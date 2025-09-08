@@ -406,6 +406,7 @@
                 <h2>体魄技能</h2>
                 <div class="skill-item"><label>威慑</label><div class="skill-ranks" id="skill_awe"></div></div>
                 <div class="skill-item"><label>运动</label><div class="skill-ranks" id="skill_athletics"></div></div>
+                <div class="skill-item"><label>觉察</label><div class="skill-ranks" id="skill_awareness"></div></div>
                 <div class="skill-item"><label>狩猎</label><div class="skill-ranks" id="skill_hunting"></div></div>
                 <div class="skill-item"><label>歌唱</label><div class="skill-ranks" id="skill_song"></div></div>
                 <div class="skill-item"><label>手艺</label><div class="skill-ranks" id="skill_craft"></div></div>
@@ -536,199 +537,6 @@ document.addEventListener('DOMContentLoaded', function() {
           trait3Feature = document.getElementById('trait3_calling_feature');
 
     // --- DATA MAPPINGS ---
-
-    const traitsData = {
-        '大胆': '你对自己的能力极为自信，因此你并不容易被吓倒，并且随时准备好投身于危险。',
-        '狡黠': '你的才思敏锐，每当有机会你都会利用它为自己取得优势。',
-        '热忱': '每当某项活动激起你的兴趣，你都会非常激动且迫不及待。',
-        '忠贞': '你坚定不渝地献身于你选择的理想或追随之人，你的事功往往也有赖这份忠诚坚贞。',
-        '迷人': '在大多数人眼中，你都显得魅力十足，即便他们并非与你同族同类。',
-        '言语得体': '你的言谈举止令人如沐春风而又不失礼数，因此你的话语鲜少引来敌意。',
-        '凶狠': '在你被激怒时，或者在你认为有必要的时候，你会显露出你野蛮凶狠的一面。',
-        '慷慨': '你在物质和真心上都不吝于给予，总是把他人的需求放在心上。',
-        '正直': '你坚信人应当公正行事，也应当遵循道德做正确的事。',
-        '好奇': '你天性好奇，即使与自己无关的事物也能轻易激起你的兴趣。这种天性的优点在于，你不那么容易被表面现象所蒙蔽。',
-        '目光敏锐': '你的视力比大多数人都敏锐。',
-        '威严': '你的举止中有一种高傲凛然的风度，令旁观者肃然起敬。',
-        '乐天': '你乐观的精神百折不挠，即使在阴影重重之中，你也能发现一丝光明。',
-        '耐心': '你性情平和，不容易发脾气。无论对于蠢人还是事情的延误，还是在面对极为艰苦的处境时，你都可以默默忍受。',
-        '自傲': '你对自己或所属族群的功绩与成就感到深深的骄傲与自豪。',
-        '朴实': '你的行事风格质朴无华，或许有人会觉得略显粗犷，但你深知，真正的金子未必光芒四射，外表也并不能代表一切。',
-        '内敛': '你并不轻易吐露心声，更喜欢将自己的意图隐藏起来不让他人窥视，尤其是对于你的族群之外的人。',
-        '严肃': '你天生严肃而不苟言笑，你的举止、肢体语言和话语之中也时刻体现着这一点。',
-        '机智': '你或许不是一位巫师，但你达成目标的方式往往称得上狡猾，甚至或许可以说是奸诈。',
-        '矫捷': '你的脚步轻快迅速，而且行动果断。',
-        '高大': '你的身材比大多数同族都要高大。',
-        '真诚': '你为人诚恳，往往在言行举止间都显露出你最真挚的想法意图。',
-        '警惕': '你总是对周围环境保持警觉，并且对于不熟悉的人的言行举止尤为细心注意。',
-        '固执': '你的性情与信念都坚定不移，并且通常只依据自己的判断行事。'
-    };
-
-    const cultureData = {
-        "巴德一族的人类": {
-            blessing: "勇敢刚毅", livingStandard: "富有",
-            modifiers: { endurance: 20, hope: 8, parry: 12 },
-            traits: ['大胆', '热忱', '迷人', '凶狠', '慷慨', '自傲', '高大', '固执']
-        },
-        "都林一族的矮人": {
-            blessing: "锐不可当", livingStandard: "富有",
-            modifiers: { endurance: 22, hope: 8, parry: 10 },
-            traits: ['狡黠', '凶狠', '威严', '自傲', '内敛', '严肃', '警惕', '固执']
-        },
-        "林顿的精灵": {
-            blessing: "精灵之艺", livingStandard: "节俭",
-            modifiers: { endurance: 20, hope: 8, parry: 12 },
-            traits: ['迷人', '目光敏锐', '威严', '乐天', '耐心', '机智', '矫捷', '警惕']
-        },
-        "夏尔的霍比特人": {
-            blessing: "见怪不怪", livingStandard: "普通",
-            modifiers: { endurance: 18, hope: 10, parry: 12 },
-            traits: ['热忱', '言语得体', '忠贞', '正直', '好奇', '目光敏锐', '乐天', '朴实']
-        },
-        "布理的人类": {
-            blessing: "布理血脉", livingStandard: "普通",
-            modifiers: { endurance: 20, hope: 10, parry: 10 },
-            traits: ['狡黠', '言语得体', '忠贞', '慷慨', '好奇', '耐心', '朴实', '真诚']
-        },
-        "北方的游民": {
-            blessing: "人中王者", livingStandard: "节俭",
-            modifiers: { endurance: 20, hope: 6, parry: 14 },
-            traits: ['大胆', '正直', '内敛', '严肃', '机智', '矫捷', '高大', '真诚']
-        },
-        "": { 
-            blessing: "", livingStandard: "",
-            modifiers: { endurance: 0, hope: 0, parry: 0 },
-            traits: []
-        }
-    };
-    
-    const callingFeatures = {
-        '领袖': '领导力', '勇士': '宿敌知识', '信使': '民间知识',
-        '学者': '学识诗歌', '寻宝客': '盗窃', '守望者': '魔影知识',
-        '': ''
-    };
-
-    // --- HELPER FUNCTIONS ---
-    function updateAttributes() {
-        const bVal = parseInt(bodyVal.value) || 0;
-        if (document.activeElement !== bodyTN) bodyTN.value = 20 - bVal;
-        const hVal = parseInt(heartVal.value) || 0;
-        if (document.activeElement !== heartTN) heartTN.value = 20 - hVal;
-        const wVal = parseInt(witsVal.value) || 0;
-        if (document.activeElement !== witsTN) witsTN.value = 20 - wVal;
-
-        const selectedCulture = heroicCultureSelect.value;
-        const modifiers = cultureData[selectedCulture]?.modifiers || cultureData[""].modifiers;
-
-        enduranceVal.textContent = bVal + modifiers.endurance;
-        hopeVal.textContent = hVal + modifiers.hope;
-        parryVal.textContent = wVal + modifiers.parry;
-    }
-    
-    function populateTraitSelectors(traitList) {
-        [trait1Select, trait2Select].forEach(select => {
-            const currentValue = select.value;
-            select.innerHTML = '<option value="">--请选择特质--</option>';
-            traitList.forEach(trait => {
-                const option = document.createElement('option');
-                option.value = trait;
-                option.textContent = trait;
-                select.appendChild(option);
-            });
-            select.value = currentValue; // try to restore previous value
-            select.disabled = traitList.length === 0;
-        });
-        updateTraitDescriptionsAndDuplicates();
-    }
-    
-    function updateTraitDescriptionsAndDuplicates() {
-        // Update descriptions
-        trait1Desc.textContent = traitsData[trait1Select.value] || '';
-        trait2Desc.textContent = traitsData[trait2Select.value] || '';
-
-        // Handle duplicates
-        const val1 = trait1Select.value;
-        const val2 = trait2Select.value;
-
-        for (const option of trait2Select.options) {
-            option.disabled = (option.value !== '' && option.value === val1);
-        }
-        for (const option of trait1Select.options) {
-            option.disabled = (option.value !== '' && option.value === val2);
-        }
-    }
-
-    // --- EVENT LISTENERS ---
-    
-    // Core Attributes
-    bodyVal.addEventListener('input', updateAttributes);
-    bodyTN.addEventListener('input', () => { const tnVal = parseInt(bodyTN.value) || 0; bodyVal.value = 20 - tnVal; updateAttributes(); });
-    heartVal.addEventListener('input', updateAttributes);
-    heartTN.addEventListener('input', () => { const tnVal = parseInt(heartTN.value) || 0; heartVal.value = 20 - tnVal; updateAttributes(); });
-    witsVal.addEventListener('input', updateAttributes);
-    witsTN.addEventListener('input', () => { const tnVal = parseInt(witsTN.value) || 0; witsVal.value = 20 - tnVal; updateAttributes(); });
-
-    // Culture and Calling
-    heroicCultureSelect.addEventListener('change', (event) => {
-        const selectedCulture = event.target.value;
-        const data = cultureData[selectedCulture] || cultureData[""];
-        culturalBlessingInput.value = data.blessing;
-        livingStandardInput.value = data.livingStandard;
-        
-        // Reset and populate trait selectors
-        trait1Select.value = '';
-        trait2Select.value = '';
-        populateTraitSelectors(data.traits);
-
-        updateAttributes();
-    });
-
-    callingSelect.addEventListener('change', (event) => {
-        const selectedCalling = event.target.value;
-        trait3Feature.value = callingFeatures[selectedCalling] || '';
-    });
-    
-    // Traits
-    trait1Select.addEventListener('change', updateTraitDescriptionsAndDuplicates);
-    trait2Select.addEventListener('change', updateTraitDescriptionsAndDuplicates);
-
-
-    // --- DATA MANAGEMENT ---
-    
-    // Save, Load, Reset button logic remains here
-    // ... (This logic is complex and long, but doesn't need changes, so it's kept as is)
-
-    // --- INITIALIZATION and AUTO-LOAD ---
-    
-    // ... (This logic also remains the same)
-    
-    // The previous JS for saving/loading, skills, etc. remains the same.
-    // Full script below for completeness.
-});
-
-// Full script, including button logic and initialization
-document.addEventListener('DOMContentLoaded', function() {
-    // --- ELEMENTS ---
-    const bodyVal = document.getElementById('body_val'),
-          bodyTN = document.getElementById('body_tn'),
-          heartVal = document.getElementById('heart_val'),
-          heartTN = document.getElementById('heart_tn'),
-          witsVal = document.getElementById('wits_val'),
-          witsTN = document.getElementById('wits_tn'),
-          enduranceVal = document.getElementById('endurance_val'),
-          hopeVal = document.getElementById('hope_val'),
-          parryVal = document.getElementById('parry_val'),
-          heroicCultureSelect = document.getElementById('heroic_culture'),
-          culturalBlessingInput = document.getElementById('cultural_blessing'),
-          livingStandardInput = document.getElementById('char_living_standard'),
-          callingSelect = document.getElementById('calling'),
-          trait1Select = document.getElementById('trait1_select'),
-          trait1Desc = document.getElementById('trait1_desc'),
-          trait2Select = document.getElementById('trait2_select'),
-          trait2Desc = document.getElementById('trait2_desc'),
-          trait3Feature = document.getElementById('trait3_calling_feature');
-
-    // --- DATA MAPPINGS ---
     const traitsData = {
         '大胆': '你对自己的能力极为自信，因此你并不容易被吓倒，并且随时准备好投身于危险。', '狡黠': '你的才思敏锐，每当有机会你都会利用它为自己取得优势。', '热忱': '每当某项活动激起你的兴趣，你都会非常激动且迫不及待。', '忠贞': '你坚定不渝地献身于你选择的理想或追随之人，你的事功往往也有赖这份忠诚坚贞。', '迷人': '在大多数人眼中，你都显得魅力十足，即便他们并非与你同族同类。', '言语得体': '你的言谈举止令人如沐春风而又不失礼数，因此你的话语鲜少引来敌意。', '凶狠': '在你被激怒时，或者在你认为有必要的时候，你会显露出你野蛮凶狠的一面。', '慷慨': '你在物质和真心上都不吝于给予，总是把他人的需求放在心上。', '正直': '你坚信人应当公正行事，也应当遵循道德做正确的事。', '好奇': '你天性好奇，即使与自己无关的事物也能轻易激起你的兴趣。这种天性的优点在于，你不那么容易被表面现象所蒙蔽。', '目光敏锐': '你的视力比大多数人都敏锐。', '威严': '你的举止中有一种高傲凛然的风度，令旁观者肃然起敬。', '乐天': '你乐观的精神百折不挠，即使在阴影重重之中，你也能发现一丝光明。', '耐心': '你性情平和，不容易发脾气。无论对于蠢人还是事情的延误，还是在面对极为艰苦的处境时，你都可以默默忍受。', '自傲': '你对自己或所属族群的功绩与成就感到深深的骄傲与自豪。', '朴实': '你的行事风格质朴无华，或许有人会觉得略显粗犷，但你深知，真正的金子未必光芒四射，外表也并不能代表一切。', '内敛': '你并不轻易吐露心声，更喜欢将自己的意图隐藏起来不让他人窥视，尤其是对于你的族群之外的人。', '严肃': '你天生严肃而不苟言笑，你的举止、肢体语言和话语之中也时刻体现着这一点。', '机智': '你或许不是一位巫师，但你达成目标的方式往往称得上狡猾，甚至或许可以说是奸诈。', '矫捷': '你的脚步轻快迅速，而且行动果断。', '高大': '你的身材比大多数同族都要高大。', '真诚': '你为人诚恳，往往在言行举止间都显露出你最真挚的想法意图。', '警惕': '你总是对周围环境保持警觉，并且对于不熟悉的人的言行举止尤为细心注意。', '固执': '你的性情与信念都坚定不移，并且通常只依据自己的判断行事。'
     };
@@ -746,6 +554,32 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // --- HELPER FUNCTIONS ---
+    function handleRankClick(event) {
+        const checkbox = event.target;
+        if (checkbox.type !== 'checkbox') return;
+
+        // Allow single toggle with Shift key
+        if (event.shiftKey) {
+            return;
+        }
+
+        const checkboxes = Array.from(checkbox.parentNode.children);
+        const currentIndex = checkboxes.indexOf(checkbox);
+        const isChecking = checkbox.checked;
+
+        for (let i = 0; i < checkboxes.length; i++) {
+            if (isChecking) {
+                if (i <= currentIndex) {
+                    checkboxes[i].checked = true;
+                }
+            } else {
+                if (i >= currentIndex) {
+                    checkboxes[i].checked = false;
+                }
+            }
+        }
+    }
+
     function createRankCheckboxes(containerId, count = 5) {
         const container = document.getElementById(containerId);
         if (!container) return;
@@ -757,7 +591,9 @@ document.addEventListener('DOMContentLoaded', function() {
             checkbox.value = i;
             container.appendChild(checkbox);
         }
+        container.addEventListener('click', handleRankClick);
     }
+    
     function updateAttributes() {
         const bVal = parseInt(bodyVal.value) || 0;
         if (document.activeElement !== bodyTN) bodyTN.value = 20 - bVal;
@@ -826,7 +662,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- INITIALIZATION ---
-    const skillContainers = ['skill_awe', 'skill_athletics', 'skill_hunting', 'skill_song', 'skill_craft', 'skill_enhearten', 'skill_travel', 'skill_insight', 'skill_healing', 'skill_courtesy', 'skill_battle', 'skill_persuade', 'skill_stealth', 'skill_search', 'skill_explore', 'skill_riddle', 'skill_lore', 'prof_axes', 'prof_bows', 'prof_spears', 'prof_swords'];
+    const skillContainers = ['skill_awe', 'skill_athletics', 'skill_awareness', 'skill_hunting', 'skill_song', 'skill_craft', 'skill_enhearten', 'skill_travel', 'skill_insight', 'skill_healing', 'skill_courtesy', 'skill_battle', 'skill_persuade', 'skill_stealth', 'skill_search', 'skill_explore', 'skill_riddle', 'skill_lore', 'prof_axes', 'prof_bows', 'prof_spears', 'prof_swords'];
     skillContainers.forEach(id => createRankCheckboxes(id));
     addGearRow('combat_gear_body', 5);
 
