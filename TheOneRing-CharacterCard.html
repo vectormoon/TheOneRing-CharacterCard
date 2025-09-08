@@ -38,7 +38,7 @@
             padding-bottom: 5px;
             font-weight: bold;
         }
-        h1 { text-align: center; }
+        h1 { text-align: center; margin-bottom: 15px; }
 
         .grid-container {
             display: grid;
@@ -65,9 +65,35 @@
             resize: vertical;
             min-height: 60px;
         }
+
+        .header-info {
+            grid-column: span 12;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 15px;
+        }
+        
+        .portrait-box {
+            grid-column: 10 / -1;
+            grid-row: 1 / 4;
+            text-align: center;
+        }
+        
+        #portrait_preview {
+            width: 100%;
+            height: 160px;
+            border: 2px solid var(--border-color);
+            background: #fff;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        
+        .portrait-controls {
+            margin-top: 5px;
+            font-size: 0.8em;
+        }
         
         .header-info, .attributes-section, .skills-section, .combat-features-section, .status-section, .gear-section {
-            grid-column: span 12;
             display: contents;
         }
 
@@ -81,16 +107,18 @@
             font-size: 0.9em;
         }
         
-        .header-info .info-item:nth-child(1) { grid-column: span 3; }
-        .header-info .info-item:nth-child(2) { grid-column: span 2; }
-        .header-info .info-item:nth-child(3) { grid-column: span 2; }
-        .header-info .info-item:nth-child(4) { grid-column: span 5; }
-        .header-info .info-item:nth-child(5) { grid-column: span 4; }
-        .header-info .info-item:nth-child(6) { grid-column: span 4; }
-        .header-info .info-item:nth-child(7) { grid-column: span 4; }
-        .header-info .info-item:nth-child(8) { grid-column: span 4; }
-        .header-info .info-item:nth-child(9) { grid-column: span 4; }
-        .header-info .info-item:nth-child(10) { grid-column: span 4; }
+        /* Spanning for header items, leaving 3 columns for portrait */
+        .info-item.char-name { grid-column: span 3; }
+        .info-item.char-age { grid-column: span 2; }
+        .info-item.char-living-standard { grid-column: span 2; }
+        .info-item.char-patron { grid-column: span 2; }
+        .info-item.heroic-culture { grid-column: span 5; }
+        .info-item.cultural-blessing { grid-column: span 4; }
+        .info-item.calling { grid-column: span 3; }
+        .info-item.shadow-path { grid-column: span 3; }
+        .info-item.flaw { grid-column: span 3; }
+        .info-item.char-treasure { grid-column: span 12; }
+
 
         .attribute-box {
             grid-column: span 4;
@@ -265,6 +293,22 @@
         .gear-table th { background-color: var(--header-bg); }
         .gear-table input { text-align: center; }
         
+        .gear-controls {
+            margin-top: 5px;
+            text-align: right;
+        }
+        .gear-controls button, .remove-row-btn {
+            background-color: #8b4513;
+            color: white;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        .remove-row-btn {
+            background-color: #c04040;
+        }
+        
         .buttons-section {
             grid-column: span 12;
             text-align: center;
@@ -289,12 +333,54 @@
         @media (max-width: 992px) {
             .attribute-box, .skills-column, .combat-proficiencies, .feature-box { grid-column: span 12; }
             .traits-container { grid-template-columns: 1fr; }
+            .header-info { display: flex; flex-wrap: wrap; }
+            .info-item { width: 48%; }
+            .portrait-box { order: -1; width: 100%; margin-bottom: 15px; }
         }
         @media (max-width: 768px) {
-            .header-info .info-item { grid-column: span 6 !important; }
             .points-and-status-section { grid-template-columns: repeat(2, 1fr); }
             .points-and-status-section .info-item-fullwidth { grid-column: span 2; }
             .points-and-status-section .status-box-internal { border-left: none; padding-left: 0; }
+        }
+        
+        /* Print Styles */
+        @media print {
+            @page {
+                size: A3;
+                margin: 1cm;
+            }
+            body {
+                background-color: #fff;
+                font-size: 10pt;
+            }
+            .character-sheet {
+                box-shadow: none;
+                border: 1px solid #ccc;
+                max-width: 100%;
+            }
+            .buttons-section, .gear-controls, .remove-row-btn, .portrait-controls {
+                display: none;
+            }
+            input, textarea, select {
+                border: none !important;
+                background-color: transparent !important;
+                -webkit-appearance: none;
+                appearance: none;
+                padding: 2px;
+                color: #000;
+            }
+            input[type="checkbox"] {
+                border: 1px solid #000 !important;
+            }
+            .skill-ranks input[type="checkbox"]::before {
+                background-color: #000;
+            }
+             h1, h2, legend {
+                border-color: #ccc;
+             }
+            #portrait_preview {
+                border: 1px solid #ccc;
+            }
         }
 
     </style>
@@ -303,15 +389,15 @@
 
 <div class="character-sheet">
     <h1>魔戒TRPG 人物卡</h1>
-
+    
     <div class="grid-container">
         <div class="header-info">
-            <div class="info-item"><label for="char_name">角色姓名</label><input type="text" id="char_name" name="char_name"></div>
-            <div class="info-item"><label for="char_age">年龄</label><input type="text" id="char_age" name="char_age"></div>
-            <div class="info-item"><label for="char_living_standard">生活水平</label><input type="text" id="char_living_standard" name="char_living_standard" readonly></div>
-            <div class="info-item"><label for="char_treasure">宝藏</label><input type="text" id="char_treasure" name="char_treasure"></div>
+            <div class="info-item char-name"><label for="char_name">角色姓名</label><input type="text" id="char_name" name="char_name"></div>
+            <div class="info-item char-age"><label for="char_age">年龄</label><input type="text" id="char_age" name="char_age"></div>
+            <div class="info-item char-living-standard"><label for="char_living_standard">生活水平</label><input type="text" id="char_living_standard" name="char_living_standard" readonly></div>
+            <div class="info-item char-patron"><label for="patron">赞助人</label><input type="text" id="patron" name="patron"></div>
             
-            <div class="info-item">
+            <div class="info-item heroic-culture">
                 <label for="heroic_culture">英雄所属文化</label>
                 <select id="heroic_culture" name="heroic_culture">
                     <option value="">--请选择一个文化--</option>
@@ -323,10 +409,9 @@
                     <option value="北方的游民">北方的游民</option>
                 </select>
             </div>
-            <div class="info-item"><label for="patron">赞助人</label><input type="text" id="patron" name="patron"></div>
-            <div class="info-item"><label for="cultural_blessing">文化赐福</label><input type="text" id="cultural_blessing" name="cultural_blessing" readonly></div>
+            <div class="info-item cultural-blessing"><label for="cultural_blessing">文化赐福</label><input type="text" id="cultural_blessing" name="cultural_blessing" readonly></div>
             
-            <div class="info-item">
+            <div class="info-item calling">
                 <label for="calling">呼召 (职业)</label>
                 <select id="calling" name="calling">
                     <option value="">--请选择一个呼召--</option>
@@ -338,8 +423,19 @@
                     <option value="守望者">守望者</option>
                 </select>
             </div>
-            <div class="info-item"><label for="shadow_path">魔影之路</label><input type="text" id="shadow_path" name="shadow_path"></div>
-            <div class="info-item"><label for="flaw">缺陷</label><input type="text" id="flaw" name="flaw"></div>
+            <div class="info-item shadow-path"><label for="shadow_path">魔影之路</label><input type="text" id="shadow_path" name="shadow_path"></div>
+            <div class="info-item flaw"><label for="flaw">缺陷</label><input type="text" id="flaw" name="flaw"></div>
+
+            <div class="portrait-box">
+                <label>人物形象</label>
+                <img id="portrait_preview" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMCAyMWE4IDggMCAwIDAtMTYgME0xMiAxM2E0IDQgMCAxIDAgMC04IDQgNCAwIDAgMCAwIDhaIi8+PC9zdmc+" alt="人物形象预览">
+                <div class="portrait-controls">
+                    <input type="file" id="portrait_upload" accept="image/*" title="上传本地图片">
+                    <input type="text" id="portrait_url" placeholder="或粘贴链接" style="width: 100%; margin-top: 4px;">
+                </div>
+            </div>
+
+            <div class="info-item char-treasure"><label for="char_treasure">宝藏</label><input type="text" id="char_treasure" name="char_treasure"></div>
         </div>
 
         <div id="personal_traits_section">
@@ -483,21 +579,22 @@
             <div class="gear-table">
                 <h2>作战装备</h2>
                 <table>
-                    <thead><tr><th>作战装备</th><th>伤害值</th><th>攻伤值</th><th>负重</th><th>备注</th></tr></thead>
+                    <thead><tr><th>作战装备</th><th>伤害值</th><th>攻伤值</th><th>负重</th><th>备注</th><th>操作</th></tr></thead>
                     <tbody id="combat_gear_body"></tbody>
                 </table>
-                 <button type="button" onclick="addGearRow('combat_gear_body')" style="margin-top: 5px;">+ 添加一行</button>
+                <div class="gear-controls">
+                    <button type="button" id="add_combat_gear_btn">+ 添加一行</button>
+                </div>
             </div>
             <div class="gear-table" style="margin-top: 20px;">
                 <h2>防护装备</h2>
                 <table>
-                    <thead><tr><th>护甲/头盔/盾牌</th><th>防护/招架</th><th>负重</th></tr></thead>
-                    <tbody>
-                        <tr><td><input type="text" name="armour_name"></td><td><input type="number" name="armour_prot"></td><td><input type="number" name="armour_load"></td></tr>
-                        <tr><td><input type="text" name="helm_name"></td><td><input type="number" name="helm_prot"></td><td><input type="number" name="helm_load"></td></tr>
-                        <tr><td><input type="text" name="shield_name"></td><td><input type="number" name="shield_parry"></td><td><input type="number" name="shield_load"></td></tr>
-                    </tbody>
+                    <thead><tr><th>护甲/头盔/盾牌</th><th>防护/招架</th><th>负重</th><th>操作</th></tr></thead>
+                    <tbody id="protective_gear_body"></tbody>
                 </table>
+                <div class="gear-controls">
+                    <button type="button" id="add_protective_gear_btn">+ 添加一行</button>
+                </div>
             </div>
             <div class="info-item" style="grid-column: span 12; margin-top: 20px;">
                 <label for="travel_gear"><h2>旅行装备</h2></label>
@@ -507,6 +604,7 @@
         
         <div class="buttons-section">
             <button id="save-btn">保存到浏览器</button>
+            <button id="export-btn">导出为PDF/打印</button>
             <button id="load-btn">从浏览器读取</button>
             <button id="reset-btn">重置人物卡</button>
         </div>
@@ -537,49 +635,23 @@ document.addEventListener('DOMContentLoaded', function() {
           trait3Feature = document.getElementById('trait3_calling_feature');
 
     // --- DATA MAPPINGS ---
-    const traitsData = {
-        '大胆': '你对自己的能力极为自信，因此你并不容易被吓倒，并且随时准备好投身于危险。', '狡黠': '你的才思敏锐，每当有机会你都会利用它为自己取得优势。', '热忱': '每当某项活动激起你的兴趣，你都会非常激动且迫不及待。', '忠贞': '你坚定不渝地献身于你选择的理想或追随之人，你的事功往往也有赖这份忠诚坚贞。', '迷人': '在大多数人眼中，你都显得魅力十足，即便他们并非与你同族同类。', '言语得体': '你的言谈举止令人如沐春风而又不失礼数，因此你的话语鲜少引来敌意。', '凶狠': '在你被激怒时，或者在你认为有必要的时候，你会显露出你野蛮凶狠的一面。', '慷慨': '你在物质和真心上都不吝于给予，总是把他人的需求放在心上。', '正直': '你坚信人应当公正行事，也应当遵循道德做正确的事。', '好奇': '你天性好奇，即使与自己无关的事物也能轻易激起你的兴趣。这种天性的优点在于，你不那么容易被表面现象所蒙蔽。', '目光敏锐': '你的视力比大多数人都敏锐。', '威严': '你的举止中有一种高傲凛然的风度，令旁观者肃然起敬。', '乐天': '你乐观的精神百折不挠，即使在阴影重重之中，你也能发现一丝光明。', '耐心': '你性情平和，不容易发脾气。无论对于蠢人还是事情的延误，还是在面对极为艰苦的处境时，你都可以默默忍受。', '自傲': '你对自己或所属族群的功绩与成就感到深深的骄傲与自豪。', '朴实': '你的行事风格质朴无华，或许有人会觉得略显粗犷，但你深知，真正的金子未必光芒四射，外表也并不能代表一切。', '内敛': '你并不轻易吐露心声，更喜欢将自己的意图隐藏起来不让他人窥视，尤其是对于你的族群之外的人。', '严肃': '你天生严肃而不苟言笑，你的举止、肢体语言和话语之中也时刻体现着这一点。', '机智': '你或许不是一位巫师，但你达成目标的方式往往称得上狡猾，甚至或许可以说是奸诈。', '矫捷': '你的脚步轻快迅速，而且行动果断。', '高大': '你的身材比大多数同族都要高大。', '真诚': '你为人诚恳，往往在言行举止间都显露出你最真挚的想法意图。', '警惕': '你总是对周围环境保持警觉，并且对于不熟悉的人的言行举止尤为细心注意。', '固执': '你的性情与信念都坚定不移，并且通常只依据自己的判断行事。'
-    };
-    const cultureData = {
-        "巴德一族的人类": { blessing: "勇敢刚毅", livingStandard: "富有", modifiers: { endurance: 20, hope: 8, parry: 12 }, traits: ['大胆', '热忱', '迷人', '凶狠', '慷慨', '自傲', '高大', '固执']},
-        "都林一族的矮人": { blessing: "锐不可当", livingStandard: "富有", modifiers: { endurance: 22, hope: 8, parry: 10 }, traits: ['狡黠', '凶狠', '威严', '自傲', '内敛', '严肃', '警惕', '固执']},
-        "林顿的精灵": { blessing: "精灵之艺", livingStandard: "节俭", modifiers: { endurance: 20, hope: 8, parry: 12 }, traits: ['迷人', '目光敏锐', '威严', '乐天', '耐心', '机智', '矫捷', '警惕']},
-        "夏尔的霍比特人": { blessing: "见怪不怪", livingStandard: "普通", modifiers: { endurance: 18, hope: 10, parry: 12 }, traits: ['热忱', '言语得体', '忠贞', '正直', '好奇', '目光敏锐', '乐天', '朴实']},
-        "布理的人类": { blessing: "布理血脉", livingStandard: "普通", modifiers: { endurance: 20, hope: 10, parry: 10 }, traits: ['狡黠', '言语得体', '忠贞', '慷慨', '好奇', '耐心', '朴实', '真诚']},
-        "北方的游民": { blessing: "人中王者", livingStandard: "节俭", modifiers: { endurance: 20, hope: 6, parry: 14 }, traits: ['大胆', '正直', '内敛', '严肃', '机智', '矫捷', '高大', '真诚']},
-        "": { blessing: "", livingStandard: "", modifiers: { endurance: 0, hope: 0, parry: 0 }, traits: []}
-    };
-    const callingFeatures = {
-        '领袖': '领导力', '勇士': '宿敌知识', '信使': '民间知识', '学者': '学识诗歌', '寻宝客': '盗窃', '守望者': '魔影知识', '': ''
-    };
+    const traitsData = { '大胆': '你对自己的能力极为自信，因此你并不容易被吓倒，并且随时准备好投身于危险。', '狡黠': '你的才思敏锐，每当有机会你都会利用它为自己取得优势。', '热忱': '每当某项活动激起你的兴趣，你都会非常激动且迫不及待。', '忠贞': '你坚定不渝地献身于你选择的理想或追随之人，你的事功往往也有赖这份忠诚坚贞。', '迷人': '在大多数人眼中，你都显得魅力十足，即便他们并非与你同族同类。', '言语得体': '你的言谈举止令人如沐春风而又不失礼数，因此你的话语鲜少引来敌意。', '凶狠': '在你被激怒时，或者在你认为有必要的时候，你会显露出你野蛮凶狠的一面。', '慷慨': '你在物质和真心上都不吝于给予，总是把他人的需求放在心上。', '正直': '你坚信人应当公正行事，也应当遵循道德做正确的事。', '好奇': '你天性好奇，即使与自己无关的事物也能轻易激起你的兴趣。这种天性的优点在于，你不那么容易被表面现象所蒙蔽。', '目光敏锐': '你的视力比大多数人都敏锐。', '威严': '你的举止中有一种高傲凛然的风度，令旁观者肃然起敬。', '乐天': '你乐观的精神百折不挠，即使在阴影重重之中，你也能发现一丝光明。', '耐心': '你性情平和，不容易发脾气。无论对于蠢人还是事情的延误，还是在面对极为艰苦的处境时，你都可以默默忍受。', '自傲': '你对自己或所属族群的功绩与成就感到深深的骄傲与自豪。', '朴实': '你的行事风格质朴无华，或许有人会觉得略显粗犷，但你深知，真正的金子未必光芒四射，外表也并不能代表一切。', '内敛': '你并不轻易吐露心声，更喜欢将自己的意图隐藏起来不让他人窥视，尤其是对于你的族群之外的人。', '严肃': '你天生严肃而不苟言笑，你的举止、肢体语言和话语之中也时刻体现着这一点。', '机智': '你或许不是一位巫师，但你达成目标的方式往往称得上狡猾，甚至或许可以说是奸诈。', '矫捷': '你的脚步轻快迅速，而且行动果断。', '高大': '你的身材比大多数同族都要高大。', '真诚': '你为人诚恳，往往在言行举止间都显露出你最真挚的想法意图。', '警惕': '你总是对周围环境保持警觉，并且对于不熟悉的人的言行举-止尤为细心注意。', '固执': '你的性情与信念都坚定不移，并且通常只依据自己的判断行事。' };
+    const cultureData = { "巴德一族的人类": { blessing: "勇敢刚毅", livingStandard: "富有", modifiers: { endurance: 20, hope: 8, parry: 12 }, traits: ['大胆', '热忱', '迷人', '凶狠', '慷慨', '自傲', '高大', '固执']}, "都林一族的矮人": { blessing: "锐不可当", livingStandard: "富有", modifiers: { endurance: 22, hope: 8, parry: 10 }, traits: ['狡黠', '凶狠', '威严', '自傲', '内敛', '严肃', '警惕', '固执']}, "林顿的精灵": { blessing: "精灵之艺", livingStandard: "节俭", modifiers: { endurance: 20, hope: 8, parry: 12 }, traits: ['迷人', '目光敏锐', '威严', '乐天', '耐心', '机智', '矫捷', '警惕']}, "夏尔的霍比特人": { blessing: "见怪不怪", livingStandard: "普通", modifiers: { endurance: 18, hope: 10, parry: 12 }, traits: ['热忱', '言语得体', '忠贞', '正直', '好奇', '目光敏锐', '乐天', '朴实']}, "布理的人类": { blessing: "布理血脉", livingStandard: "普通", modifiers: { endurance: 20, hope: 10, parry: 10 }, traits: ['狡黠', '言语得体', '忠贞', '慷慨', '好奇', '耐心', '朴实', '真诚']}, "北方的游民": { blessing: "人中王者", livingStandard: "节俭", modifiers: { endurance: 20, hope: 6, parry: 14 }, traits: ['大胆', '正直', '内敛', '严肃', '机智', '矫捷', '高大', '真诚']}, "": { blessing: "", livingStandard: "", modifiers: { endurance: 0, hope: 0, parry: 0 }, traits: []} };
+    const callingFeatures = { '领袖': '领导力', '勇士': '宿敌知识', '信使': '民间知识', '学者': '学识诗歌', '寻宝客': '盗窃', '守望者': '魔影知识', '': '' };
 
     // --- HELPER FUNCTIONS ---
     function handleRankClick(event) {
         const checkbox = event.target;
         if (checkbox.type !== 'checkbox') return;
-
-        // Allow single toggle with Shift key
-        if (event.shiftKey) {
-            return;
-        }
-
+        if (event.shiftKey) return;
         const checkboxes = Array.from(checkbox.parentNode.children);
         const currentIndex = checkboxes.indexOf(checkbox);
         const isChecking = checkbox.checked;
-
         for (let i = 0; i < checkboxes.length; i++) {
-            if (isChecking) {
-                if (i <= currentIndex) {
-                    checkboxes[i].checked = true;
-                }
-            } else {
-                if (i >= currentIndex) {
-                    checkboxes[i].checked = false;
-                }
-            }
+            if (isChecking) { if (i <= currentIndex) checkboxes[i].checked = true; } 
+            else { if (i >= currentIndex) checkboxes[i].checked = false; }
         }
     }
-
     function createRankCheckboxes(containerId, count = 5) {
         const container = document.getElementById(containerId);
         if (!container) return;
@@ -593,7 +665,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         container.addEventListener('click', handleRankClick);
     }
-    
     function updateAttributes() {
         const bVal = parseInt(bodyVal.value) || 0;
         if (document.activeElement !== bodyTN) bodyTN.value = 20 - bVal;
@@ -635,36 +706,116 @@ document.addEventListener('DOMContentLoaded', function() {
         for (const option of trait2Select.options) { option.disabled = (option.value !== '' && option.value === val1); }
         for (const option of trait1Select.options) { option.disabled = (option.value !== '' && option.value === val2); }
     }
-    function loadDataFromStorage() {
+    
+    // --- DYNAMIC TABLE FUNCTIONS ---
+    function addCombatGearRow(data = {}) {
+        const tableBody = document.getElementById('combat_gear_body');
+        const newRow = tableBody.insertRow();
+        newRow.innerHTML = `
+            <td><input type="text" data-key="name" value="${data.name || ''}"></td>
+            <td><input type="text" data-key="damage" value="${data.damage || ''}"></td>
+            <td><input type="text" data-key="injury" value="${data.injury || ''}"></td>
+            <td><input type="number" data-key="load" value="${data.load || ''}"></td>
+            <td><input type="text" data-key="notes" value="${data.notes || ''}"></td>
+            <td><button type="button" class="remove-row-btn">移除</button></td>
+        `;
+    }
+    function addProtectiveGearRow(data = {}) {
+        const tableBody = document.getElementById('protective_gear_body');
+        const newRow = tableBody.insertRow();
+        newRow.innerHTML = `
+            <td><input type="text" data-key="name" value="${data.name || ''}"></td>
+            <td><input type="text" data-key="protection" value="${data.protection || ''}"></td>
+            <td><input type="number" data-key="load" value="${data.load || ''}"></td>
+            <td><button type="button" class="remove-row-btn">移除</button></td>
+        `;
+    }
+    function setupDynamicTables() {
+        document.getElementById('add_combat_gear_btn').addEventListener('click', () => addCombatGearRow());
+        document.getElementById('add_protective_gear_btn').addEventListener('click', () => addProtectiveGearRow());
+
+        document.getElementById('combat_gear_body').addEventListener('click', e => {
+            if (e.target.classList.contains('remove-row-btn')) e.target.closest('tr').remove();
+        });
+        document.getElementById('protective_gear_body').addEventListener('click', e => {
+            if (e.target.classList.contains('remove-row-btn')) e.target.closest('tr').remove();
+        });
+    }
+
+    // --- SAVE / LOAD REFACTOR ---
+    function collectTableData(tableBodyId) {
+        const rows = document.querySelectorAll(`#${tableBodyId} tr`);
+        return Array.from(rows).map(row => {
+            const rowData = {};
+            row.querySelectorAll('input, select').forEach(input => {
+                rowData[input.dataset.key] = input.value;
+            });
+            return rowData;
+        });
+    }
+
+    function saveCharacter() {
+        const charData = {};
+        document.querySelectorAll('input, textarea, select').forEach(element => {
+            if (!element.closest('.gear-table')) {
+                const key = element.id || element.name;
+                if (key) {
+                    if (element.type === 'checkbox') { charData[key] = element.checked; } 
+                    else { charData[key] = element.value; }
+                }
+            }
+        });
+        document.querySelectorAll('.skill-ranks').forEach(container => {
+            const ranks = [];
+            container.querySelectorAll('input:checked').forEach(cb => ranks.push(cb.value));
+            charData[container.id] = ranks;
+        });
+        charData.combatGear = collectTableData('combat_gear_body');
+        charData.protectiveGear = collectTableData('protective_gear_body');
+        charData.portraitSrc = document.getElementById('portrait_preview').src;
+        localStorage.setItem('tor_char_sheet', JSON.stringify(charData));
+        alert('人物卡已保存到浏览器！');
+    }
+
+    function loadCharacter(isSilent = false) {
         const savedData = localStorage.getItem('tor_char_sheet');
         if (savedData) {
             const charData = JSON.parse(savedData);
-            const formElements = document.querySelectorAll('input, textarea, select');
-            formElements.forEach(element => {
-                const key = element.id || element.name;
-                if (charData.hasOwnProperty(key)) {
-                    if (element.type === 'checkbox') { element.checked = charData[key]; } 
-                    else { element.value = charData[key]; }
-                }
+            document.querySelectorAll('input, textarea, select').forEach(element => {
+                 if (!element.closest('.gear-table')) {
+                    const key = element.id || element.name;
+                    if (charData.hasOwnProperty(key)) {
+                        if (element.type === 'checkbox') { element.checked = charData[key]; } 
+                        else { element.value = charData[key]; }
+                    }
+                 }
             });
             document.querySelectorAll('.skill-ranks').forEach(container => {
                 const ranks = charData[container.id] || [];
                 container.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = ranks.includes(cb.value); });
             });
+            document.getElementById('combat_gear_body').innerHTML = '';
+            (charData.combatGear || []).forEach(rowData => addCombatGearRow(rowData));
+            document.getElementById('protective_gear_body').innerHTML = '';
+            (charData.protectiveGear || []).forEach(rowData => addProtectiveGearRow(rowData));
+            if (charData.portraitSrc) { document.getElementById('portrait_preview').src = charData.portraitSrc; }
             heroicCultureSelect.dispatchEvent(new Event('change'));
             callingSelect.dispatchEvent(new Event('change'));
             trait1Select.dispatchEvent(new Event('change'));
             trait2Select.dispatchEvent(new Event('change'));
             updateAttributes();
-            return true;
+            if (!isSilent) alert('人物卡数据已读取！');
+        } else {
+            if (!isSilent) alert('未找到已保存的人物卡。');
         }
-        return false;
     }
 
     // --- INITIALIZATION ---
     const skillContainers = ['skill_awe', 'skill_athletics', 'skill_awareness', 'skill_hunting', 'skill_song', 'skill_craft', 'skill_enhearten', 'skill_travel', 'skill_insight', 'skill_healing', 'skill_courtesy', 'skill_battle', 'skill_persuade', 'skill_stealth', 'skill_search', 'skill_explore', 'skill_riddle', 'skill_lore', 'prof_axes', 'prof_bows', 'prof_spears', 'prof_swords'];
     skillContainers.forEach(id => createRankCheckboxes(id));
-    addGearRow('combat_gear_body', 5);
+    setupDynamicTables();
+    addCombatGearRow();
+    addProtectiveGearRow();
 
     // --- EVENT LISTENERS ---
     bodyVal.addEventListener('input', updateAttributes);
@@ -686,36 +837,34 @@ document.addEventListener('DOMContentLoaded', function() {
     callingSelect.addEventListener('change', (event) => { trait3Feature.value = callingFeatures[event.target.value] || ''; });
     trait1Select.addEventListener('change', updateTraitDescriptionsAndDuplicates);
     trait2Select.addEventListener('change', updateTraitDescriptionsAndDuplicates);
+    document.getElementById('portrait_upload').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = e => document.getElementById('portrait_preview').src = e.target.result;
+            reader.readAsDataURL(file);
+        }
+    });
+    document.getElementById('portrait_url').addEventListener('input', function(event) {
+        if (event.target.value) document.getElementById('portrait_preview').src = event.target.value;
+    });
 
-    // --- BUTTONS and DATA MANAGEMENT ---
-    document.getElementById('save-btn').addEventListener('click', () => {
-        const charData = {};
-        document.querySelectorAll('input, textarea, select').forEach(element => {
-            const key = element.id || element.name;
-            if (key) {
-                if (element.type === 'checkbox') { charData[key] = element.checked; } 
-                else { charData[key] = element.value; }
-            }
-        });
-        document.querySelectorAll('.skill-ranks').forEach(container => {
-            const ranks = [];
-            container.querySelectorAll('input:checked').forEach(cb => ranks.push(cb.value));
-            charData[container.id] = ranks;
-        });
-        localStorage.setItem('tor_char_sheet', JSON.stringify(charData));
-        alert('人物卡已保存到浏览器！');
-    });
-    document.getElementById('load-btn').addEventListener('click', () => {
-        if (loadDataFromStorage()) { alert('人物卡数据已读取！'); } 
-        else { alert('未找到已保存的人物卡。'); }
-    });
+    // --- BUTTONS ---
+    document.getElementById('save-btn').addEventListener('click', saveCharacter);
+    document.getElementById('load-btn').addEventListener('click', () => loadCharacter(false));
+    document.getElementById('export-btn').addEventListener('click', () => window.print());
     document.getElementById('reset-btn').addEventListener('click', () => {
         if (confirm('确定要重置所有数据吗？此操作不可撤销。')) {
-            document.querySelector('.character-sheet').querySelectorAll('input, textarea, select').forEach(el => {
-                if (el.type === 'checkbox' || el.type === 'radio') { el.checked = false; } 
-                else if (el.tagName === 'SELECT') { el.selectedIndex = 0; } 
-                else if (el.type !== 'button') { el.value = ''; }
+            const form = document.querySelector('.character-sheet');
+            form.querySelectorAll('input, textarea, select').forEach(el => {
+                if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
+                else if (el.tagName === 'SELECT') el.selectedIndex = 0;
+                else if (el.type !== 'button') el.value = '';
             });
+            document.getElementById('combat_gear_body').innerHTML = '';
+            document.getElementById('protective_gear_body').innerHTML = '';
+            addCombatGearRow();
+            addProtectiveGearRow();
             heroicCultureSelect.dispatchEvent(new Event('change'));
             callingSelect.dispatchEvent(new Event('change'));
             localStorage.removeItem('tor_char_sheet');
@@ -725,23 +874,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // --- AUTO-LOAD DATA ON PAGE STARTUP ---
-    loadDataFromStorage();
-});
+    loadCharacter(true);
 
-function addGearRow(tableBodyId, rowCount = 1) {
-    const tableBody = document.getElementById(tableBodyId);
-    for(let i=0; i<rowCount; i++) {
-        const newRow = tableBody.insertRow();
-        const rowIndex = tableBody.rows.length;
-        newRow.innerHTML = `
-            <td><input type="text" name="gear_name_${rowIndex}"></td>
-            <td><input type="text" name="gear_damage_${rowIndex}"></td>
-            <td><input type="text" name="gear_injury_${rowIndex}"></td>
-            <td><input type="number" name="gear_load_${rowIndex}"></td>
-            <td><input type="text" name="gear_notes_${rowIndex}"></td>
-        `;
-    }
-}
+});
 </script>
 
 </body>
