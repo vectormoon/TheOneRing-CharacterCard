@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>魔戒TRPG - 自动人物卡生成器</title>
+    <title>魔戒TRPG - 自动人物卡生成器 Ver0.1</title>
     <style>
         :root {
             --border-color: #8b4513;
@@ -24,7 +24,7 @@
         }
 
         .character-sheet {
-            max-width: 1200px;
+            max-width: 800px;
             margin: auto;
             border: 2px solid var(--border-color);
             padding: 15px;
@@ -56,7 +56,7 @@
             font-family: inherit;
         }
         
-        input[readonly] {
+        input[readonly], input.readonly {
             background-color: #eee;
             cursor: default;
         }
@@ -69,31 +69,48 @@
         .header-info {
             grid-column: span 12;
             display: grid;
-            grid-template-columns: repeat(12, 1fr);
+            grid-template-columns: repeat(6, 1fr) 3fr 3fr; /* 9 columns for info, 3 for portrait */
             gap: 15px;
+            align-items: start;
+            padding-bottom: 0;
         }
         
         .portrait-box {
-            grid-column: 10 / -1;
-            grid-row: 1 / 4;
+            grid-column: 10 / -1; /* Place in the last 3 columns */
+            grid-row: 1 / 4;     /* Span multiple rows */
             text-align: center;
         }
         
         #portrait_preview {
-            width: 100%;
-            height: 160px;
+            width: 150px;
+            height: 150px;
             border: 2px solid var(--border-color);
             background: #fff;
             object-fit: cover;
             border-radius: 4px;
+            margin: 0 auto;
         }
         
         .portrait-controls {
-            margin-top: 5px;
-            font-size: 0.8em;
+            margin-top: 8px;
         }
         
-        .header-info, .attributes-section, .skills-section, .combat-features-section, .status-section, .gear-section {
+        .custom-file-upload {
+            border: 1px solid #8b4513;
+            display: inline-block;
+            padding: 6px 12px;
+            cursor: pointer;
+            background-color: #8b4513;
+            color: white;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+
+        .attributes-section, .skills-section, .combat-features-section, .status-section, .gear-section {
             display: contents;
         }
 
@@ -107,18 +124,60 @@
             font-size: 0.9em;
         }
         
-        /* Spanning for header items, leaving 3 columns for portrait */
-        .info-item.char-name { grid-column: span 3; }
-        .info-item.char-age { grid-column: span 2; }
-        .info-item.char-living-standard { grid-column: span 2; }
-        .info-item.char-patron { grid-column: span 2; }
-        .info-item.heroic-culture { grid-column: span 5; }
-        .info-item.cultural-blessing { grid-column: span 4; }
-        .info-item.calling { grid-column: span 3; }
-        .info-item.shadow-path { grid-column: span 3; }
-        .info-item.flaw { grid-column: span 3; }
-        .info-item.char-treasure { grid-column: span 12; }
+        .info-item.char-name { grid-column: 1 / span 2; }
+        .info-item.char-age { grid-column: 3 / span 2; }
+        .info-item.heroic-culture { grid-column: 5 / span 3; }
+        
+        .info-item.calling { grid-column: 1 / span 3; }
+        .info-item.shadow-path { grid-column: 4 / span 2; }
+        .info-item.flaw { grid-column:6 / span 2; }
 
+        .info-item.char-patron { grid-column: 1 / span 3; }
+        .info-item.char-living-standard { grid-column: 4 / span 2; }
+        .info-item.char-treasure { grid-column:6 / span 2; }
+
+        .info-item.cultural-blessing {
+            grid-column: 8 / span 1; /* Span across the info columns */
+            grid-row: 1 / 4;
+        }
+
+        #personal_traits_section h2 {
+            margin-top: 0;
+        }
+        
+        .description-box {
+            margin-top: 8px;
+            font-size: 0.9em;
+            min-height: 60px;
+            padding: 5px;
+            background: #fff;
+            border: 1px dashed #c8a077;
+            border-radius: 4px;
+        }
+
+        #king_of_men_bonus {
+            margin-top: 8px;
+            padding: 5px;
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+        }
+
+        #king_of_men_bonus:not(.hidden) {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 5px;
+        }
+        
+        #king_of_men_bonus button {
+            margin: 0px;
+            padding: 0px 2px;
+            font-family: inherit;
+        }
+
+        .hidden {
+            display: none;
+        }
 
         .attribute-box {
             grid-column: span 4;
@@ -161,7 +220,20 @@
             background: var(--input-bg);
             border: 1px solid #c8a077;
             border-radius: 4px;
+            vertical-align: middle;
         }
+        
+        /* Style for specific small current stat inputs */
+        .current-stat-input {
+            font-weight: bold;
+            font-size: 1.2em !important;
+            display: inline-block;
+            width: 60px !important;
+            padding: 4px !important;
+            text-align: center;
+            vertical-align: middle;
+        }
+
 
         .skills-column {
             grid-column: span 4;
@@ -244,38 +316,12 @@
             background-color: var(--header-bg);
         }
 
-        .trait-description {
-            margin-top: 8px;
-            font-size: 0.9em;
-            min-height: 60px;
-            padding: 5px;
-            background: #fff;
-            border: 1px dashed #c8a077;
-            border-radius: 4px;
-        }
-
-        .points-and-status-section {
+        .points-container {
             grid-column: span 12;
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 15px;
-            border: 1px solid var(--border-color);
-            padding: 10px;
-            border-radius: 5px;
-            background-color: var(--header-bg);
-        }
-        
-        .points-and-status-section .info-item-points {
             text-align: center;
-        }
-        
-        .points-and-status-section .status-box-internal {
-            border-left: 1px solid #c8a077;
-            padding-left: 15px;
-        }
-        
-        .points-and-status-section .info-item-fullwidth {
-            grid-column: span 4;
         }
 
         .gear-table {
@@ -330,6 +376,71 @@
             opacity: 0.9;
         }
 
+        /* --- 模态框样式 --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal-content {
+            background-color: var(--background-color);
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border: 2px solid var(--border-color);
+            width: 90%;
+            max-width: 500px;
+        }
+        
+        .modal-content h2 {
+            margin-top: 0;
+            text-align: center;
+        }
+        
+        .modal-form-item {
+            margin-bottom: 15px;
+        }
+        
+        .modal-form-item label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .modal-buttons {
+            text-align: right;
+            margin-top: 20px;
+        }
+        
+        .modal-buttons button {
+            padding: 8px 16px;
+            margin-left: 10px;
+            font-family: inherit;
+            font-size: 1em;
+            background-color: var(--border-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .modal-buttons button[type="button"] {
+            background-color: #a9a9a9;
+        }
+
+        .modal-overlay.hidden {
+            display: none;
+        }
+        /* --- 模态框样式结束 --- */
+
         @media (max-width: 992px) {
             .attribute-box, .skills-column, .combat-proficiencies, .feature-box { grid-column: span 12; }
             .traits-container { grid-template-columns: 1fr; }
@@ -338,12 +449,9 @@
             .portrait-box { order: -1; width: 100%; margin-bottom: 15px; }
         }
         @media (max-width: 768px) {
-            .points-and-status-section { grid-template-columns: repeat(2, 1fr); }
-            .points-and-status-section .info-item-fullwidth { grid-column: span 2; }
-            .points-and-status-section .status-box-internal { border-left: none; padding-left: 0; }
+            .points-container { grid-template-columns: 1fr; }
         }
         
-        /* Print Styles */
         @media print {
             @page {
                 size: A3;
@@ -352,15 +460,49 @@
             body {
                 background-color: #fff;
                 font-size: 10pt;
+                -webkit-print-color-adjust: exact; /* 确保背景色和颜色能被打印 */
+                print-color-adjust: exact;
             }
             .character-sheet {
                 box-shadow: none;
                 border: 1px solid #ccc;
                 max-width: 100%;
             }
-            .buttons-section, .gear-controls, .remove-row-btn, .portrait-controls {
+            /* --- 隐藏不需要打印的元素 --- */
+            .buttons-section, .gear-controls, .remove-row-btn, .portrait-controls, #king_of_men_bonus, .modal-overlay {
                 display: none;
             }
+
+            /* --- 强制大部分模块改为单列布局 --- */
+            .attribute-box, .skills-column, .combat-proficiencies, .feature-box, .points-container > .info-item {
+                grid-column: span 12 !important; 
+            }
+            .points-container {
+                grid-template-columns: 1fr !important; 
+            }
+            
+            /* --- (本次修改) 强制个人特质维持横向三列布局 --- */
+            .traits-container {
+                grid-template-columns: repeat(3, 1fr) !important; /* 添加 !important 确保此规则生效 */
+            }
+
+            .header-info {
+                display: flex !important; 
+                flex-wrap: wrap !important;
+                gap: 5px !important;
+            }
+            .header-info .info-item {
+                width: 48%; 
+                box-sizing: border-box;
+            }
+            .portrait-box {
+                width: 100%;
+                order: -1; 
+                text-align: center;
+                margin-bottom: 15px;
+            }
+
+            /* --- 优化表单元素外观 --- */
             input, textarea, select {
                 border: none !important;
                 background-color: transparent !important;
@@ -369,20 +511,27 @@
                 padding: 2px;
                 color: #000;
             }
+            input[type="text"], input[type="number"], textarea {
+                border-bottom: 1px solid #ccc !important; 
+                border-radius: 0;
+            }
             input[type="checkbox"] {
                 border: 1px solid #000 !important;
             }
             .skill-ranks input[type="checkbox"]::before {
                 background-color: #000;
             }
-             h1, h2, legend {
+            h1, h2, legend {
                 border-color: #ccc;
-             }
+            }
             #portrait_preview {
-                border: 1px solid #ccc;
+                border: 1
+            }
+            .description-box {
+                min-height: auto; 
+                background: #f9f9f9;
             }
         }
-
     </style>
 </head>
 <body>
@@ -394,13 +543,10 @@
         <div class="header-info">
             <div class="info-item char-name"><label for="char_name">角色姓名</label><input type="text" id="char_name" name="char_name"></div>
             <div class="info-item char-age"><label for="char_age">年龄</label><input type="text" id="char_age" name="char_age"></div>
-            <div class="info-item char-living-standard"><label for="char_living_standard">生活水平</label><input type="text" id="char_living_standard" name="char_living_standard" readonly></div>
-            <div class="info-item char-patron"><label for="patron">赞助人</label><input type="text" id="patron" name="patron"></div>
-            
             <div class="info-item heroic-culture">
                 <label for="heroic_culture">英雄所属文化</label>
                 <select id="heroic_culture" name="heroic_culture">
-                    <option value="">--请选择一个文化--</option>
+                    <option value="">--请选择文化--</option>
                     <option value="巴德一族的人类">巴德一族的人类</option>
                     <option value="都林一族的矮人">都林一族的矮人</option>
                     <option value="林顿的精灵">林顿的精灵</option>
@@ -409,12 +555,11 @@
                     <option value="北方的游民">北方的游民</option>
                 </select>
             </div>
-            <div class="info-item cultural-blessing"><label for="cultural_blessing">文化赐福</label><input type="text" id="cultural_blessing" name="cultural_blessing" readonly></div>
-            
+
             <div class="info-item calling">
                 <label for="calling">呼召 (职业)</label>
                 <select id="calling" name="calling">
-                    <option value="">--请选择一个呼召--</option>
+                    <option value="">--请选择呼召--</option>
                     <option value="领袖">领袖</option>
                     <option value="勇士">勇士</option>
                     <option value="信使">信使</option>
@@ -425,17 +570,30 @@
             </div>
             <div class="info-item shadow-path"><label for="shadow_path">魔影之路</label><input type="text" id="shadow_path" name="shadow_path"></div>
             <div class="info-item flaw"><label for="flaw">缺陷</label><input type="text" id="flaw" name="flaw"></div>
+            
+            <div class="info-item char-patron"><label for="patron">赞助人</label><input type="text" id="patron" name="patron"></div>
+            <div class="info-item char-living-standard"><label for="char_living_standard">生活水平</label><input type="text" id="char_living_standard" name="char_living_standard" class="readonly" readonly></div>
+            <div class="info-item char-treasure"><label for="char_treasure">宝藏</label><input type="text" id="char_treasure" name="char_treasure"></div>
 
-            <div class="portrait-box">
-                <label>人物形象</label>
-                <img id="portrait_preview" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMCAyMWE4IDggMCAwIDAtMTYgME0xMiAxM2E0IDQgMCAxIDAgMC04IDQgNCAwIDAgMCAwIDhaIi8+PC9zdmc+" alt="人物形象预览">
-                <div class="portrait-controls">
-                    <input type="file" id="portrait_upload" accept="image/*" title="上传本地图片">
-                    <input type="text" id="portrait_url" placeholder="或粘贴链接" style="width: 100%; margin-top: 4px;">
+            <div class="info-item cultural-blessing">
+                <label for="cultural_blessing">文化赐福</label>
+                <input type="text" id="cultural_blessing" name="cultural_blessing" class="readonly" readonly>
+                <div class="description-box" id="cultural_blessing_desc"></div>
+                <div id="king_of_men_bonus" class="hidden">
+                    <button type="button" data-stat="body">体魄</button>
+                    <button type="button" data-stat="heart">心志</button>
+                    <button type="button" data-stat="wits">才智</button>
+                    <button type="button" id="reset_king_bonus">重置</button>
                 </div>
             </div>
 
-            <div class="info-item char-treasure"><label for="char_treasure">宝藏</label><input type="text" id="char_treasure" name="char_treasure"></div>
+            <div class="portrait-box">
+                <img id="portrait_preview" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMCAyMWE4IDggMCAwIDAtMTYgME0xMiAxM2E0IDQgMCAxIDAgMC04IDQgNCAwIDAgMCAwIDhaIi8+PC9zdmc+" alt="人物形象预览">
+                <div class="portrait-controls">
+                    <label for="portrait_upload" class="custom-file-upload">选择文件</label>
+                    <input type="file" id="portrait_upload" accept="image/*">
+                </div>
+            </div>
         </div>
 
         <div id="personal_traits_section">
@@ -446,19 +604,19 @@
                     <select id="trait1_select" name="trait1_select" disabled>
                         <option value="">--先选择文化--</option>
                     </select>
-                    <div class="trait-description" id="trait1_desc"></div>
+                    <div class="description-box" id="trait1_desc"></div>
                 </div>
                 <div class="trait-box">
                     <label for="trait2_select">文化特质 2</label>
                     <select id="trait2_select" name="trait2_select" disabled>
                         <option value="">--先选择文化--</option>
                     </select>
-                    <div class="trait-description" id="trait2_desc"></div>
+                    <div class="description-box" id="trait2_desc"></div>
                 </div>
                 <div class="trait-box">
                     <label for="trait3_calling_feature">职业特性</label>
-                    <input type="text" id="trait3_calling_feature" name="trait3_calling_feature" readonly>
-                    <div class="trait-description" id="trait3_desc">由您的职业决定。</div>
+                    <input type="text" id="trait3_calling_feature" name="trait3_calling_feature" class="readonly" readonly>
+                    <div class="description-box" id="trait3_desc">由您的职业决定。</div>
                 </div>
             </div>
         </div>
@@ -473,7 +631,7 @@
                     <div class="info-item"><label for="body_tn">TN</label><input type="number" id="body_tn" name="body_tn" min="1" max="20"></div>
                     <div class="info-item"><label for="body_val">数值</label><input type="number" id="body_val" name="body_val" min="1" max="20"></div>
                 </div>
-                <div class="derived-stat">耐力: <span id="endurance_val">0</span></div>
+                <div class="derived-stat">耐力上限: <span id="endurance_val">0</span></div>
             </fieldset>
 
             <fieldset class="attribute-box">
@@ -482,7 +640,7 @@
                     <div class="info-item"><label for="heart_tn">TN</label><input type="number" id="heart_tn" name="heart_tn" min="1" max="20"></div>
                     <div class="info-item"><label for="heart_val">数值</label><input type="number" id="heart_val" name="heart_val" min="1" max="20"></div>
                 </div>
-                <div class="derived-stat">希望: <span id="hope_val">0</span></div>
+                <div class="derived-stat">希望上限: <span id="hope_val">0</span></div>
             </fieldset>
 
             <fieldset class="attribute-box">
@@ -553,24 +711,37 @@
 
         <div class="section-break"></div>
 
-        <div class="points-and-status-section">
-            <div class="info-item-points"><label>历险点数</label><input type="number" id="adventure_points" name="adventure_points"></div>
-            <div class="info-item-points"><label>技能点数</label><input type="number" id="skill_points" name="skill_points"></div>
-            <div class="info-item-points"><label>同盟点数</label><input type="number" id="fellowship_points" name="fellowship_points"></div>
-            <div class="info-item-points"><label>魔影</label><input type="number" id="shadow" name="shadow"></div>
-            <div class="info-item-points"><label>当前耐力</label><input type="number" id="current_endurance" name="current_endurance"></div>
-            <div class="info-item-points"><label>当前希望</label><input type="number" id="current_hope" name="current_hope"></div>
-            
-            <div class="status-box-internal" style="grid-column: span 2;">
-                <h2>状态</h2>
+        <div class="points-container">
+            <div class="info-item"><label for="adventure_points">历险点数</label><input type="number" id="adventure_points" name="adventure_points"></div>
+            <div class="info-item"><label for="skill_points">技能点数</label><input type="number" id="skill_points" name="skill_points"></div>
+            <div class="info-item"><label for="fellowship_points">同盟点数</label><input type="number" id="fellowship_points" name="fellowship_points"></div>
+        </div>
+
+        <fieldset class="attribute-box">
+            <div class="attribute-values">
+                    <div class="info-item"><label for="load_val">负重</label><input type="number" id="load_val" name="load_val" min="0"></div>
+                    <div class="info-item"><label for="fatigue_val">劳顿值</label><input type="number" id="fatigue_val" name="fatigue_val" min="0"></div>
+            </div>
+            <div class="derived-stat">当前耐力: <input type="number" id="current_endurance" class="current-stat-input"></div>
+        </fieldset>
+        
+        <fieldset class="attribute-box">
+            <div class="attribute-values">
+                    <div class="info-item"><label for="shadow_val">魔影</label><input type="number" id="shadow_val" name="shadow_val" min="0"></div>
+                    <div class="info-item"><label for="shadow_scar_val">魔影伤疤</label><input type="number" id="shadow_scar_val" name="shadow_scar_val" min="0"></div>
+            </div>
+            <div class="derived-stat">当前希望: <input type="number" id="current_hope" class="current-stat-input"></div>
+        </fieldset>
+
+        <fieldset class="attribute-box" style="text-align: left;">
+            <legend>状态</legend>
+             <div style="display: flex; flex-direction: column; gap: 10px; padding-top: 10px;">
                 <div><input type="checkbox" id="status_weary" name="status_weary"><label for="status_weary"> 疲惫</label></div>
                 <div><input type="checkbox" id="status_miserable" name="status_miserable"><label for="status_miserable"> 痛苦</label></div>
                 <div><input type="checkbox" id="status_wounded" name="status_wounded"><label for="status_wounded"> 重伤</label></div>
+                 <div class="info-item"><label for="wound_severity">受伤程度</label><textarea id="wound_severity" name="wound_severity" rows="2"></textarea></div>
             </div>
-            
-            <div class="info-item-fullwidth"><label for="shadow_scars">魔影伤疤</label><textarea id="shadow_scars" name="shadow_scars"></textarea></div>
-            <div class="info-item-fullwidth"><label for="wound_severity">受伤程度</label><textarea id="wound_severity" name="wound_severity"></textarea></div>
-        </div>
+        </fieldset>
 
 
         <div class="section-break"></div>
@@ -589,7 +760,7 @@
             <div class="gear-table" style="margin-top: 20px;">
                 <h2>防护装备</h2>
                 <table>
-                    <thead><tr><th>护甲/头盔/盾牌</th><th>防护/招架</th><th>负重</th><th>操作</th></tr></thead>
+                    <thead><tr><th>护甲/头盔/盾牌</th><th>防护值</th><th>负重</th><th>类型</th><th>操作</th></tr></thead>
                     <tbody id="protective_gear_body"></tbody>
                 </table>
                 <div class="gear-controls">
@@ -612,8 +783,86 @@
     </div>
 </div>
 
+<div id="combatGearModal" class="modal-overlay hidden">
+    <div class="modal-content">
+        <h2>添加作战装备</h2>
+        <form id="combatGearForm">
+            <div class="modal-form-item">
+                <label for="modal_combat_preset">选择预设装备</label>
+                <select id="modal_combat_preset">
+                    <option value="">--自定义或选择一项--</option>
+                </select>
+            </div>
+            <hr>
+            <div class="modal-form-item">
+                <label for="modal_combat_name">作战装备</label>
+                <input type="text" id="modal_combat_name" required>
+            </div>
+            <div class="modal-form-item">
+                <label for="modal_combat_damage">伤害值</label>
+                <input type="text" id="modal_combat_damage">
+            </div>
+            <div class="modal-form-item">
+                <label for="modal_combat_injury">攻伤值</label>
+                <input type="text" id="modal_combat_injury">
+            </div>
+            <div class="modal-form-item">
+                <label for="modal_combat_load">负重</label>
+                <input type="number" id="modal_combat_load">
+            </div>
+            <div class="modal-form-item">
+                <label for="modal_combat_notes">备注</label>
+                <input type="text" id="modal_combat_notes">
+            </div>
+            <div class="modal-buttons">
+                <button type="submit">保存</button>
+                <button type="button" id="cancel_combat_gear_btn">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="protectiveGearModal" class="modal-overlay hidden">
+    <div class="modal-content">
+        <h2>添加防护装备</h2>
+        <form id="protectiveGearForm">
+            <div class="modal-form-item">
+                <label for="modal_protective_preset">选择预设装备</label>
+                <select id="modal_protective_preset">
+                    <option value="">--自定义或选择一项--</option>
+                </select>
+            </div>
+            <hr>
+            <div class="modal-form-item">
+                <label for="modal_protective_name">护甲/头盔/盾牌</label>
+                <input type="text" id="modal_protective_name" required>
+            </div>
+            <div class="modal-form-item">
+                <label for="modal_protective_value">防护值</label>
+                <input type="text" id="modal_protective_value">
+            </div>
+            <div class="modal-form-item">
+                <label for="modal_protective_load">负重</label>
+                <input type="number" id="modal_protective_load">
+            </div>
+            <div class="modal-form-item">
+                <label for="modal_protective_notes">类型</label>
+                <input type="text" id="modal_protective_notes">
+            </div>
+            <div class="modal-buttons">
+                <button type="submit">保存</button>
+                <button type="button" id="cancel_protective_gear_btn">取消</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // --- STATE ---
+    let kingOfMenBonusAppliedTo = null;
+
     // --- ELEMENTS ---
     const bodyVal = document.getElementById('body_val'),
           bodyTN = document.getElementById('body_tn'),
@@ -626,18 +875,61 @@ document.addEventListener('DOMContentLoaded', function() {
           parryVal = document.getElementById('parry_val'),
           heroicCultureSelect = document.getElementById('heroic_culture'),
           culturalBlessingInput = document.getElementById('cultural_blessing'),
-          livingStandardInput = document.getElementById('char_living_standard'),
+          culturalBlessingDesc = document.getElementById('cultural_blessing_desc'),
           callingSelect = document.getElementById('calling'),
           trait1Select = document.getElementById('trait1_select'),
           trait1Desc = document.getElementById('trait1_desc'),
           trait2Select = document.getElementById('trait2_select'),
           trait2Desc = document.getElementById('trait2_desc'),
-          trait3Feature = document.getElementById('trait3_calling_feature');
+          trait3Feature = document.getElementById('trait3_calling_feature'),
+          trait3Desc = document.getElementById('trait3_desc');
+          
+    // Combat Gear Modal Elements
+    const combatGearModal = document.getElementById('combatGearModal'),
+          combatGearForm = document.getElementById('combatGearForm'),
+          cancelCombatGearBtn = document.getElementById('cancel_combat_gear_btn'),
+          combatPresetSelect = document.getElementById('modal_combat_preset');
+
+    // Protective Gear Modal Elements
+    const protectiveGearModal = document.getElementById('protectiveGearModal'),
+          protectiveGearForm = document.getElementById('protectiveGearForm'),
+          cancelProtectiveGearBtn = document.getElementById('cancel_protective_gear_btn'),
+          protectivePresetSelect = document.getElementById('modal_protective_preset');
+
 
     // --- DATA MAPPINGS ---
-    const traitsData = { '大胆': '你对自己的能力极为自信，因此你并不容易被吓倒，并且随时准备好投身于危险。', '狡黠': '你的才思敏锐，每当有机会你都会利用它为自己取得优势。', '热忱': '每当某项活动激起你的兴趣，你都会非常激动且迫不及待。', '忠贞': '你坚定不渝地献身于你选择的理想或追随之人，你的事功往往也有赖这份忠诚坚贞。', '迷人': '在大多数人眼中，你都显得魅力十足，即便他们并非与你同族同类。', '言语得体': '你的言谈举止令人如沐春风而又不失礼数，因此你的话语鲜少引来敌意。', '凶狠': '在你被激怒时，或者在你认为有必要的时候，你会显露出你野蛮凶狠的一面。', '慷慨': '你在物质和真心上都不吝于给予，总是把他人的需求放在心上。', '正直': '你坚信人应当公正行事，也应当遵循道德做正确的事。', '好奇': '你天性好奇，即使与自己无关的事物也能轻易激起你的兴趣。这种天性的优点在于，你不那么容易被表面现象所蒙蔽。', '目光敏锐': '你的视力比大多数人都敏锐。', '威严': '你的举止中有一种高傲凛然的风度，令旁观者肃然起敬。', '乐天': '你乐观的精神百折不挠，即使在阴影重重之中，你也能发现一丝光明。', '耐心': '你性情平和，不容易发脾气。无论对于蠢人还是事情的延误，还是在面对极为艰苦的处境时，你都可以默默忍受。', '自傲': '你对自己或所属族群的功绩与成就感到深深的骄傲与自豪。', '朴实': '你的行事风格质朴无华，或许有人会觉得略显粗犷，但你深知，真正的金子未必光芒四射，外表也并不能代表一切。', '内敛': '你并不轻易吐露心声，更喜欢将自己的意图隐藏起来不让他人窥视，尤其是对于你的族群之外的人。', '严肃': '你天生严肃而不苟言笑，你的举止、肢体语言和话语之中也时刻体现着这一点。', '机智': '你或许不是一位巫师，但你达成目标的方式往往称得上狡猾，甚至或许可以说是奸诈。', '矫捷': '你的脚步轻快迅速，而且行动果断。', '高大': '你的身材比大多数同族都要高大。', '真诚': '你为人诚恳，往往在言行举止间都显露出你最真挚的想法意图。', '警惕': '你总是对周围环境保持警觉，并且对于不熟悉的人的言行举-止尤为细心注意。', '固执': '你的性情与信念都坚定不移，并且通常只依据自己的判断行事。' };
-    const cultureData = { "巴德一族的人类": { blessing: "勇敢刚毅", livingStandard: "富有", modifiers: { endurance: 20, hope: 8, parry: 12 }, traits: ['大胆', '热忱', '迷人', '凶狠', '慷慨', '自傲', '高大', '固执']}, "都林一族的矮人": { blessing: "锐不可当", livingStandard: "富有", modifiers: { endurance: 22, hope: 8, parry: 10 }, traits: ['狡黠', '凶狠', '威严', '自傲', '内敛', '严肃', '警惕', '固执']}, "林顿的精灵": { blessing: "精灵之艺", livingStandard: "节俭", modifiers: { endurance: 20, hope: 8, parry: 12 }, traits: ['迷人', '目光敏锐', '威严', '乐天', '耐心', '机智', '矫捷', '警惕']}, "夏尔的霍比特人": { blessing: "见怪不怪", livingStandard: "普通", modifiers: { endurance: 18, hope: 10, parry: 12 }, traits: ['热忱', '言语得体', '忠贞', '正直', '好奇', '目光敏锐', '乐天', '朴实']}, "布理的人类": { blessing: "布理血脉", livingStandard: "普通", modifiers: { endurance: 20, hope: 10, parry: 10 }, traits: ['狡黠', '言语得体', '忠贞', '慷慨', '好奇', '耐心', '朴实', '真诚']}, "北方的游民": { blessing: "人中王者", livingStandard: "节俭", modifiers: { endurance: 20, hope: 6, parry: 14 }, traits: ['大胆', '正直', '内敛', '严肃', '机智', '矫捷', '高大', '真诚']}, "": { blessing: "", livingStandard: "", modifiers: { endurance: 0, hope: 0, parry: 0 }, traits: []} };
-    const callingFeatures = { '领袖': '领导力', '勇士': '宿敌知识', '信使': '民间知识', '学者': '学识诗歌', '寻宝客': '盗窃', '守望者': '魔影知识', '': '' };
+    const traitsData = { '大胆': '你对自己的能力极为自信，因此你并不容易被吓倒，并且随时准备好投身于危险。', '狡黠': '你的才思敏锐，每当有机会你都会利用它为自己取得优势。', '热忱': '每当某项活动激起你的兴趣，你都会非常激动且迫不及E待。', '忠贞': '你坚定不渝地献身于你选择的理想或追随之人，你的事功往往也有赖这份忠诚坚贞。', '迷人': '在大多数人眼中，你都显得魅力十足，即便他们并非与你同族同类。', '言语得体': '你的言谈举止令人如沐春风而又不失礼数，因此你的话语鲜少引来敌意。', '凶狠': '在你被激怒时，或者在你认为有必要的时候，你会显露出你野蛮凶狠的一面。', '慷慨': '你在物质和真心上都不吝于给予，总是把他人的需求放在心上。', '正直': '你坚信人应当公正行事，也应当遵循道德做正确的事。', '好奇': '你天性好奇，即使与自己无关的事物也能轻易激起你的兴趣。这种天性的优点在于，你不那么容易被表面现象所蒙蔽。', '目光敏锐': '你的视力比大多数人都敏锐。', '威严': '你的举止中有一种高傲凛然的风度，令旁观者肃然起敬。', '乐天': '你乐观的精神百折不挠，即使在阴影重重之中，你也能发现一丝光明。', '耐心': '你性情平和，不容易发脾气。无论对于蠢人还是事情的延误，还是在面对极为艰苦的处境时，你都可以默默忍受。', '自傲': '你对自己或所属族群的功绩与成就感到深深的骄傲与自豪。', '朴实': '你的行事风格质朴无华，或许有人会觉得略显粗犷，但你深知，真正的金子未必光芒四射，外表也并不能代表一切。', '内敛': '你并不轻易吐露心声，更喜欢将自己的意图隐藏起来不让他人窥视，尤其是对于你的族群之外的人。', '严肃': '你天生严肃而不苟言笑，你的举止、肢体语言和话语之中也时刻体现着这一点。', '机智': '你或许不是一位巫师，但你达成目标的方式往往称得上狡猾，甚至或许可以说是奸诈。', '矫捷': '你的脚步轻快迅速，而且行动果断。', '高大': '你的身材比大多数同族都要高大。', '真诚': '你为人诚恳，往往在言行举止间都显露出你最真挚的想法意图。', '警惕': '你总是对周围环境保持警觉，并且对于不熟悉的人的言行举-止尤为细心注意。', '固执': '你的性情与信念都坚定不移，并且通常只依据自己的判断行事。' };
+    const cultureData = { "巴德一族的人类": { blessing: { name: "勇敢刚毅", description: "你的英勇检定都将具备优势。" }, livingStandard: "富有", modifiers: { endurance: 20, hope: 8, parry: 12 }, traits: ['大胆', '热忱', '迷人', '凶狠', '慷慨', '自傲', '高大', '固执']}, "都林一族的矮人": { blessing: { name: "锐不可当", description: "你所穿戴的护甲负重值减半计算（往上取整），包括头盔（但不包括盾牌）。" }, livingStandard: "富有", modifiers: { endurance: 22, hope: 8, parry: 10 }, traits: ['狡黠', '凶狠', '威严', '自傲', '内敛', '严肃', '警惕', '固执']}, "林顿的精灵": { blessing: { name: "精灵之艺", description: "*如果你不处于痛苦状态，当你使用至少拥有1个等级的技能时，你可以通过消耗1点希望值从而在该技能检定中取得魔法成功。" }, livingStandard: "节俭", modifiers: { endurance: 20, hope: 8, parry: 12 }, traits: ['迷人', '目光敏锐', '威严', '乐天', '耐心', '机智', '矫捷', '警惕']}, "夏尔的霍比特人": { blessing: { name: "见怪不怪", description: "*你的智慧检定视为优势，并且你在有关抵御贪婪影响的魔影检定中获得（1d）。" }, livingStandard: "普通", modifiers: { endurance: 18, hope: 10, parry: 12 }, traits: ['热忱', '言语得体', '忠贞', '正直', '好奇', '目光敏锐', '乐天', '朴实']}, "布理的人类": { blessing: { name: "布理血脉", description: "*玩家团队中每有一名布理人，同盟点就会提升1点。" }, livingStandard: "普通", modifiers: { endurance: 20, hope: 10, parry: 10 }, traits: ['狡黠', '言语得体', '忠贞', '慷慨', '好奇', '耐心', '朴实', '真诚']}, "北方的游民": { blessing: { name: "人中王者", description: "*任选一项属性提升1点。" }, livingStandard: "节俭", modifiers: { endurance: 20, hope: 6, parry: 14 }, traits: ['大胆', '正直', '内敛', '严肃', '机智', '矫捷', '高大', '真诚']}, "": { blessing: { name: "", description: ""}, livingStandard: "", modifiers: { endurance: 0, hope: 0, parry: 0 }, traits: []} };
+    const callingFeatures = { '领袖': { name: '领导力', description: '你拥有引领他人行动的能力。在面对压力时，其他人会自然而然地向你寻求指导。'}, '勇士': { name: '宿敌知识', description: '宿敌知识并不是一种单独的特质；你必须选择其适用的敌人种类。你可以从邪恶人类、奥克、蜘蛛、食人妖、座狼和亡灵中进行选择。这种额外特质可让你了解所选敌人的特点、习性、优势与弱点。'}, '信使': { name: '民间知识', description: '四处游历让你对自由之民所组成的各个社区的许多传统习俗、信仰和故事略知一二。在你与陌生人打交道时，这些信息可能会有所帮助，让你能够刚巧知道一些与他们民俗相关的事实，或者恰好掌握了一部分对方的语言。'}, '学者': { name: '学识诗歌', description: '许多文化都曾创作过一种名为学识诗歌的短诗，用以铭记那些重要历史事件，以免它们湮没于岁月的长河中。中洲的学者们认为，他们之所以能了解诸多古代知识，很大程度上要归功于这些诗歌。'}, '寻宝客': { name: '盗窃', description: '这项令人敬畏的技艺包含了扒窃、开锁，以及总的来说，任何能够偷偷摸摸获取他人财产或进入看守区域的手段。'}, '守望者': { name: '魔影知识', description: '你已经察觉到，在中洲世界中，大多数邪恶、黑暗和可怖之事背后似乎有一条隐秘的脉络，而这份隐秘勾连更是日渐滋长。这是中洲土地上智者的共识，而这份知识背后的真相也终将水落出。'}, '': { name: '', description: '由您的职业决定。' }};
+    
+    // 更新：作战装备数据
+    const combatGearPresets = [
+        { name: '徒手攻击', damage: '1', injury: '—', load: '0', proficiency: '格斗 *', notes: '包括投掷石块。无法造成致命一击。' },
+        { name: '匕首', damage: '2', injury: '14', load: '0', proficiency: '格斗 *', notes: '可以如同剑鞘般发射 (详见于第99页)' },
+        { name: '短棍', damage: '3', injury: '12', load: '0', proficiency: '格斗 *', notes: '—' },
+        { name: '棍棒', damage: '4', injury: '14', load: '1', proficiency: '格斗 *', notes: '—' },
+        { name: '短剑', damage: '3', injury: '16', load: '1', proficiency: '剑类', notes: '—' },
+        { name: '剑', damage: '4', injury: '16', load: '2', proficiency: '剑类', notes: '—' },
+        { name: '长剑', damage: '5', injury: '16 (单手) / 18 (双手)', load: '3', proficiency: '剑类', notes: '可单手或双手持握' },
+        { name: '短矛', damage: '3', injury: '14', load: '2', proficiency: '矛类', notes: '可投掷' },
+        { name: '矛', damage: '4', injury: '14 (单手) / 16 (双手)', load: '3', proficiency: '矛类', notes: '可单手或双手持握' },
+        { name: '巨矛', damage: '5', injury: '16', load: '4', proficiency: '矛类', notes: '双手持握' },
+        { name: '斧', damage: '5', injury: '18', load: '2', proficiency: '斧类', notes: '—' },
+        { name: '长柄斧', damage: '6', injury: '18 (单手) / 20 (双手)', load: '3', proficiency: '斧类', notes: '可单手或双手持握' },
+        { name: '巨斧', damage: '7', injury: '20', load: '4', proficiency: '斧类', notes: '双手持握' },
+        { name: '鹤嘴锄', damage: '7', injury: '18', load: '3', proficiency: '斧类', notes: '双手持握' },
+        { name: '弓', damage: '3', injury: '14', load: '2', proficiency: '弓类', notes: '远程武器，双手持握' },
+        { name: '大弓', damage: '4', injury: '16', load: '4', proficiency: '弓类', notes: '远程武器，双手持握' }
+    ];
+
+    // 新增：防护装备数据
+    const protectiveGearPresets = [
+        { name: '皮革衣', value: '1d', load: '3', type: '皮甲' },
+        { name: '皮革甲', value: '2d', load: '6', type: '皮甲' },
+        { name: '链甲衫 **', value: '3d', load: '9', type: '链甲' },
+        { name: '链甲衣 **', value: '4d', load: '12', type: '链甲' },
+        { name: '头盔 *', value: '+1d', load: '4', type: '头部装备' }
+    ];
 
     // --- HELPER FUNCTIONS ---
     function handleRankClick(event) {
@@ -674,9 +966,16 @@ document.addEventListener('DOMContentLoaded', function() {
         if (document.activeElement !== witsTN) witsTN.value = 20 - wVal;
         const selectedCulture = heroicCultureSelect.value;
         const modifiers = cultureData[selectedCulture]?.modifiers || cultureData[""].modifiers;
-        enduranceVal.textContent = bVal + modifiers.endurance;
-        hopeVal.textContent = hVal + modifiers.hope;
+        const enduranceMax = bVal + modifiers.endurance;
+        const hopeMax = hVal + modifiers.hope;
+        enduranceVal.textContent = enduranceMax;
+        hopeVal.textContent = hopeMax;
         parryVal.textContent = wVal + modifiers.parry;
+
+        const currentEnduranceInput = document.getElementById('current_endurance');
+        if(currentEnduranceInput.value === '' || currentEnduranceInput.value === '0') currentEnduranceInput.value = enduranceMax;
+        const currentHopeInput = document.getElementById('current_hope');
+        if(currentHopeInput.value === '' || currentHopeInput.value === '0') currentHopeInput.value = hopeMax;
     }
     function updateFromTN(sourceTN, targetVal) {
         const tnVal = parseInt(sourceTN.value) || 0;
@@ -707,16 +1006,48 @@ document.addEventListener('DOMContentLoaded', function() {
         for (const option of trait1Select.options) { option.disabled = (option.value !== '' && option.value === val2); }
     }
     
+    // --- KING OF MEN BONUS ---
+    function applyKingOfMenBonus(stat) {
+        if (kingOfMenBonusAppliedTo) return; 
+        const statInput = document.getElementById(stat + '_val');
+        if (statInput) {
+            statInput.value = (parseInt(statInput.value) || 0) + 1;
+            kingOfMenBonusAppliedTo = stat;
+            updateAttributes();
+            updateKingOfMenUI();
+        }
+    }
+
+    function removeKingOfMenBonus(silent = false) {
+        if (!kingOfMenBonusAppliedTo) return;
+        const statInput = document.getElementById(kingOfMenBonusAppliedTo + '_val');
+        if(statInput) statInput.value = Math.max(0, parseInt(statInput.value) - 1);
+        kingOfMenBonusAppliedTo = null;
+        updateAttributes();
+        if (!silent) updateKingOfMenUI();
+    }
+
+    function updateKingOfMenUI() {
+        const bonusContainer = document.getElementById('king_of_men_bonus');
+        const isRanger = heroicCultureSelect.value === '北方的游民';
+        bonusContainer.classList.toggle('hidden', !isRanger);
+
+        bonusContainer.querySelectorAll('button[data-stat]').forEach(btn => {
+            btn.disabled = !!kingOfMenBonusAppliedTo;
+        });
+        document.getElementById('reset_king_bonus').disabled = !kingOfMenBonusAppliedTo;
+    }
+    
     // --- DYNAMIC TABLE FUNCTIONS ---
     function addCombatGearRow(data = {}) {
         const tableBody = document.getElementById('combat_gear_body');
         const newRow = tableBody.insertRow();
         newRow.innerHTML = `
-            <td><input type="text" data-key="name" value="${data.name || ''}"></td>
-            <td><input type="text" data-key="damage" value="${data.damage || ''}"></td>
-            <td><input type="text" data-key="injury" value="${data.injury || ''}"></td>
-            <td><input type="number" data-key="load" value="${data.load || ''}"></td>
-            <td><input type="text" data-key="notes" value="${data.notes || ''}"></td>
+            <td><input type="text" data-key="name" value="${data.name || ''}" class="readonly" readonly></td>
+            <td><input type="text" data-key="damage" value="${data.damage || ''}" class="readonly" readonly></td>
+            <td><input type="text" data-key="injury" value="${data.injury || ''}" class="readonly" readonly></td>
+            <td><input type="number" data-key="load" value="${data.load || ''}" class="readonly" readonly></td>
+            <td><input type="text" data-key="notes" value="${data.notes || ''}" class="readonly" readonly></td>
             <td><button type="button" class="remove-row-btn">移除</button></td>
         `;
     }
@@ -724,25 +1055,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const tableBody = document.getElementById('protective_gear_body');
         const newRow = tableBody.insertRow();
         newRow.innerHTML = `
-            <td><input type="text" data-key="name" value="${data.name || ''}"></td>
-            <td><input type="text" data-key="protection" value="${data.protection || ''}"></td>
-            <td><input type="number" data-key="load" value="${data.load || ''}"></td>
+            <td><input type="text" data-key="name" value="${data.name || ''}" class="readonly" readonly></td>
+            <td><input type="text" data-key="value" value="${data.value || ''}" class="readonly" readonly></td>
+            <td><input type="number" data-key="load" value="${data.load || ''}" class="readonly" readonly></td>
+            <td><input type="text" data-key="notes" value="${data.notes || ''}" class="readonly" readonly></td>
             <td><button type="button" class="remove-row-btn">移除</button></td>
         `;
     }
-    function setupDynamicTables() {
-        document.getElementById('add_combat_gear_btn').addEventListener('click', () => addCombatGearRow());
-        document.getElementById('add_protective_gear_btn').addEventListener('click', () => addProtectiveGearRow());
 
-        document.getElementById('combat_gear_body').addEventListener('click', e => {
-            if (e.target.classList.contains('remove-row-btn')) e.target.closest('tr').remove();
-        });
-        document.getElementById('protective_gear_body').addEventListener('click', e => {
-            if (e.target.classList.contains('remove-row-btn')) e.target.closest('tr').remove();
-        });
-    }
-
-    // --- SAVE / LOAD REFACTOR ---
+    // --- SAVE / LOAD ---
     function collectTableData(tableBodyId) {
         const rows = document.querySelectorAll(`#${tableBodyId} tr`);
         return Array.from(rows).map(row => {
@@ -753,16 +1074,13 @@ document.addEventListener('DOMContentLoaded', function() {
             return rowData;
         });
     }
-
     function saveCharacter() {
         const charData = {};
         document.querySelectorAll('input, textarea, select').forEach(element => {
-            if (!element.closest('.gear-table')) {
-                const key = element.id || element.name;
-                if (key) {
-                    if (element.type === 'checkbox') { charData[key] = element.checked; } 
-                    else { charData[key] = element.value; }
-                }
+            const key = element.id || element.name;
+            if (key && !element.closest('.gear-table') && !element.closest('.modal-content')) {
+                if (element.type === 'checkbox') { charData[key] = element.checked; } 
+                else { charData[key] = element.value; }
             }
         });
         document.querySelectorAll('.skill-ranks').forEach(container => {
@@ -773,16 +1091,23 @@ document.addEventListener('DOMContentLoaded', function() {
         charData.combatGear = collectTableData('combat_gear_body');
         charData.protectiveGear = collectTableData('protective_gear_body');
         charData.portraitSrc = document.getElementById('portrait_preview').src;
+        charData.kingOfMenBonus = kingOfMenBonusAppliedTo; 
         localStorage.setItem('tor_char_sheet', JSON.stringify(charData));
         alert('人物卡已保存到浏览器！');
     }
-
     function loadCharacter(isSilent = false) {
         const savedData = localStorage.getItem('tor_char_sheet');
         if (savedData) {
             const charData = JSON.parse(savedData);
+            
+            if (kingOfMenBonusAppliedTo) {
+                const oldStatInput = document.getElementById(kingOfMenBonusAppliedTo + '_val');
+                if (oldStatInput) oldStatInput.value = Math.max(0, parseInt(oldStatInput.value) - 1);
+            }
+            kingOfMenBonusAppliedTo = charData.kingOfMenBonus || null;
+
             document.querySelectorAll('input, textarea, select').forEach(element => {
-                 if (!element.closest('.gear-table')) {
+                 if (!element.closest('.gear-table') && !element.closest('.modal-content')) {
                     const key = element.id || element.name;
                     if (charData.hasOwnProperty(key)) {
                         if (element.type === 'checkbox') { element.checked = charData[key]; } 
@@ -799,23 +1124,56 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('protective_gear_body').innerHTML = '';
             (charData.protectiveGear || []).forEach(rowData => addProtectiveGearRow(rowData));
             if (charData.portraitSrc) { document.getElementById('portrait_preview').src = charData.portraitSrc; }
+            
+            if (heroicCultureSelect.value === '北方的游民' && kingOfMenBonusAppliedTo) {
+                 const statInput = document.getElementById(kingOfMenBonusAppliedTo + '_val');
+                 if (statInput) statInput.value = (parseInt(statInput.value) || 0) + 1;
+            }
+
             heroicCultureSelect.dispatchEvent(new Event('change'));
             callingSelect.dispatchEvent(new Event('change'));
             trait1Select.dispatchEvent(new Event('change'));
             trait2Select.dispatchEvent(new Event('change'));
             updateAttributes();
+            updateKingOfMenUI(); 
+
             if (!isSilent) alert('人物卡数据已读取！');
         } else {
             if (!isSilent) alert('未找到已保存的人物卡。');
         }
     }
+    
+    // --- POPULATE PRESETS ---
+    function populateCombatGearPresets() {
+        combatGearPresets.forEach(gear => {
+            const option = document.createElement('option');
+            option.value = gear.name;
+            option.textContent = gear.name;
+            combatPresetSelect.appendChild(option);
+        });
+    }
+    function populateProtectiveGearPresets() {
+        protectiveGearPresets.forEach(gear => {
+            const option = document.createElement('option');
+            option.value = gear.name;
+            option.textContent = gear.name;
+            protectivePresetSelect.appendChild(option);
+        });
+    }
 
     // --- INITIALIZATION ---
     const skillContainers = ['skill_awe', 'skill_athletics', 'skill_awareness', 'skill_hunting', 'skill_song', 'skill_craft', 'skill_enhearten', 'skill_travel', 'skill_insight', 'skill_healing', 'skill_courtesy', 'skill_battle', 'skill_persuade', 'skill_stealth', 'skill_search', 'skill_explore', 'skill_riddle', 'skill_lore', 'prof_axes', 'prof_bows', 'prof_spears', 'prof_swords'];
     skillContainers.forEach(id => createRankCheckboxes(id));
-    setupDynamicTables();
-    addCombatGearRow();
-    addProtectiveGearRow();
+    
+    document.getElementById('combat_gear_body').addEventListener('click', e => {
+        if (e.target.classList.contains('remove-row-btn')) e.target.closest('tr').remove();
+    });
+    document.getElementById('protective_gear_body').addEventListener('click', e => {
+        if (e.target.classList.contains('remove-row-btn')) e.target.closest('tr').remove();
+    });
+
+    populateCombatGearPresets();
+    populateProtectiveGearPresets();
 
     // --- EVENT LISTENERS ---
     bodyVal.addEventListener('input', updateAttributes);
@@ -824,19 +1182,35 @@ document.addEventListener('DOMContentLoaded', function() {
     heartTN.addEventListener('input', () => updateFromTN(heartTN, heartVal));
     witsVal.addEventListener('input', updateAttributes);
     witsTN.addEventListener('input', () => updateFromTN(witsTN, witsVal));
+    
     heroicCultureSelect.addEventListener('change', (event) => {
+        removeKingOfMenBonus(true);
         const selectedCulture = event.target.value;
         const data = cultureData[selectedCulture] || cultureData[""];
-        culturalBlessingInput.value = data.blessing;
-        livingStandardInput.value = data.livingStandard;
+        culturalBlessingInput.value = data.blessing.name;
+        culturalBlessingDesc.textContent = data.blessing.description;
+        document.getElementById('char_living_standard').value = data.livingStandard;
+        
+        document.getElementById('current_endurance').value = '';
+        document.getElementById('current_hope').value = '';
+
         trait1Select.value = '';
         trait2Select.value = '';
         populateTraitSelectors(data.traits);
         updateAttributes();
+        updateKingOfMenUI(); 
     });
-    callingSelect.addEventListener('change', (event) => { trait3Feature.value = callingFeatures[event.target.value] || ''; });
+    
+    callingSelect.addEventListener('change', (event) => {
+        const selectedCalling = event.target.value;
+        const featureData = callingFeatures[selectedCalling] || callingFeatures[''];
+        trait3Feature.value = featureData.name;
+        trait3Desc.textContent = featureData.description;
+    });
+
     trait1Select.addEventListener('change', updateTraitDescriptionsAndDuplicates);
     trait2Select.addEventListener('change', updateTraitDescriptionsAndDuplicates);
+    
     document.getElementById('portrait_upload').addEventListener('change', function(event) {
         const file = event.target.files[0];
         if (file) {
@@ -845,8 +1219,86 @@ document.addEventListener('DOMContentLoaded', function() {
             reader.readAsDataURL(file);
         }
     });
-    document.getElementById('portrait_url').addEventListener('input', function(event) {
-        if (event.target.value) document.getElementById('portrait_preview').src = event.target.value;
+
+    document.getElementById('king_of_men_bonus').addEventListener('click', e => {
+        if (e.target.matches('button[data-stat]')) {
+            applyKingOfMenBonus(e.target.dataset.stat);
+        } else if (e.target.matches('#reset_king_bonus')) {
+            removeKingOfMenBonus();
+        }
+    });
+
+    // --- MODAL LISTENERS ---
+    // Combat Gear
+    document.getElementById('add_combat_gear_btn').addEventListener('click', () => {
+        combatGearForm.reset();
+        combatPresetSelect.dispatchEvent(new Event('change'));
+        combatGearModal.classList.remove('hidden'); 
+    });
+    combatGearForm.addEventListener('submit', (e) => {
+        e.preventDefault(); 
+        const notes = `熟练: ${document.getElementById('modal_combat_notes').dataset.proficiency || 'N/A'}. ${document.getElementById('modal_combat_notes').value}`;
+        const gearData = {
+            name: document.getElementById('modal_combat_name').value,
+            damage: document.getElementById('modal_combat_damage').value,
+            injury: document.getElementById('modal_combat_injury').value,
+            load: document.getElementById('modal_combat_load').value,
+            notes: (document.getElementById('modal_combat_notes').value === '—' ? `熟练: ${document.getElementById('modal_combat_notes').dataset.proficiency}` : `熟练: ${document.getElementById('modal_combat_notes').dataset.proficiency}. ${document.getElementById('modal_combat_notes').value}`)
+        };
+        addCombatGearRow(gearData); 
+        combatGearModal.classList.add('hidden');
+    });
+    cancelCombatGearBtn.addEventListener('click', () => combatGearModal.classList.add('hidden'));
+    combatGearModal.addEventListener('click', (e) => { if (e.target === combatGearModal) combatGearModal.classList.add('hidden'); });
+    combatPresetSelect.addEventListener('change', function() {
+        const selectedName = this.value;
+        const selectedGear = combatGearPresets.find(gear => gear.name === selectedName);
+        const notesInput = document.getElementById('modal_combat_notes');
+
+        if (selectedGear) {
+            document.getElementById('modal_combat_name').value = selectedGear.name;
+            document.getElementById('modal_combat_damage').value = selectedGear.damage;
+            document.getElementById('modal_combat_injury').value = selectedGear.injury;
+            document.getElementById('modal_combat_load').value = selectedGear.load;
+            notesInput.value = selectedGear.notes;
+            notesInput.dataset.proficiency = selectedGear.proficiency; // Store proficiency separately
+        } else {
+            combatGearForm.reset();
+            notesInput.dataset.proficiency = '';
+        }
+    });
+
+    // Protective Gear
+    document.getElementById('add_protective_gear_btn').addEventListener('click', () => {
+        protectiveGearForm.reset();
+        protectivePresetSelect.dispatchEvent(new Event('change'));
+        protectiveGearModal.classList.remove('hidden'); 
+    });
+    protectiveGearForm.addEventListener('submit', (e) => {
+        e.preventDefault(); 
+        const gearData = {
+            name: document.getElementById('modal_protective_name').value,
+            value: document.getElementById('modal_protective_value').value,
+            load: document.getElementById('modal_protective_load').value,
+            notes: document.getElementById('modal_protective_notes').value
+        };
+        addProtectiveGearRow(gearData); 
+        protectiveGearModal.classList.add('hidden');
+    });
+    cancelProtectiveGearBtn.addEventListener('click', () => protectiveGearModal.classList.add('hidden'));
+    protectiveGearModal.addEventListener('click', (e) => { if (e.target === protectiveGearModal) protectiveGearModal.classList.add('hidden'); });
+    protectivePresetSelect.addEventListener('change', function() {
+        const selectedName = this.value;
+        const selectedGear = protectiveGearPresets.find(gear => gear.name === selectedName);
+
+        if (selectedGear) {
+            document.getElementById('modal_protective_name').value = selectedGear.name;
+            document.getElementById('modal_protective_value').value = selectedGear.value;
+            document.getElementById('modal_protective_load').value = selectedGear.load;
+            document.getElementById('modal_protective_notes').value = selectedGear.type;
+        } else {
+            protectiveGearForm.reset();
+        }
     });
 
     // --- BUTTONS ---
@@ -855,20 +1307,33 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('export-btn').addEventListener('click', () => window.print());
     document.getElementById('reset-btn').addEventListener('click', () => {
         if (confirm('确定要重置所有数据吗？此操作不可撤销。')) {
-            const form = document.querySelector('.character-sheet');
-            form.querySelectorAll('input, textarea, select').forEach(el => {
-                if (el.type === 'checkbox' || el.type === 'radio') el.checked = false;
-                else if (el.tagName === 'SELECT') el.selectedIndex = 0;
-                else if (el.type !== 'button') el.value = '';
+            // Manually find all form elements within the character sheet to reset them
+            document.querySelectorAll('.character-sheet input, .character-sheet textarea, .character-sheet select').forEach(el => {
+                if (el.closest('.modal-content')) return; // Don't reset modals
+                
+                if (el.type === 'checkbox' || el.type === 'radio') {
+                    el.checked = false;
+                } else if (el.tagName === 'SELECT') {
+                    el.selectedIndex = 0;
+                } else if (!['button', 'submit', 'reset', 'file'].includes(el.type)) {
+                    el.value = '';
+                }
             });
+            
+            document.getElementById('portrait_preview').src = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMCAyMWE4IDggMCAwIDAtMTYgME0xMiAxM2E0IDQgMCAxIDAgMC04IDQgNCAwIDAgMCAwIDhaIi8+PC9zdmc+";
+            document.getElementById('portrait_upload').value = '';
+
             document.getElementById('combat_gear_body').innerHTML = '';
             document.getElementById('protective_gear_body').innerHTML = '';
-            addCombatGearRow();
-            addProtectiveGearRow();
+            
+            removeKingOfMenBonus(true);
+            
             heroicCultureSelect.dispatchEvent(new Event('change'));
             callingSelect.dispatchEvent(new Event('change'));
+            
             localStorage.removeItem('tor_char_sheet');
             updateAttributes();
+            updateKingOfMenUI(); 
             alert('人物卡已重置。');
         }
     });
