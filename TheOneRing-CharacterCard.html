@@ -460,7 +460,7 @@
             body {
                 background-color: #fff;
                 font-size: 10pt;
-                -webkit-print-color-adjust: exact; /* 确保背景色和颜色能被打印 */
+                -webkit-print-color-adjust: exact; 
                 print-color-adjust: exact;
             }
             .character-sheet {
@@ -469,67 +469,73 @@
                 max-width: 100%;
             }
             /* --- 隐藏不需要打印的元素 --- */
-            .buttons-section, .gear-controls, .remove-row-btn, .portrait-controls, #king_of_men_bonus, .modal-overlay {
+            .buttons-section, .gear-controls, .remove-row-btn, .portrait-controls, #king_of_men_bonus, .modal-overlay, .custom-file-upload {
                 display: none;
             }
-
-            /* --- 强制大部分模块改为单列布局 --- */
-            .attribute-box, .skills-column, .combat-proficiencies, .feature-box, .points-container > .info-item {
-                grid-column: span 12 !important; 
-            }
-            .points-container {
-                grid-template-columns: 1fr !important; 
-            }
             
-            /* --- (本次修改) 强制个人特质维持横向三列布局 --- */
             .traits-container {
-                grid-template-columns: repeat(3, 1fr) !important; /* 添加 !important 确保此规则生效 */
+                grid-template-columns: repeat(3, 1fr) !important;
             }
 
             .header-info {
-                display: flex !important; 
-                flex-wrap: wrap !important;
-                gap: 5px !important;
+                display: grid !important;
+                grid-template-columns: repeat(6, 1fr) 3fr 3fr !important;
+                gap: 15px !important;
+                align-items: start !important;
             }
             .header-info .info-item {
-                width: 48%; 
-                box-sizing: border-box;
+                width: auto !important;
             }
             .portrait-box {
-                width: 100%;
-                order: -1; 
+                width: auto !important;
+                order: initial !important;
                 text-align: center;
-                margin-bottom: 15px;
+                margin-bottom: 0;
             }
 
-            /* --- 优化表单元素外观 --- */
             input, textarea, select {
-                border: none !important;
-                background-color: transparent !important;
+                border: 1px solid #ccc !important; /* 恢复一个浅灰色边框 */
+                background-color: #fdfdfd !important; /* 提供一个非常浅的背景色以示区分 */
                 -webkit-appearance: none;
                 appearance: none;
-                padding: 2px;
+                padding: 8px; /* 恢复内边距 */
                 color: #000;
+                border-radius: 4px; /* 恢复圆角 */
+                box-sizing: border-box;
+                width: 100%;
             }
-            input[type="text"], input[type="number"], textarea {
-                border-bottom: 1px solid #ccc !important; 
-                border-radius: 0;
+            
+            input[readonly], input.readonly {
+                 background-color: #eee !important; /* 对只读输入框使用不同的背景色 */
             }
+
+            select {
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+                background-image: none !important; /* 移除下拉箭头 */
+            }
+
             input[type="checkbox"] {
                 border: 1px solid #000 !important;
+                width: 20px;
+                height: 20px;
+                padding: 0;
             }
             .skill-ranks input[type="checkbox"]::before {
                 background-color: #000;
             }
+            
             h1, h2, legend {
                 border-color: #ccc;
             }
             #portrait_preview {
-                border: 1
+                border: 1px solid #ccc !important;
             }
             .description-box {
-                min-height: auto; 
-                background: #f9f9f9;
+                min-height: 60px;
+                background: #fff;
+                border: 1px dashed #c8a077 !important;
             }
         }
     </style>
