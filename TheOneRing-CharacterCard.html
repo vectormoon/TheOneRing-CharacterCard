@@ -3,28 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>魔戒TRPG - 自动人物卡生成器 Ver0.3</title>
+    <title>魔戒TRPG - 自动人物卡生成器 Ver0.4 (样式已更新)</title>
     <style>
         :root {
-            --border-color: #8b4513;
-            --background-color: #f5f5dc;
-            --input-bg: #fff;
-            --header-bg: #eaddc4;
-            --box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-            --font-family: 'KaiTi', 'STKaiti', 'serif';
+            --main-font: 'Ringbearer', 'KaiTi', 'STKaiti', 'serif';
+            --border-color: #b7433c;
+            --text-color: #3a2d1d;
+            --background-color: #f7f3e9;
+            --input-underline-color: #d1c5b0;
+        }
+
+        @font-face {
+            font-family: 'Ringbearer';
+            src: url('ringbearer.ttf') format('truetype');
         }
 
         body {
-            font-family: var(--font-family);
-            background-color: var(--background-color);
-            color: #3a2d1d;
+            font-family: var(--main-font);
+            background-color: #e0dace;
+            color: var(--text-color);
             margin: 0;
             padding: 20px;
-            font-size: 16px;
+            font-size: 14px;
+            line-height: 1.5;
         }
 
         .character-sheet {
-            max-width: 800px;
+            max-width: 1200px;
             margin: auto;
             border: 2px solid var(--border-color);
             padding: 15px;
@@ -45,7 +50,7 @@
             grid-template-columns: repeat(12, 1fr);
             gap: 15px;
         }
-        
+
         input[type="text"], input[type="number"], textarea, select {
             width: 100%;
             padding: 8px;
@@ -53,14 +58,14 @@
             border: 1px solid #c8a077;
             background-color: var(--input-bg);
             border-radius: 4px;
-            font-family: inherit;
+            font-family: Ringbearer;
         }
-        
+
         input[readonly], input.readonly {
             background-color: #eee;
             cursor: default;
         }
-        
+
         textarea {
             resize: vertical;
             min-height: 60px;
@@ -69,18 +74,19 @@
         .header-info {
             grid-column: span 12;
             display: grid;
-            grid-template-columns: repeat(6, 1fr) 3fr 3fr; /* 9 columns for info, 3 for portrait */
+            grid-template-columns: repeat(12, 1fr); /* 9 columns for info, 3 for portrait */
+            grid-template-rows: repeat(4, 50px); /* Adjusted rows for new diamond boxes */
             gap: 15px;
             align-items: start;
             padding-bottom: 0;
         }
-        
+
         .portrait-box {
-            grid-column: 10 / -1; /* Place in the last 3 columns */
-            grid-row: 1 / 4;     /* Span multiple rows */
+            grid-column: 10 / span 3;
+            grid-row: 1 / 6;
             text-align: center;
         }
-        
+
         #portrait_preview {
             width: 150px;
             height: 150px;
@@ -90,11 +96,11 @@
             border-radius: 4px;
             margin: 0 auto;
         }
-        
+
         .portrait-controls {
             margin-top: 8px;
         }
-        
+
         .custom-file-upload {
             border: 1px solid #8b4513;
             display: inline-block;
@@ -105,457 +111,159 @@
             border-radius: 4px;
             font-size: 0.9em;
         }
-        
+
         input[type="file"] {
             display: none;
         }
 
-        .attributes-section, .skills-section, .combat-features-section, .status-section, .gear-section {
+        .attributes-section, .skills-section, .combat-features-section, .gear-section {
             display: contents;
         }
 
         .info-item {
             display: flex;
             flex-direction: column;
-            margin-bottom: 10px; /* Add margin for spacing between dynamic items */
         }
 
         .info-item label {
             margin-bottom: 4px;
             font-size: 0.9em;
         }
-        
-        .info-item.char-name { grid-column: 1 / span 2; }
-        .info-item.char-age { grid-column: 3 / span 2; }
-        .info-item.heroic-culture { grid-column: 5 / span 3; }
-        
-        .info-item.calling { grid-column: 1 / span 3; }
-        .info-item.shadow-path { grid-column: 4 / span 2; }
-        .info-item.flaw { grid-column:6 / span 2; }
 
-        .info-item.char-patron { grid-column: 1 / span 3; }
-        .info-item.char-living-standard { grid-column: 4 / span 2; }
-        .info-item.char-treasure { grid-column:6 / span 2; }
+        /* --- Grid Placement for Header Info Items --- */
+        .info-item.char-name { grid-column: 1 / span 2; grid-row: 1; }
+        .info-item.heroic-culture { grid-column: 3 / span 2; grid-row: 1; }
+        .info-item.char-age { grid-column: 5 / span 1; grid-row: 1; }
+        .info-item.char-living-standard { grid-column: 6 / span 1; grid-row: 1; }
+        .info-item.status-checks { grid-column: 7 / span 3; grid-row: 1; }
 
-        .info-item.cultural-blessing {
-            grid-column: 8 / span 1; /* Span across the info columns */
-            grid-row: 1 / 4;
-        }
+        .info-item.wound-severity { grid-column: 7 / span 2; grid-row: 2; }
+        .info-item.cultural-blessing { grid-column: 1 / span 2; grid-row: 2 / 4; }
+        .info-item.calling { grid-column: 3 / span 2; grid-row: 2; }
+        .info-item.shadow-path { grid-column: 5 / span 2; grid-row: 2; }
+        .info-item.char-patron { grid-column: 3 / span 2; grid-row: 3; }
+        .info-item.flaw { grid-column: 5 / span 2; grid-row: 3; }
 
-        #personal_traits_section h2 {
-            margin-top: 0;
-        }
-        
-        .description-box {
-            margin-top: 8px;
-            font-size: 0.9em;
-            min-height: 60px;
-            padding: 5px;
-            background: #fff;
-            border: 1px dashed #c8a077;
-            border-radius: 4px;
-            white-space: pre-wrap; /* Preserve line breaks */
-        }
+        .info-item.char-treasure { grid-column: 3 / span 1; grid-row: 4; }
+        .info-item.adventure-points { grid-column: 4 / span 1; grid-row: 4; }
+        .info-item.skill-points { grid-column: 5 / span 1; grid-row: 4; }
+        .info-item.fellowship-points { grid-column: 6 / span 1; grid-row: 4; }
 
-        #king_of_men_bonus {
-            margin-top: 8px;
-            padding: 5px;
-            background-color: #fff;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-        }
-
-        #king_of_men_bonus:not(.hidden) {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 5px;
-        }
-        
-        #king_of_men_bonus button {
-            margin: 0px;
-            padding: 0px 2px;
-            font-family: inherit;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .attribute-box {
-            grid-column: span 4;
-            border: 1px solid var(--border-color);
-            padding: 10px;
-            border-radius: 5px;
-            background-color: var(--header-bg);
-            text-align: center;
-        }
-        
-        .attribute-box legend {
-            font-size: 1.5em;
-            border: none;
-            width: auto;
-            padding: 0 10px;
-            margin: 0 auto;
-        }
-
-        .attribute-values {
+        .status-checkbox-group {
             display: flex;
-            justify-content: space-around;
-            align-items: center;
-        }
-        
-        .attribute-values .info-item {
-            width: 45%;
-        }
-
-        .derived-stat {
-            margin-top: 15px;
-            font-size: 1.2em;
-        }
-
-        .derived-stat span {
-            font-weight: bold;
-            font-size: 1.5em;
-            display: inline-block;
-            min-width: 40px;
-            padding: 5px;
-            background: var(--input-bg);
-            border: 1px solid #c8a077;
-            border-radius: 4px;
-            vertical-align: middle;
-        }
-        
-        /* Style for specific small current stat inputs */
-        .current-stat-input {
-            font-weight: bold;
-            font-size: 1.2em !important;
-            display: inline-block;
-            width: 60px !important;
-            padding: 4px !important;
-            text-align: center;
-            vertical-align: middle;
-        }
-
-
-        .skills-column {
-            grid-column: span 4;
-            padding: 10px;
-        }
-        
-        .skills-column h2 {
-            margin-top: 0;
-            text-align: center;
-        }
-
-        .skill-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .skill-item label {
-            flex-grow: 1;
-        }
-
-        .skill-ranks {
-            display: flex;
-        }
-        .skill-ranks input[type="checkbox"] {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border: 1px solid var(--border-color);
-            margin: 0 2px;
-            cursor: pointer;
-            position: relative;
-        }
-        .skill-ranks input[type="checkbox"]::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 14px;
-            height: 14px;
-            background-color: var(--border-color);
-            transform: translate(-50%, -50%) scale(0);
-            transition: transform 0.2s ease-in-out;
-        }
-        .skill-ranks input[type="checkbox"]:checked::before {
-            transform: translate(-50%, -50%) scale(1);
-        }
-
-        .section-break {
-            grid-column: span 12;
-            border-top: 2px solid var(--border-color);
-            margin-top: 10px;
-        }
-
-        .combat-proficiencies, .feature-box {
-             grid-column: span 4;
-             padding: 10px;
-        }
-        
-        .feature-box .info-item {
-            margin-top: 10px;
-        }
-        
-        #personal_traits_section {
-            grid-column: span 12;
-        }
-        
-        .traits-container {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
-        
-        .trait-box {
-            padding: 10px;
-            border: 1px solid #c8a077;
-            border-radius: 4px;
-            background-color: var(--header-bg);
-        }
-
-        .points-container {
-            grid-column: span 12;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
             gap: 15px;
-            text-align: center;
-        }
-
-        .gear-table {
-            grid-column: span 12;
-        }
-        .gear-table table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        .gear-table th, .gear-table td {
-            border: 1px solid var(--border-color);
-            padding: 8px;
-            text-align: center;
-        }
-        .gear-table th { background-color: var(--header-bg); }
-        .gear-table input { text-align: center; }
-        
-        .gear-controls {
-            margin-top: 5px;
-            text-align: right;
-        }
-        .gear-controls button, .remove-row-btn, .select-protective-gear-btn, .clear-protective-gear-btn {
-            background-color: #8b4513;
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 3px;
-            cursor: pointer;
-            font-family: inherit;
-        }
-        .remove-row-btn, .clear-protective-gear-btn {
-            background-color: #c04040;
+            align-items: center;
+            flex-wrap: wrap;
         }
         
-        .buttons-section {
-            grid-column: span 12;
-            text-align: center;
-            padding-top: 20px;
-        }
-        .buttons-section button {
-            padding: 10px 20px;
-            margin: 0 10px;
-            font-family: inherit;
-            font-size: 1em;
-            background-color: var(--border-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            box-shadow: var(--box-shadow);
-        }
-        .buttons-section button:hover {
-            opacity: 0.9;
-        }
-        
-        .short-input {
-            max-width: 80px;
-        }
-
-        /* --- 模态框样式 --- */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.6);
+        /* NEW: Container for small diamond boxes in header */
+        .secondary-stats-container {
+            grid-column: 7 / span 4;
+            grid-row: 3 / span 3;
             display: flex;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
-            transition: opacity 0.3s ease;
+            gap: 10px;
+            padding-top: 10px;
         }
 
-        .modal-content {
-            background-color: var(--background-color);
-            padding: 25px;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        #personal_traits_section h2 { margin-top: 0; }
+        .description-box { margin-top: 8px; font-size: 0.9em; min-height: 60px; padding: 5px; background: #fff; border: 1px dashed #c8a077; border-radius: 4px; white-space: pre-wrap; }
+        #king_of_men_bonus { margin-top: 8px; padding: 5px; background-color: #fff; border: 1px solid var(--border-color); border-radius: 4px; }
+        #king_of_men_bonus:not(.hidden) { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; }
+        #king_of_men_bonus button { margin: 0px; padding: 0px 2px; font-family: Ringbearer; }
+        .hidden { display: none; }
+
+        /* --- Diamond Attribute Box Styles --- */
+        .diamond-box {
             border: 2px solid var(--border-color);
-            width: 90%;
-            max-width: 500px;
+            transform: rotate(45deg);
+            position: relative;
         }
-        
-        .modal-content h2 {
-            margin-top: 0;
-            text-align: center;
+        .diamond-content {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-45deg);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        
-        .modal-form-item {
-            margin-bottom: 15px;
-        }
-        
-        .modal-form-item label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        
-        .modal-buttons {
-            text-align: right;
-            margin-top: 20px;
-        }
-        
-        .modal-buttons button {
-            padding: 8px 16px;
-            margin-left: 10px;
-            font-family: inherit;
-            font-size: 1em;
-            background-color: var(--border-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        
-        .modal-buttons button[type="button"] {
-            background-color: #a9a9a9;
-        }
+        .diamond-box .attr-title { position: absolute; font-weight: bold; color: var(--border-color); text-align: center; width: 100%; }
+        .diamond-box .attr-derived { position: absolute; text-align: center; width: 100%; }
+        .diamond-box .attr-tn, .diamond-box .attr-val { position: absolute; text-align: center; }
+        .diamond-box .attr-tn input, .diamond-box .attr-val input { border: 1px solid var(--border-color); text-align: center; padding: 0; background-color: white; }
 
-        .modal-overlay.hidden {
-            display: none;
-        }
-        /* --- 模态框样式结束 --- */
+        /* Large Diamond Box Styles (Main Attributes) */
+        .diamond-box:not(.diamond-box-small) { width: 180px; height: 180px; margin: 25px auto; }
+        .diamond-box:not(.diamond-box-small) .attr-title { top: 12px; font-size: 1.6em; }
+        .diamond-box:not(.diamond-box-small) .attr-derived { bottom: 12px; font-size: 1.2em; }
+        .diamond-box:not(.diamond-box-small) .attr-tn, .diamond-box:not(.diamond-box-small) .attr-val { width: 60px; }
+        .diamond-box:not(.diamond-box-small) .attr-tn { left: 0px; }
+        .diamond-box:not(.diamond-box-small) .attr-val { right: 0px; }
+        .diamond-box:not(.diamond-box-small) .attr-tn label, .diamond-box:not(.diamond-box-small) .attr-val label { font-size: 1.1em; }
+        .diamond-box:not(.diamond-box-small) .attr-tn input, .diamond-box:not(.diamond-box-small) .attr-val input { width: 50px; height: 50px; font-size: 1.5em; }
 
-        @media (max-width: 992px) {
-            .attribute-box, .skills-column, .combat-proficiencies, .feature-box { grid-column: span 12; }
-            .traits-container { grid-template-columns: 1fr; }
-            .header-info { display: flex; flex-wrap: wrap; }
-            .info-item { width: 48%; }
-            .portrait-box { order: -1; width: 100%; margin-bottom: 15px; }
-        }
-        @media (max-width: 768px) {
-            .points-container { grid-template-columns: 1fr; }
-        }
+        /* NEW: Small Diamond Box Styles (Header) */
+        .diamond-box-small { width: 120px; height: 120px; margin: 10px auto; }
+        .diamond-box-small .attr-title { top: 6px; font-size: 1em; }
+        .diamond-box-small .attr-derived { bottom: 23px; font-size: 1.2em; }
+        .diamond-box-small .attr-tn, .diamond-box-small .attr-val { top: 12px; width: 45px; }
+        .diamond-box-small .attr-tn { left: 5px; }
+        .diamond-box-small .attr-val { right: 5px; }
+        .diamond-box-small .attr-tn label, .diamond-box-small .attr-val label { font-size: 1em; }
+        .diamond-box-small .attr-tn input, .diamond-box-small .attr-val input { width: 34px; height: 34px; font-size: 1.2em; }
         
-        @media print {
-            @page {
-                size: A3;
-                margin: 1cm;
-            }
-            body {
-                background-color: #fff;
-                font-size: 10pt;
-                -webkit-print-color-adjust: exact; 
-                print-color-adjust: exact;
-            }
-            .character-sheet {
-                box-shadow: none;
-                border: 1px solid #ccc;
-                max-width: 100%;
-            }
-            /* --- 隐藏不需要打印的元素 --- */
-            .buttons-section, .gear-controls, .remove-row-btn, .select-protective-gear-btn, .clear-protective-gear-btn, .portrait-controls, #king_of_men_bonus, .modal-overlay, .custom-file-upload {
-                display: none;
-            }
-            
-            .traits-container {
-                grid-template-columns: repeat(3, 1fr) !important;
-            }
+        .current-stat-input-diamond { width: 38px !important; padding: 1px !important; text-align: center; font-size: 1em !important; display: inline-block; vertical-align: middle; margin-left: 4px; }
 
-            .header-info {
-                display: grid !important;
-                grid-template-columns: repeat(6, 1fr) 3fr 3fr !important;
-                gap: 15px !important;
-                align-items: start !important;
-            }
-            .header-info .info-item {
-                width: auto !important;
-            }
-            .portrait-box {
-                width: auto !important;
-                order: initial !important;
-                text-align: center;
-                margin-bottom: 0;
-            }
-
-            input, textarea, select {
-                border: 1px solid #ccc !important; /* 恢复一个浅灰色边框 */
-                background-color: #fdfdfd !important; /* 提供一个非常浅的背景色以示区分 */
-                -webkit-appearance: none;
-                appearance: none;
-                padding: 8px; /* 恢复内边距 */
-                color: #000;
-                border-radius: 4px; /* 恢复圆角 */
-                box-sizing: border-box;
-                width: 100%;
-            }
-            
-            input[readonly], input.readonly {
-                 background-color: #eee !important; /* 对只读输入框使用不同的背景色 */
-            }
-
-            select {
-                -webkit-appearance: none;
-                -moz-appearance: none;
-                appearance: none;
-                background-image: none !important; /* 移除下拉箭头 */
-            }
-
-            input[type="checkbox"] {
-                border: 1px solid #000 !important;
-                width: 20px;
-                height: 20px;
-                padding: 0;
-            }
-            .skill-ranks input[type="checkbox"]::before {
-                background-color: #000;
-            }
-            
-            h1, h2, legend {
-                border-color: #ccc;
-            }
-            #portrait_preview {
-                border: 1px solid #ccc !important;
-            }
-            .description-box {
-                min-height: 60px;
-                background: #fff;
-                border: 1px dashed #c8a077 !important;
-            }
-        }
+        .skills-column { grid-column: span 4; padding: 10px; }
+        .skills-column h2 { margin-top: 0; text-align: center; }
+        .skill-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .skill-item label { flex-grow: 1; }
+        .skill-ranks { display: flex; }
+        .skill-ranks input[type="checkbox"] { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border: 1px solid var(--border-color); margin: 0 2px; cursor: pointer; position: relative; }
+        .skill-ranks input[type="checkbox"]::before { content: ''; position: absolute; top: 50%; left: 50%; width: 14px; height: 14px; background-color: var(--border-color); transform: translate(-50%, -50%) scale(0); transition: transform 0.2s ease-in-out; }
+        .skill-ranks input[type="checkbox"]:checked::before { transform: translate(-50%, -50%) scale(1); }
+        .section-break { grid-column: span 12; border-top: 2px solid var(--border-color); margin-top: 10px; }
+        .combat-proficiencies, .feature-box { grid-column: span 4; padding: 10px; }
+        .feature-box .info-item { margin-top: 10px; }
+        #personal_traits_section { grid-column: span 12; }
+        .traits-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .trait-box { padding: 10px; border: 1px solid #c8a077; border-radius: 4px; background-color: var(--header-bg); }
+        .gear-table { grid-column: span 12; }
+        .gear-table table { width: 100%; border-collapse: collapse; }
+        .gear-table th, .gear-table td { border: 1px solid var(--border-color); padding: 8px; text-align: center; }
+        .gear-table th { background-color: var(--header-bg); }
+        .gear-table input { text-align: center; }
+        .gear-controls { margin-top: 5px; text-align: right; }
+        .gear-controls button, .remove-row-btn, .select-protective-gear-btn, .clear-protective-gear-btn { background-color: #8b4513; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-family: Ringbearer; }
+        .remove-row-btn, .clear-protective-gear-btn { background-color: #c04040; }
+        .buttons-section { grid-column: span 12; text-align: center; padding-top: 20px; }
+        .buttons-section button { padding: 10px 20px; margin: 0 10px; font-family: Ringbearer; font-size: 1em; background-color: var(--border-color); color: white; border: none; border-radius: 5px; cursor: pointer; box-shadow: var(--box-shadow); }
+        .buttons-section button:hover { opacity: 0.9; }
+        .short-input { max-width: 80px; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; transition: opacity 0.3s ease; }
+        .modal-content { background-color: var(--background-color); padding: 25px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); border: 2px solid var(--border-color); width: 90%; max-width: 500px; }
+        .modal-content h2 { margin-top: 0; text-align: center; }
+        .modal-form-item { margin-bottom: 15px; }
+        .modal-form-item label { display: block; margin-bottom: 5px; }
+        .modal-buttons { text-align: right; margin-top: 20px; }
+        .modal-buttons button { padding: 8px 16px; margin-left: 10px; font-family: Ringbearer; font-size: 1em; background-color: var(--border-color); color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .modal-buttons button[type="button"] { background-color: #a9a9a9; }
+        .modal-overlay.hidden { display: none; }
+        @media (max-width: 992px) { .attributes-section > div, .skills-column, .combat-proficiencies, .feature-box { grid-column: span 12 !important; } .traits-container { grid-template-columns: 1fr; } .header-info { display: flex; flex-wrap: wrap; } .info-item { width: 48%; } .portrait-box { order: -1; width: 100%; margin-bottom: 15px; } .secondary-stats-container { order: 1; width: 100%; } }
+        @media (max-width: 768px) { .points-container { grid-template-columns: 1fr; } }
+        @media print { @page { size: A3; margin: 1cm; } body { background-color: #fff; font-size: 10pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; } .character-sheet { box-shadow: none; border: 1px solid #ccc; max-width: 100%; } .buttons-section, .gear-controls, .remove-row-btn, .select-protective-gear-btn, .clear-protective-gear-btn, .portrait-controls, #king_of_men_bonus, .modal-overlay, .custom-file-upload { display: none; } .traits-container { grid-template-columns: repeat(3, 1fr) !important; } .header-info { display: grid !important; grid-template-columns: repeat(9, 1fr) 3fr !important; grid-template-rows: repeat(8, auto) !important; gap: 15px !important; align-items: start !important; } .header-info .info-item { width: auto !important; } .portrait-box { width: auto !important; order: initial !important; text-align: center; margin-bottom: 0; } input, textarea, select { border: 1px solid #ccc !important; background-color: #fdfdfd !important; -webkit-appearance: none; appearance: none; padding: 8px; color: #000; border-radius: 4px; box-sizing: border-box; width: 100%; } input[readonly], input.readonly { background-color: #eee !important; } select { -webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: none !important; } input[type="checkbox"] { border: 1px solid #000 !important; width: 20px; height: 20px; padding: 0; } .skill-ranks input[type="checkbox"]::before { background-color: #000; } h1, h2, legend { border-color: #ccc; } #portrait_preview { border: 1px solid #ccc !important; } .description-box { min-height: 60px; background: #fff; border: 1px dashed #c8a077 !important; } }
     </style>
 </head>
 <body>
 
 <div class="character-sheet">
     <h1>魔戒TRPG 人物卡</h1>
-    
+
     <div class="grid-container">
         <div class="header-info">
             <div class="info-item char-name"><label for="char_name">角色姓名</label><input type="text" id="char_name" name="char_name"></div>
-            <div class="info-item char-age"><label for="char_age">年龄</label><input type="text" id="char_age" name="char_age"></div>
             <div class="info-item heroic-culture">
                 <label for="heroic_culture">英雄所属文化</label>
                 <select id="heroic_culture" name="heroic_culture">
@@ -568,7 +276,20 @@
                     <option value="北方的游民">北方的游民</option>
                 </select>
             </div>
-
+            <div class="info-item char-age"><label for="char_age">年龄</label><input type="text" id="char_age" name="char_age"></div>
+            <div class="info-item char-living-standard"><label for="char_living_standard">生活水平</label><input type="text" id="char_living_standard" name="char_living_standard" class="readonly" readonly></div>
+            
+            <div class="info-item cultural-blessing">
+                <label for="cultural_blessing">文化赐福</label>
+                <input type="text" id="cultural_blessing" name="cultural_blessing" class="readonly" readonly>
+                <div class="description-box" id="cultural_blessing_desc"></div>
+                <div id="king_of_men_bonus" class="hidden">
+                    <button type="button" data-stat="body">体魄</button>
+                    <button type="button" data-stat="heart">心志</button>
+                    <button type="button" data-stat="wits">才智</button>
+                    <button type="button" id="reset_king_bonus">重置</button>
+                </div>
+            </div>
             <div class="info-item calling">
                 <label for="calling">呼召 (职业)</label>
                 <select id="calling" name="calling">
@@ -581,30 +302,53 @@
                     <option value="守望者">守望者</option>
                 </select>
             </div>
-            <div class="info-item shadow-path"><label for="shadow_path">魔影之路</label><input type="text" id="shadow_path" name="shadow_path"></div>
-            <div class="info-item flaw"><label for="flaw">缺陷</label><input type="text" id="flaw" name="flaw"></div>
+            <div class="info-item char-treasure"><label for="char_treasure">宝藏</label><input type="text" id="char_treasure" name="char_treasure"></div>
             
             <div class="info-item char-patron"><label for="patron">赞助人</label><input type="text" id="patron" name="patron"></div>
-            <div class="info-item char-living-standard"><label for="char_living_standard">生活水平</label><input type="text" id="char_living_standard" name="char_living_standard" class="readonly" readonly></div>
-            <div class="info-item char-treasure"><label for="char_treasure">宝藏</label><input type="text" id="char_treasure" name="char_treasure"></div>
+            <div class="info-item flaw"><label for="flaw">缺陷</label><input type="text" id="flaw" name="flaw"></div>
 
-            <div class="info-item cultural-blessing">
-                <label for="cultural_blessing">文化赐福</label>
-                <input type="text" id="cultural_blessing" name="cultural_blessing" class="readonly" readonly>
-                <div class="description-box" id="cultural_blessing_desc"></div>
-                <div id="king_of_men_bonus" class="hidden">
-                    <button type="button" data-stat="body">体魄</button>
-                    <button type="button" data-stat="heart">心志</button>
-                    <button type="button" data-stat="wits">才智</button>
-                    <button type="button" id="reset_king_bonus">重置</button>
+            <div class="info-item shadow-path"><label for="shadow_path">魔影之路</label><input type="text" id="shadow_path" name="shadow_path"></div>
+            <div class="info-item status-checks">
+                <label>状态</label>
+                <div class="status-checkbox-group">
+                    <div><input type="checkbox" id="status_weary" name="status_weary"><label for="status_weary"> 疲惫</label></div>
+                    <div><input type="checkbox" id="status_miserable" name="status_miserable"><label for="status_miserable"> 痛苦</label></div>
+                    <div><input type="checkbox" id="status_wounded" name="status_wounded"><label for="status_wounded"> 重伤</label></div>
                 </div>
             </div>
+            <div class="info-item wound-severity"><label for="wound_severity">受伤程度</label><input type="text" id="wound_severity" name="wound_severity"></div>
+
+            <!-- <div class="info-item wound-severity">
+                <label for="wound_severity">受伤程度</label>
+                <textarea id="wound_severity" name="wound_severity" rows="1"></textarea>
+            </div> -->
+            
+            <div class="info-item adventure-points"><label for="adventure_points">冒险点数</label><input type="number" id="adventure_points" name="adventure_points"></div>
+            <div class="info-item skill-points"><label for="skill_points">技能点数</label><input type="number" id="skill_points" name="skill_points"></div>
+            <div class="info-item fellowship-points"><label for="fellowship_points">同盟点数</label><input type="number" id="fellowship_points" name="fellowship_points"></div>
 
             <div class="portrait-box">
                 <img id="portrait_preview" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMCAyMWE4IDggMCAwIDAtMTYgME0xMiAxM2E0IDQgMCAxIDAgMC04IDQgNCAwIDAgMCAwIDhaIi8+PC9zdmc+" alt="人物形象预览">
                 <div class="portrait-controls">
                     <label for="portrait_upload" class="custom-file-upload">选择文件</label>
                     <input type="file" id="portrait_upload" accept="image/*">
+                </div>
+            </div>
+            
+            <div class="secondary-stats-container">
+                 <div class="diamond-box diamond-box-small">
+                    <div class="diamond-content">
+                        <div class="attr-tn"><label for="load_val">负重</label><input type="number" id="load_val" name="load_val" min="0"></div>
+                        <div class="attr-val"><label for="fatigue_val">劳顿值</label><input type="number" id="fatigue_val" name="fatigue_val" min="0"></div>
+                        <div class="attr-derived">当前耐力:<input type="number" id="current_endurance" class="current-stat-input-diamond"></div>
+                    </div>
+                </div>
+                <div class="diamond-box diamond-box-small">
+                    <div class="diamond-content">
+                        <div class="attr-tn"><label for="shadow_val">魔影</label><input type="number" id="shadow_val" name="shadow_val" min="0"></div>
+                        <div class="attr-val"><label for="shadow_scar_val">伤疤</label><input type="number" id="shadow_scar_val" name="shadow_scar_val" min="0"></div>
+                        <div class="attr-derived">当前希望:<input type="number" id="current_hope" class="current-stat-input-diamond"></div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -638,32 +382,38 @@
         <div class="section-break"></div>
 
         <div class="attributes-section">
-            <fieldset class="attribute-box">
-                <legend>体魄</legend>
-                <div class="attribute-values">
-                    <div class="info-item"><label for="body_tn">TN</label><input type="number" id="body_tn" name="body_tn" min="1" max="20"></div>
-                    <div class="info-item"><label for="body_val">数值</label><input type="number" id="body_val" name="body_val" min="1" max="20"></div>
+            <div style="grid-column: span 4;">
+                <div class="diamond-box">
+                    <div class="diamond-content">
+                        <div class="attr-title">体魄</div>
+                        <div class="attr-tn"><label for="body_tn">TN</label><input type="number" id="body_tn" name="body_tn" min="1" max="20"></div>
+                        <div class="attr-val"><label for="body_val">数值</label><input type="number" id="body_val" name="body_val" min="1" max="20"></div>
+                        <div class="attr-derived">耐力上限: <span id="endurance_val">0</span></div>
+                    </div>
                 </div>
-                <div class="derived-stat">耐力上限: <span id="endurance_val">0</span></div>
-            </fieldset>
+            </div>
 
-            <fieldset class="attribute-box">
-                <legend>心志</legend>
-                <div class="attribute-values">
-                    <div class="info-item"><label for="heart_tn">TN</label><input type="number" id="heart_tn" name="heart_tn" min="1" max="20"></div>
-                    <div class="info-item"><label for="heart_val">数值</label><input type="number" id="heart_val" name="heart_val" min="1" max="20"></div>
+            <div style="grid-column: span 4;">
+                <div class="diamond-box">
+                    <div class="diamond-content">
+                        <div class="attr-title">心志</div>
+                        <div class="attr-tn"><label for="heart_tn">TN</label><input type="number" id="heart_tn" name="heart_tn" min="1" max="20"></div>
+                        <div class="attr-val"><label for="heart_val">数值</label><input type="number" id="heart_val" name="heart_val" min="1" max="20"></div>
+                        <div class="attr-derived">希望上限: <span id="hope_val">0</span></div>
+                    </div>
                 </div>
-                <div class="derived-stat">希望上限: <span id="hope_val">0</span></div>
-            </fieldset>
+            </div>
 
-            <fieldset class="attribute-box">
-                <legend>才智</legend>
-                <div class="attribute-values">
-                    <div class="info-item"><label for="wits_tn">TN</label><input type="number" id="wits_tn" name="wits_tn" min="1" max="20"></div>
-                    <div class="info-item"><label for="wits_val">数值</label><input type="number" id="wits_val" name="wits_val" min="1" max="20"></div>
+            <div style="grid-column: span 4;">
+                <div class="diamond-box">
+                    <div class="diamond-content">
+                        <div class="attr-title">才智</div>
+                        <div class="attr-tn"><label for="wits_tn">TN</label><input type="number" id="wits_tn" name="wits_tn" min="1" max="20"></div>
+                        <div class="attr-val"><label for="wits_val">数值</label><input type="number" id="wits_val" name="wits_val" min="1" max="20"></div>
+                        <div class="attr-derived">招架: <span id="parry_val">0</span></div>
+                    </div>
                 </div>
-                <div class="derived-stat">招架: <span id="parry_val">0</span></div>
-            </fieldset>
+            </div>
         </div>
 
         <div class="section-break"></div>
@@ -699,7 +449,7 @@
         </div>
 
         <div class="section-break"></div>
-        
+
         <div class="combat-features-section">
             <div class="combat-proficiencies">
                 <h2>战斗熟练</h2>
@@ -725,40 +475,6 @@
                 <div class="info-item"><label for="wisdom">智慧</label><input type="number" id="wisdom" name="wisdom"></div>
             </div>
         </div>
-
-        <div class="section-break"></div>
-
-        <div class="points-container">
-            <div class="info-item"><label for="adventure_points">历险点数</label><input type="number" id="adventure_points" name="adventure_points"></div>
-            <div class="info-item"><label for="skill_points">技能点数</label><input type="number" id="skill_points" name="skill_points"></div>
-            <div class="info-item"><label for="fellowship_points">同盟点数</label><input type="number" id="fellowship_points" name="fellowship_points"></div>
-        </div>
-
-        <fieldset class="attribute-box">
-            <div class="attribute-values">
-                    <div class="info-item"><label for="load_val">负重</label><input type="number" id="load_val" name="load_val" min="0"></div>
-                    <div class="info-item"><label for="fatigue_val">劳顿值</label><input type="number" id="fatigue_val" name="fatigue_val" min="0"></div>
-            </div>
-            <div class="derived-stat">当前耐力: <input type="number" id="current_endurance" class="current-stat-input"></div>
-        </fieldset>
-        
-        <fieldset class="attribute-box">
-            <div class="attribute-values">
-                    <div class="info-item"><label for="shadow_val">魔影</label><input type="number" id="shadow_val" name="shadow_val" min="0"></div>
-                    <div class="info-item"><label for="shadow_scar_val">魔影伤疤</label><input type="number" id="shadow_scar_val" name="shadow_scar_val" min="0"></div>
-            </div>
-            <div class="derived-stat">当前希望: <input type="number" id="current_hope" class="current-stat-input"></div>
-        </fieldset>
-
-        <fieldset class="attribute-box" style="text-align: left;">
-            <legend>状态</legend>
-             <div style="display: flex; flex-direction: column; gap: 10px; padding-top: 10px;">
-                <div><input type="checkbox" id="status_weary" name="status_weary"><label for="status_weary"> 疲惫</label></div>
-                <div><input type="checkbox" id="status_miserable" name="status_miserable"><label for="status_miserable"> 痛苦</label></div>
-                <div><input type="checkbox" id="status_wounded" name="status_wounded"><label for="status_wounded"> 重伤</label></div>
-                 <div class="info-item"><label for="wound_severity">受伤程度</label><textarea id="wound_severity" name="wound_severity" rows="2"></textarea></div>
-            </div>
-        </fieldset>
 
 
         <div class="section-break"></div>
@@ -817,7 +533,7 @@
                 <textarea id="travel_gear" name="travel_gear" rows="4"></textarea>
             </div>
         </div>
-        
+
         <div class="buttons-section">
             <button id="save-btn">保存到浏览器</button>
             <button id="export-btn">导出为PDF/打印</button>
@@ -904,6 +620,8 @@
 
 
 <script>
+// El Javascript no requiere cambios para esta modificación de diseño.
+// Se pega aquí para mantener el archivo completo y funcional.
 document.addEventListener('DOMContentLoaded', function() {
     // --- STATE ---
     let kingOfMenBonusAppliedTo = null;
@@ -931,7 +649,7 @@ document.addEventListener('DOMContentLoaded', function() {
           trait3Desc = document.getElementById('trait3_desc'),
           valourInput = document.getElementById('valour'),
           rewardsContainer = document.getElementById('rewards_container');
-          
+
     // Combat Gear Modal Elements
     const combatGearModal = document.getElementById('combatGearModal'),
           combatGearForm = document.getElementById('combatGearForm'),
@@ -950,7 +668,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const cultureData = { "巴德一族的人类": { blessing: { name: "勇敢刚毅", description: "你的英勇检定都将具备优势。" }, livingStandard: "富有", modifiers: { endurance: 20, hope: 8, parry: 12 }, traits: ['大胆', '热忱', '迷人', '凶狠', '慷慨', '自傲', '高大', '固执']}, "都林一族的矮人": { blessing: { name: "锐不可当", description: "你所穿戴的护甲负重值减半计算（往上取整），包括头盔（但不包括盾牌）。" }, livingStandard: "富有", modifiers: { endurance: 22, hope: 8, parry: 10 }, traits: ['狡黠', '凶狠', '威严', '自傲', '内敛', '严肃', '警惕', '固执']}, "林顿的精灵": { blessing: { name: "精灵之艺", description: "*如果你不处于痛苦状态，当你使用至少拥有1个等级的技能时，你可以通过消耗1点希望值从而在该技能检定中取得魔法成功。" }, livingStandard: "节俭", modifiers: { endurance: 20, hope: 8, parry: 12 }, traits: ['迷人', '目光敏锐', '威严', '乐天', '耐心', '机智', '矫捷', '警惕']}, "夏尔的霍比特人": { blessing: { name: "见怪不怪", description: "*你的智慧检定视为优势，并且你在有关抵御贪婪影响的魔影检定中获得（1d）。" }, livingStandard: "普通", modifiers: { endurance: 18, hope: 10, parry: 12 }, traits: ['热忱', '言语得体', '忠贞', '正直', '好奇', '目光敏锐', '乐天', '朴实']}, "布理的人类": { blessing: { name: "布理血脉", description: "*玩家团队中每有一名布理人，同盟点就会提升1点。" }, livingStandard: "普通", modifiers: { endurance: 20, hope: 10, parry: 10 }, traits: ['狡黠', '言语得体', '忠贞', '慷慨', '好奇', '耐心', '朴实', '真诚']}, "北方的游民": { blessing: { name: "人中王者", description: "*任选一项属性提升1点。" }, livingStandard: "节俭", modifiers: { endurance: 20, hope: 6, parry: 14 }, traits: ['大胆', '正直', '内敛', '严肃', '机智', '矫捷', '高大', '真诚']}, "": { blessing: { name: "", description: ""}, livingStandard: "", modifiers: { endurance: 0, hope: 0, parry: 0 }, traits: []} };
     const callingFeatures = { '领袖': { name: '领导力', description: '你拥有引领他人行动的能力。在面对压力时，其他人会自然而然地向你寻求指导。'}, '勇士': { name: '宿敌知识', description: '宿敌知识并不是一种单独的特质；你必须选择其适用的敌人种类。你可以从邪恶人类、奥克、蜘蛛、食人妖、座狼和亡灵中进行选择。这种额外特质可让你了解所选敌人的特点、习性、优势与弱点。'}, '信使': { name: '民间知识', description: '四处游历让你对自由之民所组成的各个社区的许多传统习俗、信仰和故事略知一二。在你与陌生人打交道时，这些信息可能会有所帮助，让你能够刚巧知道一些与他们民俗相关的事实，或者恰好掌握了一部分对方的语言。'}, '学者': { name: '学识诗歌', description: '许多文化都曾创作过一种名为学识诗歌的短诗，用以铭记那些重要历史事件，以免它们湮没于岁月的长河中。中洲的学者们认为，他们之所以能了解诸多古代知识，很大程度上要归功于这些诗歌。'}, '寻宝客': { name: '盗窃', description: '这项令人敬畏的技艺包含了扒窃、开锁，以及总的来说，任何能够偷偷摸摸获取他人财产或进入看守区域的手段。'}, '守望者': { name: '魔影知识', description: '你已经察觉到，在中洲世界中，大多数邪恶、黑暗和可怖之事背后似乎有一条隐秘的脉络，而这份隐秘勾连更是日渐滋长。这是中洲土地上智者的共识，而这份知识背后的真相也终将水落出。'}, '': { name: '', description: '由您的职业决定。' }};
     const rewardsData = { "贴身": "技艺高超的铁匠把这件防具打造得更为坚固，难以被致命一击穿透。\n当你穿戴着贴身的护甲或头盔时，你的防护检定结果+2。", "精工": "熟练的工匠将这件装备打造得更加轻盈、灵活。\n所选物品的负重值减少2（最小负重为0）。", "致命": "这利器所使出的一击，既迅猛又精准，更难被护甲阻挡。\n所选武器的致伤值增加2。\n可以被单手和双手使用的武器，两方的致伤值都会获得提升。", "深化": "这件武器强劲而沉重，能够对目标造成更多伤害。\n所选武器的伤害值增加1。", "利刃": "这件武器十分锋利或者平衡性更好，它在命中目标时有更大可能性造成致命一击。\n使用利刃武器攻击时，技艺骰结果为9的时候也会造成致命一击。", "加固": "这面盾牌的结构得到了加固，它可能在边缘被金属加固，或者有一个更大的铁制凸起，让使用者可以更容易地招架攻击。\n盾牌的招架值增加1", "": "" };
-    
+
     const combatGearPresets = [
         { name: '徒手攻击', damage: '1', injury: '—', load: '0', proficiency: '格斗 *', notes: '包括投掷石块。无法造成致命一击。' },
         { name: '匕首', damage: '2', injury: '14', load: '0', proficiency: '格斗 *', notes: '可以如同剑鞘般发射 (详见于第99页)' },
@@ -988,7 +706,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const currentIndex = checkboxes.indexOf(checkbox);
         const isChecking = checkbox.checked;
         for (let i = 0; i < checkboxes.length; i++) {
-            if (isChecking) { if (i <= currentIndex) checkboxes[i].checked = true; } 
+            if (isChecking) { if (i <= currentIndex) checkboxes[i].checked = true; }
             else { if (i >= currentIndex) checkboxes[i].checked = false; }
         }
     }
@@ -1053,10 +771,10 @@ document.addEventListener('DOMContentLoaded', function() {
         for (const option of trait2Select.options) { option.disabled = (option.value !== '' && option.value === val1); }
         for (const option of trait1Select.options) { option.disabled = (option.value !== '' && option.value === val2); }
     }
-    
+
     // --- KING OF MEN BONUS ---
     function applyKingOfMenBonus(stat) {
-        if (kingOfMenBonusAppliedTo) return; 
+        if (kingOfMenBonusAppliedTo) return;
         const statInput = document.getElementById(stat + '_val');
         if (statInput) {
             statInput.value = (parseInt(statInput.value) || 0) + 1;
@@ -1085,7 +803,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         document.getElementById('reset_king_bonus').disabled = !kingOfMenBonusAppliedTo;
     }
-    
+
     // --- DYNAMIC REWARDS ---
     function updateRewardOptions() {
         const rewardSelects = rewardsContainer.querySelectorAll('.reward-select');
@@ -1116,9 +834,9 @@ document.addEventListener('DOMContentLoaded', function() {
             select.id = `reward_select_${i}`;
             select.className = 'reward-select';
             select.dataset.descId = `reward_desc_${i}`;
-            
+
             // Populate options
-            const rewardNames = { "贴身": "贴身 (护甲或头盔)", "精工": "精工 (护甲, 头盔或盾牌)", "致命": "致命 (武器)", "深化": "深化 (武器)", "利刃": "利刃 (武器)", "加固": "加固 (盾牌)", "": "--请选择勋绩--" };
+            const rewardNames = { "": "--请选择勋绩--", "贴身": "贴身 (护甲或头盔)", "精工": "精工 (护甲, 头盔或盾牌)", "致命": "致命 (武器)", "深化": "深化 (武器)", "利刃": "利刃 (武器)", "加固": "加固 (盾牌)" };
             for(const key in rewardNames) {
                 const option = document.createElement('option');
                 option.value = key;
@@ -1171,11 +889,11 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('input, textarea, select').forEach(element => {
             const key = element.id || element.name;
             if (key && !element.closest('.gear-table') && !element.closest('.modal-content') && !element.closest('#rewards_container')) {
-                if (element.type === 'checkbox') { charData[key] = element.checked; } 
+                if (element.type === 'checkbox') { charData[key] = element.checked; }
                 else { charData[key] = element.value; }
             }
         });
-        
+
         charData.rewards = Array.from(rewardsContainer.querySelectorAll('.reward-select')).map(s => s.value);
 
         document.querySelectorAll('.skill-ranks').forEach(container => {
@@ -1183,9 +901,9 @@ document.addEventListener('DOMContentLoaded', function() {
             container.querySelectorAll('input:checked').forEach(cb => ranks.push(cb.value));
             charData[container.id] = ranks;
         });
-        
+
         charData.combatGear = collectTableData('combat_gear_body');
-        
+
         charData.protectiveGear = {};
         document.querySelectorAll('#protective_gear_body tr').forEach(row => {
             const slot = row.id.replace('_slot', '');
@@ -1198,9 +916,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 };
             }
         });
-        
+
         charData.portraitSrc = document.getElementById('portrait_preview').src;
-        charData.kingOfMenBonus = kingOfMenBonusAppliedTo; 
+        charData.kingOfMenBonus = kingOfMenBonusAppliedTo;
         localStorage.setItem('tor_char_sheet', JSON.stringify(charData));
         alert('人物卡已保存到浏览器！');
     }
@@ -1209,7 +927,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const savedData = localStorage.getItem('tor_char_sheet');
         if (savedData) {
             const charData = JSON.parse(savedData);
-            
+
             if (kingOfMenBonusAppliedTo) {
                 const oldStatInput = document.getElementById(kingOfMenBonusAppliedTo + '_val');
                 if (oldStatInput) oldStatInput.value = Math.max(0, parseInt(oldStatInput.value) - 1);
@@ -1220,7 +938,7 @@ document.addEventListener('DOMContentLoaded', function() {
                  if (!element.closest('.gear-table') && !element.closest('.modal-content') && !element.closest('#rewards_container')) {
                     const key = element.id || element.name;
                     if (charData.hasOwnProperty(key)) {
-                        if (element.type === 'checkbox') { element.checked = charData[key]; } 
+                        if (element.type === 'checkbox') { element.checked = charData[key]; }
                         else { element.value = charData[key]; }
                     }
                  }
@@ -1245,7 +963,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             document.getElementById('combat_gear_body').innerHTML = '';
             (charData.combatGear || []).forEach(rowData => addCombatGearRow(rowData));
-            
+
             if (charData.protectiveGear) {
                 for (const slot in charData.protectiveGear) {
                     const gearData = charData.protectiveGear[slot];
@@ -1260,7 +978,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
 
             if (charData.portraitSrc) { document.getElementById('portrait_preview').src = charData.portraitSrc; }
-            
+
             if (heroicCultureSelect.value === '北方的游民' && kingOfMenBonusAppliedTo) {
                  const statInput = document.getElementById(kingOfMenBonusAppliedTo + '_val');
                  if (statInput) statInput.value = (parseInt(statInput.value) || 0) + 1;
@@ -1271,14 +989,14 @@ document.addEventListener('DOMContentLoaded', function() {
             trait1Select.dispatchEvent(new Event('change'));
             trait2Select.dispatchEvent(new Event('change'));
             updateAttributes();
-            updateKingOfMenUI(); 
+            updateKingOfMenUI();
 
             if (!isSilent) alert('人物卡数据已读取！');
         } else {
             if (!isSilent) alert('未找到已保存的人物卡。');
         }
     }
-    
+
     // --- POPULATE PRESETS ---
     function populateCombatGearPresets() {
         combatGearPresets.forEach(gear => {
@@ -1288,11 +1006,11 @@ document.addEventListener('DOMContentLoaded', function() {
             combatPresetSelect.appendChild(option);
         });
     }
-    
+
     // --- INITIALIZATION ---
     const skillContainers = ['skill_awe', 'skill_athletics', 'skill_awareness', 'skill_hunting', 'skill_song', 'skill_craft', 'skill_enhearten', 'skill_travel', 'skill_insight', 'skill_healing', 'skill_courtesy', 'skill_battle', 'skill_persuade', 'skill_stealth', 'skill_search', 'skill_explore', 'skill_riddle', 'skill_lore', 'prof_axes', 'prof_bows', 'prof_spears', 'prof_swords'];
     skillContainers.forEach(id => createRankCheckboxes(id));
-    
+
     document.getElementById('combat_gear_body').addEventListener('click', e => {
         if (e.target.classList.contains('remove-row-btn')) e.target.closest('tr').remove();
     });
@@ -1306,7 +1024,7 @@ document.addEventListener('DOMContentLoaded', function() {
     heartTN.addEventListener('input', () => updateFromTN(heartTN, heartVal));
     witsVal.addEventListener('input', updateAttributes);
     witsTN.addEventListener('input', () => updateFromTN(witsTN, witsVal));
-    
+
     heroicCultureSelect.addEventListener('change', (event) => {
         removeKingOfMenBonus(true);
         const selectedCulture = event.target.value;
@@ -1314,7 +1032,7 @@ document.addEventListener('DOMContentLoaded', function() {
         culturalBlessingInput.value = data.blessing.name;
         culturalBlessingDesc.textContent = data.blessing.description;
         document.getElementById('char_living_standard').value = data.livingStandard;
-        
+
         document.getElementById('current_endurance').value = '';
         document.getElementById('current_hope').value = '';
 
@@ -1322,9 +1040,9 @@ document.addEventListener('DOMContentLoaded', function() {
         trait2Select.value = '';
         populateTraitSelectors(data.traits);
         updateAttributes();
-        updateKingOfMenUI(); 
+        updateKingOfMenUI();
     });
-    
+
     callingSelect.addEventListener('change', (event) => {
         const selectedCalling = event.target.value;
         const featureData = callingFeatures[selectedCalling] || callingFeatures[''];
@@ -1351,7 +1069,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     trait1Select.addEventListener('change', updateTraitDescriptionsAndDuplicates);
     trait2Select.addEventListener('change', updateTraitDescriptionsAndDuplicates);
-    
+
     document.getElementById('portrait_upload').addEventListener('change', function(event) {
         const file = event.target.files[0];
         if (file) {
@@ -1374,10 +1092,10 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('add_combat_gear_btn').addEventListener('click', () => {
         combatGearForm.reset();
         combatPresetSelect.dispatchEvent(new Event('change'));
-        combatGearModal.classList.remove('hidden'); 
+        combatGearModal.classList.remove('hidden');
     });
     combatGearForm.addEventListener('submit', (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
         const gearData = {
             name: document.getElementById('modal_combat_name').value,
             damage: document.getElementById('modal_combat_damage').value,
@@ -1385,7 +1103,7 @@ document.addEventListener('DOMContentLoaded', function() {
             load: document.getElementById('modal_combat_load').value,
             notes: document.getElementById('modal_combat_notes').value
         };
-        addCombatGearRow(gearData); 
+        addCombatGearRow(gearData);
         combatGearModal.classList.add('hidden');
     });
     cancelCombatGearBtn.addEventListener('click', () => combatGearModal.classList.add('hidden'));
@@ -1410,7 +1128,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (target.classList.contains('select-protective-gear-btn')) {
             currentProtectiveSlot = target.dataset.slot;
             protectiveGearForm.reset();
-            
+
             protectivePresetSelect.innerHTML = '<option value="">--自定义或选择一项--</option>';
             const filteredPresets = protectiveGearPresets.filter(gear => {
                 const type = gear.type.toLowerCase();
@@ -1438,7 +1156,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     protectiveGearForm.addEventListener('submit', (e) => {
-        e.preventDefault(); 
+        e.preventDefault();
         if (!currentProtectiveSlot) return;
         const gearData = {
             name: document.getElementById('modal_protective_name').value,
@@ -1479,7 +1197,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (confirm('确定要重置所有数据吗？此操作不可撤销。')) {
             document.querySelectorAll('.character-sheet input, .character-sheet textarea, .character-sheet select').forEach(el => {
                 if (el.closest('.modal-content') || el.closest('#rewards_container')) return;
-                
+
                 if (el.type === 'checkbox' || el.type === 'radio') {
                     el.checked = false;
                 } else if (el.tagName === 'SELECT') {
@@ -1488,7 +1206,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     el.value = '';
                 }
             });
-            
+
             rewardsContainer.innerHTML = '';
 
             document.getElementById('portrait_preview').src = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMCAyMWE4IDggMCAwIDAtMTYgME0xMiAxM2E0IDQgMCAxIDAgMC04IDQgNCAwIDAgMCAwIDhaIi8+PC9zdmc+";
@@ -1496,15 +1214,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
             document.getElementById('combat_gear_body').innerHTML = '';
             document.querySelectorAll('#protective_gear_body input[data-key]').forEach(input => { input.value = ''; });
-            
+
             removeKingOfMenBonus(true);
-            
+
             heroicCultureSelect.dispatchEvent(new Event('change'));
             callingSelect.dispatchEvent(new Event('change'));
-            
+
             localStorage.removeItem('tor_char_sheet');
             updateAttributes();
-            updateKingOfMenUI(); 
+            updateKingOfMenUI();
             alert('人物卡已重置。');
         }
     });
