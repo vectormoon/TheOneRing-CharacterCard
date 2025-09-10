@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>魔戒TRPG - 自动人物卡生成器 Ver0.4 (样式已更新)</title>
+    <title>魔戒TRPG - 自动人物卡生成器</title>
     <style>
         :root {
             --main-font: 'Ringbearer', 'Microsoft YaHei', 'SimHei', 'KaiTi', 'STKaiti', 'serif';
@@ -291,7 +291,7 @@
                 </div>
             </div>
             <div class="info-item calling">
-                <label for="calling">呼召 (职业)</label>
+                <label for="calling">呼召</label>
                 <select id="calling" name="calling">
                     <option value="">--请选择呼召--</option>
                     <option value="领袖">领袖</option>
@@ -318,11 +318,6 @@
             </div>
             <div class="info-item wound-severity"><label for="wound_severity">受伤程度</label><input type="text" id="wound_severity" name="wound_severity"></div>
 
-            <!-- <div class="info-item wound-severity">
-                <label for="wound_severity">受伤程度</label>
-                <textarea id="wound_severity" name="wound_severity" rows="1"></textarea>
-            </div> -->
-            
             <div class="info-item adventure-points"><label for="adventure_points">冒险点数</label><input type="number" id="adventure_points" name="adventure_points"></div>
             <div class="info-item skill-points"><label for="skill_points">技能点数</label><input type="number" id="skill_points" name="skill_points"></div>
             <div class="info-item fellowship-points"><label for="fellowship_points">同盟点数</label><input type="number" id="fellowship_points" name="fellowship_points"></div>
@@ -338,15 +333,15 @@
             <div class="secondary-stats-container">
                  <div class="diamond-box diamond-box-small">
                     <div class="diamond-content">
-                        <div class="attr-tn"><label for="load_val">负重</label><input type="number" id="load_val" name="load_val" min="0"></div>
-                        <div class="attr-val"><label for="fatigue_val">劳顿值</label><input type="number" id="fatigue_val" name="fatigue_val" min="0"></div>
+                        <div class="attr-tn"><label for="load_val">负重</label><input type="number" id="load_val" name="load_val" min="0" readonly></div>
+                        <div class="attr-val"><label for="fatigue_val">劳顿值</label><input type="number" id="fatigue_val" name="fatigue_val" min="0" value="0"></div>
                         <div class="attr-derived">当前耐力:<input type="number" id="current_endurance" class="current-stat-input-diamond"></div>
                     </div>
                 </div>
                 <div class="diamond-box diamond-box-small">
                     <div class="diamond-content">
-                        <div class="attr-tn"><label for="shadow_val">魔影</label><input type="number" id="shadow_val" name="shadow_val" min="0"></div>
-                        <div class="attr-val"><label for="shadow_scar_val">伤疤</label><input type="number" id="shadow_scar_val" name="shadow_scar_val" min="0"></div>
+                        <div class="attr-tn"><label for="shadow_val">魔影</label><input type="number" id="shadow_val" name="shadow_val" min="0" value="0"></div>
+                        <div class="attr-val"><label for="shadow_scar_val">伤疤</label><input type="number" id="shadow_scar_val" name="shadow_scar_val" min="0" value="0"></div>
                         <div class="attr-derived">当前希望:<input type="number" id="current_hope" class="current-stat-input-diamond"></div>
                     </div>
                 </div>
@@ -386,8 +381,8 @@
                 <div class="diamond-box">
                     <div class="diamond-content">
                         <div class="attr-title">体魄</div>
-                        <div class="attr-tn"><label for="body_tn">TN</label><input type="number" id="body_tn" name="body_tn" min="1" max="20"></div>
-                        <div class="attr-val"><label for="body_val">数值</label><input type="number" id="body_val" name="body_val" min="1" max="20"></div>
+                        <div class="attr-tn"><label for="body_tn">TN</label><input type="number" id="body_tn" name="body_tn" min="0" max="20"></div>
+                        <div class="attr-val"><label for="body_val">数值</label><input type="number" id="body_val" name="body_val" min="0" max="20" value="0"></div>
                         <div class="attr-derived">耐力上限: <span id="endurance_val">0</span></div>
                     </div>
                 </div>
@@ -397,8 +392,8 @@
                 <div class="diamond-box">
                     <div class="diamond-content">
                         <div class="attr-title">心志</div>
-                        <div class="attr-tn"><label for="heart_tn">TN</label><input type="number" id="heart_tn" name="heart_tn" min="1" max="20"></div>
-                        <div class="attr-val"><label for="heart_val">数值</label><input type="number" id="heart_val" name="heart_val" min="1" max="20"></div>
+                        <div class="attr-tn"><label for="heart_tn">TN</label><input type="number" id="heart_tn" name="heart_tn" min="0" max="20"></div>
+                        <div class="attr-val"><label for="heart_val">数值</label><input type="number" id="heart_val" name="heart_val" min="0" max="20" value="0"></div>
                         <div class="attr-derived">希望上限: <span id="hope_val">0</span></div>
                     </div>
                 </div>
@@ -408,8 +403,8 @@
                 <div class="diamond-box">
                     <div class="diamond-content">
                         <div class="attr-title">才智</div>
-                        <div class="attr-tn"><label for="wits_tn">TN</label><input type="number" id="wits_tn" name="wits_tn" min="1" max="20"></div>
-                        <div class="attr-val"><label for="wits_val">数值</label><input type="number" id="wits_val" name="wits_val" min="1" max="20"></div>
+                        <div class="attr-tn"><label for="wits_tn">TN</label><input type="number" id="wits_tn" name="wits_tn" min="0" max="20"></div>
+                        <div class="attr-val"><label for="wits_val">数值</label><input type="number" id="wits_val" name="wits_val" min="0" max="20" value="0"></div>
                         <div class="attr-derived">招架: <span id="parry_val">0</span></div>
                     </div>
                 </div>
@@ -461,18 +456,18 @@
 
             <div class="feature-box">
                 <h2>英勇与勋绩</h2>
-                <div id="rewards_container">
-                    </div>
                 <div class="info-item">
                     <label for="valour">英勇</label>
-                    <input type="number" id="valour" name="valour" min="0">
+                    <input type="number" id="valour" name="valour" min="0" value="0">
+                </div>
+                <div id="rewards_container">
                 </div>
             </div>
 
             <div class="feature-box">
                 <h2>智慧与美德</h2>
                 <div class="info-item"><label for="virtues">美德</label><select id="virtues" name="virtues"><option>占位内容一</option><option>占位内容二</option></select></div>
-                <div class="info-item"><label for="wisdom">智慧</label><input type="number" id="wisdom" name="wisdom"></div>
+                <div class="info-item"><label for="wisdom">智慧</label><input type="number" id="wisdom" name="wisdom" value="0"></div>
             </div>
         </div>
 
@@ -620,8 +615,6 @@
 
 
 <script>
-// El Javascript no requiere cambios para esta modificación de diseño.
-// Se pega aquí para mantener el archivo completo y funcional.
 document.addEventListener('DOMContentLoaded', function() {
     // --- STATE ---
     let kingOfMenBonusAppliedTo = null;
@@ -771,6 +764,45 @@ document.addEventListener('DOMContentLoaded', function() {
         for (const option of trait2Select.options) { option.disabled = (option.value !== '' && option.value === val1); }
         for (const option of trait1Select.options) { option.disabled = (option.value !== '' && option.value === val2); }
     }
+    
+    // --- NEW: TOTAL LOAD CALCULATION ---
+    function updateTotalLoad() {
+        let totalLoad = 0;
+        const isDwarf = heroicCultureSelect.value === '都林一族的矮人';
+
+        // 1. 计算所有战斗装备的负重
+        document.querySelectorAll('#combat_gear_body input[data-key="load"]').forEach(input => {
+            const load = parseInt(input.value, 10);
+            if (!isNaN(load)) {
+                totalLoad += load;
+            }
+        });
+
+        // 2. 单独处理防护装备
+        // 获取护甲的负重值
+        const armorLoadVal = parseInt(document.querySelector('#armor_slot input[data-key="load"]').value, 10);
+        if (!isNaN(armorLoadVal)) {
+            // 如果是矮人，负重减半并向上取整；否则使用原值
+            totalLoad += isDwarf ? Math.ceil(armorLoadVal / 2) : armorLoadVal;
+        }
+        
+        // 获取头盔的负重值
+        const helmetLoadVal = parseInt(document.querySelector('#helmet_slot input[data-key="load"]').value, 10);
+        if (!isNaN(helmetLoadVal)) {
+            // 如果是矮人，负重减半并向上取整；否则使用原值
+            totalLoad += isDwarf ? Math.ceil(helmetLoadVal / 2) : helmetLoadVal;
+        }
+
+        // 获取盾牌的负重值 (矮人特性不影响盾牌)
+        const shieldLoadVal = parseInt(document.querySelector('#shield_slot input[data-key="load"]').value, 10);
+        if (!isNaN(shieldLoadVal)) {
+            totalLoad += shieldLoadVal; 
+        }
+        
+        // 3. 更新页面上显示的负重值
+        document.getElementById('load_val').value = totalLoad;
+    }
+
 
     // --- KING OF MEN BONUS ---
     function applyKingOfMenBonus(stat) {
@@ -990,6 +1022,7 @@ document.addEventListener('DOMContentLoaded', function() {
             trait2Select.dispatchEvent(new Event('change'));
             updateAttributes();
             updateKingOfMenUI();
+            updateTotalLoad(); // UPDATE TOTAL LOAD ONCE ALL DATA IS LOADED
 
             if (!isSilent) alert('人物卡数据已读取！');
         } else {
@@ -1012,7 +1045,10 @@ document.addEventListener('DOMContentLoaded', function() {
     skillContainers.forEach(id => createRankCheckboxes(id));
 
     document.getElementById('combat_gear_body').addEventListener('click', e => {
-        if (e.target.classList.contains('remove-row-btn')) e.target.closest('tr').remove();
+        if (e.target.classList.contains('remove-row-btn')) {
+            e.target.closest('tr').remove();
+            updateTotalLoad(); // UPDATE TOTAL LOAD ON REMOVAL
+        }
     });
 
     populateCombatGearPresets();
@@ -1041,6 +1077,7 @@ document.addEventListener('DOMContentLoaded', function() {
         populateTraitSelectors(data.traits);
         updateAttributes();
         updateKingOfMenUI();
+        updateTotalLoad(); // UPDATE TOTAL LOAD ON CULTURE CHANGE
     });
 
     callingSelect.addEventListener('change', (event) => {
@@ -1105,6 +1142,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         addCombatGearRow(gearData);
         combatGearModal.classList.add('hidden');
+        updateTotalLoad(); // UPDATE TOTAL LOAD ON ADDITION
     });
     cancelCombatGearBtn.addEventListener('click', () => combatGearModal.classList.add('hidden'));
     combatGearModal.addEventListener('click', (e) => { if (e.target === combatGearModal) combatGearModal.classList.add('hidden'); });
@@ -1151,6 +1189,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 row.querySelectorAll('input[data-key]').forEach(input => {
                     input.value = '';
                 });
+                updateTotalLoad(); // UPDATE TOTAL LOAD ON CLEAR
             }
         }
     });
@@ -1173,6 +1212,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         protectiveGearModal.classList.add('hidden');
         currentProtectiveSlot = null;
+        updateTotalLoad(); // UPDATE TOTAL LOAD ON SELECTION/CHANGE
     });
     cancelProtectiveGearBtn.addEventListener('click', () => protectiveGearModal.classList.add('hidden'));
     protectiveGearModal.addEventListener('click', (e) => { if (e.target === protectiveGearModal) protectiveGearModal.classList.add('hidden'); });
@@ -1195,6 +1235,9 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('export-btn').addEventListener('click', () => window.print());
     document.getElementById('reset-btn').addEventListener('click', () => {
         if (confirm('确定要重置所有数据吗？此操作不可撤销。')) {
+            // --- MODIFIED: List of IDs that should default to 0 ---
+            const defaultZeroIds = ['body_val', 'heart_val', 'wits_val', 'fatigue_val', 'shadow_scar_val', 'valour', 'wisdom'];
+
             document.querySelectorAll('.character-sheet input, .character-sheet textarea, .character-sheet select').forEach(el => {
                 if (el.closest('.modal-content') || el.closest('#rewards_container')) return;
 
@@ -1203,7 +1246,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 } else if (el.tagName === 'SELECT') {
                     el.selectedIndex = 0;
                 } else if (!['button', 'submit', 'reset', 'file'].includes(el.type)) {
-                    el.value = '';
+                    // --- MODIFIED: Reset to 0 or empty string based on ID ---
+                    if (defaultZeroIds.includes(el.id)) {
+                        el.value = '0';
+                    } else {
+                        el.value = '';
+                    }
                 }
             });
 
@@ -1223,12 +1271,15 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.removeItem('tor_char_sheet');
             updateAttributes();
             updateKingOfMenUI();
+            updateTotalLoad(); // UPDATE TOTAL LOAD ON RESET
             alert('人物卡已重置。');
         }
     });
 
     // --- AUTO-LOAD DATA ON PAGE STARTUP ---
     loadCharacter(true);
+    // Call updateAttributes on initial load to set derived values based on defaults
+    updateAttributes();
 
 });
 </script>
