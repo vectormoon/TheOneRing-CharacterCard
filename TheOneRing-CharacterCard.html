@@ -135,7 +135,9 @@
         .info-item.heroic-culture { grid-column: 3 / span 2; grid-row: 1; }
         .info-item.char-age { grid-column: 5 / span 1; grid-row: 1; }
         .info-item.char-living-standard { grid-column: 6 / span 1; grid-row: 1; }
-        .info-item.status-checks { grid-column: 8 / span 2; grid-row: 1; }
+        .info-item.game-mode { grid-column: 7 / span 1; grid-row: 1; } /* MODIFIED */
+        .info-item.status-checks { grid-column: 8 / span 2; grid-row: 1; } /* MODIFIED */
+
 
         .info-item.wound-severity { grid-column: 8 / span 2; grid-row: 2; }
         .info-item.cultural-blessing { grid-column: 1 / span 2; grid-row: 2 / 4; }
@@ -149,11 +151,14 @@
         .info-item.skill-points { grid-column: 5 / span 1; grid-row: 4; }
         .info-item.fellowship-points { grid-column: 6 / span 1; grid-row: 4; }
 
-        .status-checkbox-group {
+        .status-checkbox-group, .game-mode-group { /* MODIFIED */
             display: flex;
-            gap: 15px;
+            gap: 10px;
             align-items: center;
             flex-wrap: wrap;
+        }
+        .game-mode-group label { /* MODIFIED */
+            margin-bottom: 0;
         }
         
         /* NEW: Container for small diamond boxes in header */
@@ -218,8 +223,31 @@
 
         .skills-column { grid-column: span 4; padding: 10px; }
         .skills-column h2 { margin-top: 0; text-align: center; }
-        .skill-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-        .skill-item label { flex-grow: 1; }
+
+        /* MODIFIED: Skill Item Layout */
+        .skill-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 10px;
+        }
+        .specialization-container {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.9em;
+        }
+        .specialization-container input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            flex-shrink: 0;
+        }
+        .skill-item > .skill-name-label {
+            flex-grow: 1;
+            margin: 0;
+        }
+
         .skill-ranks { display: flex; }
         .skill-ranks input[type="checkbox"] { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border: 1px solid var(--border-color); margin: 0 2px; cursor: pointer; position: relative; }
         .skill-ranks input[type="checkbox"]::before { content: ''; position: absolute; top: 50%; left: 50%; width: 14px; height: 14px; background-color: var(--border-color); transform: translate(-50%, -50%) scale(0); transition: transform 0.2s ease-in-out; }
@@ -279,6 +307,14 @@
             <div class="info-item char-age"><label for="char_age">年龄</label><input type="text" id="char_age" name="char_age"></div>
             <div class="info-item char-living-standard"><label for="char_living_standard">生活水平</label><input type="text" id="char_living_standard" name="char_living_standard" class="readonly" readonly></div>
             
+            <div class="info-item game-mode">
+                <label>游戏模式</label>
+                <div class="game-mode-group">
+                    <input type="radio" id="mode_normal" name="game_mode" value="20" checked><label for="mode_normal"> 普通</label>
+                    <input type="radio" id="mode_simple" name="game_mode" value="18"><label for="mode_simple"> 简单</label>
+                </div>
+            </div>
+
             <div class="info-item cultural-blessing">
                 <label for="cultural_blessing">文化赐福</label>
                 <input type="text" id="cultural_blessing" name="cultural_blessing" class="readonly" readonly>
@@ -416,30 +452,30 @@
         <div class="skills-section">
             <div class="skills-column">
                 <h2>体魄技能</h2>
-                <div class="skill-item"><label>威慑</label><div class="skill-ranks" id="skill_awe"></div></div>
-                <div class="skill-item"><label>运动</label><div class="skill-ranks" id="skill_athletics"></div></div>
-                <div class="skill-item"><label>觉察</label><div class="skill-ranks" id="skill_awareness"></div></div>
-                <div class="skill-item"><label>狩猎</label><div class="skill-ranks" id="skill_hunting"></div></div>
-                <div class="skill-item"><label>歌唱</label><div class="skill-ranks" id="skill_song"></div></div>
-                <div class="skill-item"><label>手艺</label><div class="skill-ranks" id="skill_craft"></div></div>
+                <div class="skill-item"><div class="specialization-container"><input type="checkbox" id="spec_awe" name="spec_awe"><label for="spec_awe"></label></div><label class="skill-name-label">威慑</label><div class="skill-ranks" id="skill_awe"></div></div>
+                <div class="skill-item"><div class="specialization-container"><input type="checkbox" id="spec_athletics" name="spec_athletics"><label for="spec_athletics"></label></div><label class="skill-name-label">运动</label><div class="skill-ranks" id="skill_athletics"></div></div>
+                <div class="skill-item"><div class="specialization-container"><input type="checkbox" id="spec_awareness" name="spec_awareness"><label for="spec_awareness"></label></div><label class="skill-name-label">觉察</label><div class="skill-ranks" id="skill_awareness"></div></div>
+                <div class="skill-item"><div class="specialization-container"><input type="checkbox" id="spec_hunting" name="spec_hunting"><label for="spec_hunting"></label></div><label class="skill-name-label">狩猎</label><div class="skill-ranks" id="skill_hunting"></div></div>
+                <div class="skill-item"><div class="specialization-container"><input type="checkbox" id="spec_song" name="spec_song"><label for="spec_song"></label></div><label class="skill-name-label">歌唱</label><div class="skill-ranks" id="skill_song"></div></div>
+                <div class="skill-item"><div class="specialization-container"><input type="checkbox" id="spec_craft" name="spec_craft"><label for="spec_craft"></label></div><label class="skill-name-label">手艺</label><div class="skill-ranks" id="skill_craft"></div></div>
             </div>
             <div class="skills-column">
                 <h2>心志技能</h2>
-                <div class="skill-item"><label>鼓舞</label><div class="skill-ranks" id="skill_enhearten"></div></div>
-                <div class="skill-item"><label>旅行</label><div class="skill-ranks" id="skill_travel"></div></div>
-                <div class="skill-item"><label>洞悉</label><div class="skill-ranks" id="skill_insight"></div></div>
-                <div class="skill-item"><label>医疗</label><div class="skill-ranks" id="skill_healing"></div></div>
-                <div class="skill-item"><label>礼仪</label><div class="skill-ranks" id="skill_courtesy"></div></div>
-                <div class="skill-item"><label>作战</label><div class="skill-ranks" id="skill_battle"></div></div>
+                <div class="skill-item"><div class="specialization-container"><input type="checkbox" id="spec_enhearten" name="spec_enhearten"><label for="spec_enhearten"></label></div><label class="skill-name-label">鼓舞</label><div class="skill-ranks" id="skill_enhearten"></div></div>
+                <div class="skill-item"><div class="specialization-container"><input type="checkbox" id="spec_travel" name="spec_travel"><label for="spec_travel"></label></div><label class="skill-name-label">旅行</label><div class="skill-ranks" id="skill_travel"></div></div>
+                <div class="skill-item"><div class="specialization-container"><input type="checkbox" id="spec_insight" name="spec_insight"><label for="spec_insight"></label></div><label class="skill-name-label">洞悉</label><div class="skill-ranks" id="skill_insight"></div></div>
+                <div class="skill-item"><div class="specialization-container"><input type="checkbox" id="spec_healing" name="spec_healing"><label for="spec_healing"></label></div><label class="skill-name-label">医疗</label><div class="skill-ranks" id="skill_healing"></div></div>
+                <div class="skill-item"><div class="specialization-container"><input type="checkbox" id="spec_courtesy" name="spec_courtesy"><label for="spec_courtesy"></label></div><label class="skill-name-label">礼仪</label><div class="skill-ranks" id="skill_courtesy"></div></div>
+                <div class="skill-item"><div class="specialization-container"><input type="checkbox" id="spec_battle" name="spec_battle"><label for="spec_battle"></label></div><label class="skill-name-label">作战</label><div class="skill-ranks" id="skill_battle"></div></div>
             </div>
             <div class="skills-column">
                 <h2>才智技能</h2>
-                <div class="skill-item"><label>说服</label><div class="skill-ranks" id="skill_persuade"></div></div>
-                <div class="skill-item"><label>潜行</label><div class="skill-ranks" id="skill_stealth"></div></div>
-                <div class="skill-item"><label>搜索</label><div class="skill-ranks" id="skill_search"></div></div>
-                <div class="skill-item"><label>探索</label><div class="skill-ranks" id="skill_explore"></div></div>
-                <div class="skill-item"><label>暗语</label><div class="skill-ranks" id="skill_riddle"></div></div>
-                <div class="skill-item"><label>学识</label><div class="skill-ranks" id="skill_lore"></div></div>
+                <div class="skill-item"><div class="specialization-container"><input type="checkbox" id="spec_persuade" name="spec_persuade"><label for="spec_persuade"></label></div><label class="skill-name-label">说服</label><div class="skill-ranks" id="skill_persuade"></div></div>
+                <div class="skill-item"><div class="specialization-container"><input type="checkbox" id="spec_stealth" name="spec_stealth"><label for="spec_stealth"></label></div><label class="skill-name-label">潜行</label><div class="skill-ranks" id="skill_stealth"></div></div>
+                <div class="skill-item"><div class="specialization-container"><input type="checkbox" id="spec_search" name="spec_search"><label for="spec_search"></label></div><label class="skill-name-label">搜索</label><div class="skill-ranks" id="skill_search"></div></div>
+                <div class="skill-item"><div class="specialization-container"><input type="checkbox" id="spec_explore" name="spec_explore"><label for="spec_explore"></label></div><label class="skill-name-label">探索</label><div class="skill-ranks" id="skill_explore"></div></div>
+                <div class="skill-item"><div class="specialization-container"><input type="checkbox" id="spec_riddle" name="spec_riddle"><label for="spec_riddle"></label></div><label class="skill-name-label">暗语</label><div class="skill-ranks" id="skill_riddle"></div></div>
+                <div class="skill-item"><div class="specialization-container"><input type="checkbox" id="spec_lore" name="spec_lore"><label for="spec_lore"></label></div><label class="skill-name-label">学识</label><div class="skill-ranks" id="skill_lore"></div></div>
             </div>
         </div>
 
@@ -619,6 +655,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // --- STATE ---
     let kingOfMenBonusAppliedTo = null;
     let currentProtectiveSlot = null;
+    let baseTN = 20; // MODIFIED: Added baseTN for game mode
 
     // --- ELEMENTS ---
     const bodyVal = document.getElementById('body_val'),
@@ -716,13 +753,20 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         container.addEventListener('click', handleRankClick);
     }
+    // MODIFIED: Function to handle game mode change
+    function handleModeChange() {
+        const selectedMode = document.querySelector('input[name="game_mode"]:checked');
+        baseTN = selectedMode ? parseInt(selectedMode.value) : 20;
+        updateAttributes();
+    }
+    // MODIFIED: updated to use baseTN
     function updateAttributes() {
         const bVal = parseInt(bodyVal.value) || 0;
-        if (document.activeElement !== bodyTN) bodyTN.value = 20 - bVal;
+        if (document.activeElement !== bodyTN) bodyTN.value = baseTN - bVal;
         const hVal = parseInt(heartVal.value) || 0;
-        if (document.activeElement !== heartTN) heartTN.value = 20 - hVal;
+        if (document.activeElement !== heartTN) heartTN.value = baseTN - hVal;
         const wVal = parseInt(witsVal.value) || 0;
-        if (document.activeElement !== witsTN) witsTN.value = 20 - wVal;
+        if (document.activeElement !== witsTN) witsTN.value = baseTN - wVal;
         const selectedCulture = heroicCultureSelect.value;
         const modifiers = cultureData[selectedCulture]?.modifiers || cultureData[""].modifiers;
         const enduranceMax = bVal + modifiers.endurance;
@@ -736,9 +780,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const currentHopeInput = document.getElementById('current_hope');
         if(currentHopeInput.value === '' || currentHopeInput.value === '0') currentHopeInput.value = hopeMax;
     }
+    // MODIFIED: updated to use baseTN
     function updateFromTN(sourceTN, targetVal) {
         const tnVal = parseInt(sourceTN.value) || 0;
-        targetVal.value = 20 - tnVal;
+        targetVal.value = baseTN - tnVal;
         updateAttributes();
     }
     function populateTraitSelectors(traitList) {
@@ -921,10 +966,18 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('input, textarea, select').forEach(element => {
             const key = element.id || element.name;
             if (key && !element.closest('.gear-table') && !element.closest('.modal-content') && !element.closest('#rewards_container')) {
-                if (element.type === 'checkbox') { charData[key] = element.checked; }
-                else { charData[key] = element.value; }
+                // MODIFIED: Added handling for radio buttons
+                if (element.type === 'radio') {
+                    if(element.checked) charData[key] = element.value;
+                } else if (element.type === 'checkbox') {
+                    charData[key] = element.checked;
+                } else {
+                    charData[key] = element.value;
+                }
             }
         });
+        
+        charData.gameMode = document.querySelector('input[name="game_mode"]:checked').value; // MODIFIED
 
         charData.rewards = Array.from(rewardsContainer.querySelectorAll('.reward-select')).map(s => s.value);
 
@@ -959,6 +1012,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const savedData = localStorage.getItem('tor_char_sheet');
         if (savedData) {
             const charData = JSON.parse(savedData);
+            
+            // MODIFIED: Load game mode first
+            if (charData.gameMode) {
+                const modeRadio = document.querySelector(`input[name="game_mode"][value="${charData.gameMode}"]`);
+                if(modeRadio) modeRadio.checked = true;
+            }
+            handleModeChange();
+
 
             if (kingOfMenBonusAppliedTo) {
                 const oldStatInput = document.getElementById(kingOfMenBonusAppliedTo + '_val');
@@ -970,6 +1031,9 @@ document.addEventListener('DOMContentLoaded', function() {
                  if (!element.closest('.gear-table') && !element.closest('.modal-content') && !element.closest('#rewards_container')) {
                     const key = element.id || element.name;
                     if (charData.hasOwnProperty(key)) {
+                        // MODIFIED: Skip radio buttons as they are handled above
+                        if(element.type === 'radio') return;
+
                         if (element.type === 'checkbox') { element.checked = charData[key]; }
                         else { element.value = charData[key]; }
                     }
@@ -1060,6 +1124,11 @@ document.addEventListener('DOMContentLoaded', function() {
     heartTN.addEventListener('input', () => updateFromTN(heartTN, heartVal));
     witsVal.addEventListener('input', updateAttributes);
     witsTN.addEventListener('input', () => updateFromTN(witsTN, witsVal));
+    
+    // MODIFIED: Added listener for game mode change
+    document.querySelectorAll('input[name="game_mode"]').forEach(radio => {
+        radio.addEventListener('change', handleModeChange);
+    });
 
     heroicCultureSelect.addEventListener('change', (event) => {
         removeKingOfMenBonus(true);
@@ -1235,18 +1304,21 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('export-btn').addEventListener('click', () => window.print());
     document.getElementById('reset-btn').addEventListener('click', () => {
         if (confirm('确定要重置所有数据吗？此操作不可撤销。')) {
-            // --- MODIFIED: List of IDs that should default to 0 ---
+            // MODIFIED: Set game mode to normal
+            document.getElementById('mode_normal').checked = true;
+            baseTN = 20;
+
             const defaultZeroIds = ['body_val', 'heart_val', 'wits_val', 'fatigue_val', 'shadow_scar_val', 'valour', 'wisdom'];
 
             document.querySelectorAll('.character-sheet input, .character-sheet textarea, .character-sheet select').forEach(el => {
                 if (el.closest('.modal-content') || el.closest('#rewards_container')) return;
 
                 if (el.type === 'checkbox' || el.type === 'radio') {
-                    el.checked = false;
+                    // Handled separately above for game mode
+                    if (el.name !== 'game_mode') el.checked = false;
                 } else if (el.tagName === 'SELECT') {
                     el.selectedIndex = 0;
                 } else if (!['button', 'submit', 'reset', 'file'].includes(el.type)) {
-                    // --- MODIFIED: Reset to 0 or empty string based on ID ---
                     if (defaultZeroIds.includes(el.id)) {
                         el.value = '0';
                     } else {
