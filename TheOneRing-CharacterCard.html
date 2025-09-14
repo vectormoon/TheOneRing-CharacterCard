@@ -502,8 +502,9 @@
 
             <div class="feature-box">
                 <h2>智慧与美德</h2>
-                <div class="info-item"><label for="virtues">美德</label><select id="virtues" name="virtues"><option>占位内容一</option><option>占位内容二</option></select></div>
                 <div class="info-item"><label for="wisdom">智慧</label><input type="number" id="wisdom" name="wisdom" value="0"></div>
+                <div id="virtues_container">
+                </div>
             </div>
         </div>
 
@@ -698,6 +699,62 @@ document.addEventListener('DOMContentLoaded', function() {
     const cultureData = { "巴德一族的人类": { blessing: { name: "勇敢刚毅", description: "你的英勇检定都将具备优势。" }, livingStandard: "富有", modifiers: { endurance: 20, hope: 8, parry: 12 }, traits: ['大胆', '热忱', '迷人', '凶狠', '慷慨', '自傲', '高大', '固执']}, "都林一族的矮人": { blessing: { name: "锐不可当", description: "你所穿戴的护甲负重值减半计算（往上取整），包括头盔（但不包括盾牌）。" }, livingStandard: "富有", modifiers: { endurance: 22, hope: 8, parry: 10 }, traits: ['狡黠', '凶狠', '威严', '自傲', '内敛', '严肃', '警惕', '固执']}, "林顿的精灵": { blessing: { name: "精灵之艺", description: "*如果你不处于痛苦状态，当你使用至少拥有1个等级的技能时，你可以通过消耗1点希望值从而在该技能检定中取得魔法成功。" }, livingStandard: "节俭", modifiers: { endurance: 20, hope: 8, parry: 12 }, traits: ['迷人', '目光敏锐', '威严', '乐天', '耐心', '机智', '矫捷', '警惕']}, "夏尔的霍比特人": { blessing: { name: "见怪不怪", description: "*你的智慧检定视为优势，并且你在有关抵御贪婪影响的魔影检定中获得（1d）。" }, livingStandard: "普通", modifiers: { endurance: 18, hope: 10, parry: 12 }, traits: ['热忱', '言语得体', '忠贞', '正直', '好奇', '目光敏锐', '乐天', '朴实']}, "布理的人类": { blessing: { name: "布理血脉", description: "*玩家团队中每有一名布理人，同盟点就会提升1点。" }, livingStandard: "普通", modifiers: { endurance: 20, hope: 10, parry: 10 }, traits: ['狡黠', '言语得体', '忠贞', '慷慨', '好奇', '耐心', '朴实', '真诚']}, "北方的游民": { blessing: { name: "人中王者", description: "*任选一项属性提升1点。" }, livingStandard: "节俭", modifiers: { endurance: 20, hope: 6, parry: 14 }, traits: ['大胆', '正直', '内敛', '严肃', '机智', '矫捷', '高大', '真诚']}, "": { blessing: { name: "", description: ""}, livingStandard: "", modifiers: { endurance: 0, hope: 0, parry: 0 }, traits: []} };
     const callingFeatures = { '领袖': { name: '领导力', description: '你拥有引领他人行动的能力。在面对压力时，其他人会自然而然地向你寻求指导。'}, '勇士': { name: '宿敌知识', description: '宿敌知识并不是一种单独的特质；你必须选择其适用的敌人种类。你可以从邪恶人类、奥克、蜘蛛、食人妖、座狼和亡灵中进行选择。这种额外特质可让你了解所选敌人的特点、习性、优势与弱点。'}, '信使': { name: '民间知识', description: '四处游历让你对自由之民所组成的各个社区的许多传统习俗、信仰和故事略知一二。在你与陌生人打交道时，这些信息可能会有所帮助，让你能够刚巧知道一些与他们民俗相关的事实，或者恰好掌握了一部分对方的语言。'}, '学者': { name: '学识诗歌', description: '许多文化都曾创作过一种名为学识诗歌的短诗，用以铭记那些重要历史事件，以免它们湮没于岁月的长河中。中洲的学者们认为，他们之所以能了解诸多古代知识，很大程度上要归功于这些诗歌。'}, '寻宝客': { name: '盗窃', description: '这项令人敬畏的技艺包含了扒窃、开锁，以及总的来说，任何能够偷偷摸摸获取他人财产或进入看守区域的手段。'}, '守望者': { name: '魔影知识', description: '你已经察觉到，在中洲世界中，大多数邪恶、黑暗和可怖之事背后似乎有一条隐秘的脉络，而这份隐秘勾连更是日渐滋长。这是中洲土地上智者的共识，而这份知识背后的真相也终将水落出。'}, '': { name: '', description: '由您的职业决定。' }};
     const rewardsData = { "贴身": "技艺高超的铁匠把这件防具打造得更为坚固，难以被致命一击穿透。\n当你穿戴着贴身的护甲或头盔时，你的防护检定结果+2。", "精工": "熟练的工匠将这件装备打造得更加轻盈、灵活。\n所选物品的负重值减少2（最小负重为0）。", "致命": "这利器所使出的一击，既迅猛又精准，更难被护甲阻挡。\n所选武器的致伤值增加2。\n可以被单手和双手使用的武器，两方的致伤值都会获得提升。", "深化": "这件武器强劲而沉重，能够对目标造成更多伤害。\n所选武器的伤害值增加1。", "利刃": "这件武器十分锋利或者平衡性更好，它在命中目标时有更大可能性造成致命一击。\n使用利刃武器攻击时，技艺骰结果为9的时候也会造成致命一击。", "加固": "这面盾牌的结构得到了加固，它可能在边缘被金属加固，或者有一个更大的铁制凸起，让使用者可以更容易地招架攻击。\n盾牌的招架值增加1", "": "" };
+
+    // 通用美德数据
+    const generalVirtuesData = {
+        "自信": "克服重重难关，不仅砥砺了你的意志，更让你重新树立了对美好未来的信心。\n\n你的希望上限提升2点。",
+        "坚毅": "你的每一次挥击愈发强劲，每一次瞄准也更为精准，这让你能够造成更大的伤害。\n\n? 当你在战斗中成功进行特殊攻击时，你选择重击时则视作体魄值+1，你选择穿刺时则视作技艺骰结果数值+1。",
+        "顽强": "你的决心和毅力在艰难困苦中获得了锻炼。\n\n你的最大耐力值提高2点，或根据你的智慧等级来提升最大耐力值，以高者为准。",
+        "精通": "你反复练习某些技能，直到它们变得易如反掌。\n\n选择两种技能，使其成为专精技能。",
+        "机敏": "你在战斗中的技巧（或运气？）随着你的智慧越发成熟而与日俱增。\n\n你的招架值提高1点。",
+        "巧技": "冒险磨炼了你与生俱来的才能。\n\n你的一项属性目标值降低1点。"
+    };
+
+    // 种族特定美德数据
+    const cultureSpecificVirtuesData = {
+        "巴德一族的人类": {
+            "制作克拉姆": "你学会了制作一种名为克拉姆的古老食品，这是一种类似饼干、但几乎可以无限期保存的糕点，由你们族人为了长途旅行而发明。尽管它不怎么好吃（实际上，可说食之无味），但它无疑能提供持久的能量，而且营养丰富。\n每当你在旅行事件中获得劳顿值时，你所获得的劳顿值会减少1点。\n此外，当你进行短休时，你和所有团队成员将额外恢复等同于你智慧等级的耐力损失。",
+            "屠龙者": "弓箭手巴德的传奇故事激励了河谷城的许多年轻男女，使许多人也开始渴望通过亲手屠杀一头巨兽来证明自己。你也跟之前的许多人一样，经常冥思苦想如何对付各种大型生物，希望有朝一日你也能战胜它们，扬名立万。\n当你与力量为2及以上的生物战斗时，你所有的攻击检定都会获得优势。",
+            "矮人之友": "在与巨龙抗争的岁月中，巴德一族与埃瑞博的矮人缔结了坚实的联盟。\n如果你的同盟焦点为一名矮人，采取防御姿态进行战斗的你或你的同盟焦点都能以次要行动执行战斗动作：保护同伴，以另一方为目标。\n此外，在会议的交流阶段，矮人总是视为对你持友好态度。",
+            "箭无虚发": "黑箭能够击落巨龙斯毛格也许是命运的安排，但射出那惊雷般的一击的手臂却无疑蕴含着惊人的力量。在你投掷长矛或拉满弓弦之际，你总能确保自己的手又稳又准，确实无疑地命中要害。\n当你在远程攻击中造成致命一击时，目标的防御检定将为劣势检定。\n会议或旅行一次，你都可以选择在任何单次检定中获得激励。"
+        },
+        "都林一族的矮人": {
+            "矮人的战斧啊！": "尽管矮人族的秘密语言犹如远古奇珍而从不外传，但他们的战吼却声名远扬，令他们的宿敌闻风丧胆。\n每次战斗中一次，当你以奋进姿态战斗时，你可以使你的攻击检定成为优势检定，并以次要行动尝试威吓敌人。",
+            "破碎咒语": "古代矮人曾创造过强大的法术。你已习得一些古老魔法的残篇，它们至今仍留存着部分力量。\n选择你三项至少拥有1个等级的技能，并在你的角色卡上用一个点（或者符文！）作出相应的标记。每当你使用这三个已标记的技能之一时，你都可以消耗1点希望以获得魔法成功。",
+            "暗中行事": "你的族群并不像大多数其他文化那样困扰于黑暗。相反，你的成长环境让你喜欢黑暗胜过光明，在它冰冷的怀抱中感到自在。\n当你处于黑暗中（在晚上或地下时），你的所有检定都获得激励。",
+            "都林之道": "矮人们在地底深处经历过无数战争。你学习过在地底战斗中实现最佳防守的技巧。因此，你深谙如何利用角落、黑暗以及其他自然障碍取得优势\n在地下或其他如建筑物内的狭窄空间进行战斗时，你的招架值+2。",
+            "坚如磐石": "矮人天生强壮而坚韧，因为他们来到这个世界时，某个巨大的邪恶正统治着中洲世界。只要你的精神还在支撑肉体，你就比大多数人更能抵抗任何身体伤害。\n你的最大耐力值提升1点。只要你未处于痛苦状态，你的所有防护检定都将获得优势。",
+            "不屈灵魂": "矮人一族自诞生之初就被赋予抵抗各种控制的能力。你的心志坚定不移，能挡下大敌的各种武器和攻击，只除了最为难以察觉的那些。\n使你的希望上限提升1点。你在进行抵御巫术效果的魔影检定时，将获得（1d）的奖励。"
+        },
+        "林顿的精灵": {
+            "不惧亡魂": "尽管一般情况下活人看不见幽界中的各种恶灵鬼魂，只能听到它们令人胆寒的低语哀叹，精灵却能清楚感知到它们。你懂得如何坚定心志，抵抗这类恐怖的影响。\n你对恐惧引起的所有魔影检定都将获得优势，如果是恶灵或鬼魂（包括被其附身的生物）迫使你进行检定，你还将额外获得（1d）的奖励。",
+            "百步穿杨": "精灵天生便擅长使用弓箭，而你更是将此天赋发挥得淋漓尽致，你的箭矢总能以不可思议的精准度命中目标。\n当你使用弓（只要不是大弓）并以后卫姿态战斗时，你就能以次要行动瞄准动作。",
+            "埃尔贝瑞丝！吉尔松涅尔！": "所有仍居住在中洲的埃尔达都尊崇星辰之后埃尔贝瑞丝的名字。你在陷入危难的时候呼唤她的名字，并请求点燃星辰者赐予你她的恩典。\n使你的希望上限提升1点。在冒险阶段，你可以在检定中获得激励，次数等于你的智慧等级。",
+            "精灵梦境": "精灵族拥有异常强大的精神力，这使得他们的身躯能够抵御众多疾病与创伤，并以惊人的速度恢复健康。随着你的智慧等级提升，你休息与恢复所需的睡眠越来越少。取而代之的是，你学会了族人独有的秘技，能够在清醒状态下的操练中迅速消除疲劳。\n你不需要睡觉，只要你能够沉浸于一些简单、重复的活动。当你短休时，你被视作进行了长休。",
+            "怒火闪烁": "在与魔影的战争中，你的族人历经无数失败，也取得过许多无果的胜利。也正是你们一族对大敌的深刻憎恨与无尽怒火，在你的武器中灌注了一道炽烈的冷焰。\n在成功的攻击检定中，你的对手额外失去一点仇恨或士气，每掷出一个成功标记【精灵字符】再额外增加一点。",
+            "旧时之忆": "漫长世纪的流转与无数人类世代的更迭，对于精灵而言也仿佛只是短短的片刻。你的记忆深邃而辽远，能够回溯至埃利阿多尚且繁荣的古老年代。如今，随着你再次踏上这片熟悉而又陌生的土地，关于它的记忆与知识又在你的脑海中逐渐苏醒。\n当你身处于荒野之地并成为某个旅行事件的目标时，你在旅行事件表上的检定结果将如同你身处边陲之地那样；当你身处于黑暗之地并成为某个旅行事件的目标时，你在旅行事件表上的检定结果将如同你身处荒野之地那样。此外，除了你所选择的旅行职责之外，你还可以额外担任斥候的职责"
+        },
+        "夏尔的霍比特人": {
+            "销声匿迹": "据传，霍比特人几乎不具备魔法能力，但他们在自己愿意的时候迅速且无声地消失无踪的能力，对于其他人而言只能用不可思议来形容。你已经掌握了这门技艺，知道如何准确把握时机、从他人的注意中消失，有时候甚至不需要你自己意识到有躲起来的必要。\n如果某个地点或情形提供了哪怕是最微小的隐藏或悄然离开的机会，你都可以进行潜行检定：若你成功通过该检定，你可以直接消失。\n如果有人看向你的位置，你就像是人间蒸发一般消失无踪。你可以选择在任何时候现身，只要从你的藏身处走出来即可。",
+            "绝境之勇": "智者中的一位曾说到，唯有将霍比特人置于困境之中，方能洞察其内心所蕴藏的品质。你虽宁愿避免陷入如此绝境，但也深信自己能在这些情境中全身而退。\n当你处于痛苦、疲惫或重伤状态时，你的所有检定受到激励。",
+            "小家伙": "霍比特人身材矮小，但他们人短智不短。你深谙如何利用自己小巧的身材在战斗中占据优势。\n当你近身战斗的对象比你高大时（这时常发生！），你的招架等级增加2。此外，只需一名队友采取近身战斗的姿态，你就可以在战斗中采取后卫姿态。",
+            "精确瞄准": "霍比特人身手敏捷且目光锐利，这些特质使他们成为出色的射手。你已将这份天赋锤炼至炉火纯青，随手拾起一块石头，也能成为致命武器。\n你所有的远程攻击都有优势。若你以投掷石块的方式发起攻击，你会在结果为【甘道夫徽记】时造成致命一击，其致伤值为12。",
+            "三人为伴": "智者曾言，友谊的力量有时能胜过无上的智慧。这一点在霍比特人身上体现得尤为淋漓尽致，因为众所周知，霍比特人与朋友之间的羁绊之深，几乎无法被任何力量所割裂。你深信你的队友们，这种紧密的信任之纽带让真挚的友谊在你们之间生根发芽、茁壮成长。\n你团队的同盟点上限提高1点。此外，你可以选择第二个同盟焦点。",
+            "坚韧如老树根": "大家都说霍比特人吓不倒、杀不死，只要稍微休息片刻，他们就能以惊人的速度复原。你发现自己能从摔伤和擦伤中飞速恢复（尽管伴随着剧烈的疼痛）。\n当你身受重伤且必须通过检定来确定伤势的严重程度时，你可以投掷两个技艺骰而非一个，并取其中较好的结果。此外，在休息期间恢复耐力时，将以你的体魄值的两倍来计算。"
+        },
+        "布理的人类": {
+            "布理小马": "布理小马与其主人布理人十分相像——与其他中洲地区的同类相比，它们似乎并无特别突出之处，但它们之中的一些个体却展现出非凡的勇气和卓越的记忆力。你获得了一匹异常勇敢且聪明的小马，它会追随你到天涯海角。\n使你的希望上限提升1点。此外，无论你的生活水平如何，你的小马都拥有4点的活力。\n你的小马与你形影不离。若你不得已要与它分开，例如进入地下通道时，你可以选择要它留在当地，或是让它败，如今只有废墟仍标记着它们的边界。然而，布理人却在这当中存续了下来，展现出出人意表的坚韧与生命力。\n使你的耐力上限提升1点。在每个战斗场景结束时，如果你未处于重伤或痛苦状态，你将恢复等同于你的心志值或英勇等级的耐力。",
+            "血气方刚": "你这辈子都在荒野边缘生活，但在你所经历的岁月中，布理所面临的最大威胁也不过是强盗的侵扰和饥饿狼群的游荡。如今面对来自东方的魔影，你虽不清楚自己这样的普通人能够如何与之抗衡，但你心中坚信，无论需要付出怎样的代价，你都将毫不退缩、与之抗争到底。\n当你在某次检定中选择消耗希望点时，你可以选择同时获得1点魔影点以使该次检定获得激励效果。",
+            "友好亲切": "自从踏上冒险之旅，你越来越领悟到，你的族人与陌生人贸易的传统或许能在你的旅途中发挥重要作用。你以礼貌友好的态度待人接物，总能轻易赢得陌生人的好感与信任；同时你也能既保持好奇心又不失分寸，从而从陌生人那里问出许多信息，这使得你能够抓住许多宝贵机会向沿途遇见的各色人等学习。\n你在会议阶段中可尝试的技能检定次数上限额外增加1次。此外，你遇到的人总是视作对你持友好态度。",
+            "稀奇好比布理奇闻": "的确，布理人主要关心的是四个村庄的事务，但那些最好奇的居民总是热衷于收集来自远方的消息。你早已学到，倾听旅人们讲述的各种奇闻轶事有时价值连城。\n在每个同盟阶段，你都会从博闻者那里得知一则流言。此外，如果你在布理地区，你的所有洞悉和暗语检定都会获得（1d）。",
+            "吞云吐雾": "你深谙吞吐之道，总是随身携带烟斗与一大袋烟斗草，毕竟吸上一口烟，清明似神仙。\n无论是在冒险阶段还是同盟阶段，当你恢复1点及以上的希望时，你都能额外恢复1点希望。"
+        },
+        "北方的游民": {
+            "游民之韧": "俗话说，只要有踪迹，游民追不腻。你衷心希望这句古训能够应验，因为你的命运注定了你将时常匆忙踏上旅途，不论是为了紧急的送信任务而奔赴遥远他乡，还是永无止境地追猎你的种种宿敌。\n你的耐力上限提升1点。如果你身穿皮甲（没有戴头盔）或没有着甲，且未携带盾牌，你在旅行中将不会获得劳顿点数。",
+            "远见卓识": "北方的游民虽然已不如其祖先那般拥普通你曾亲耳听到逝者在孤寂墓穴中的凄凉私语，你也曾亲眼目睹鬼火在鬼影幢幢的山丘上舞动、闪烁。然而，当你的内心有了坚定的意志，世间便罕有事物能动摇你的心志。\n你在所有抵御恐惧影响的魔影检定中获得（1d）的奖励。",
+            "荒野之道": "北方的游民们不停地四处穿梭，猎捕着那些邪恶的生物，坚定地守护着每一条边境线。你们熟知荒野的每一寸土地，正如霍比特人熟悉自己家乡的道路，而这片广袤的土地本身也会向你透露新的流言。\n每当你进行探索、狩猎或旅行检定时，你都可以消耗1点希望来获得魔法成功。此外在旅行阶段中，你总是可以担任多个团队角色。"
+        }
+    };
 
     const combatGearPresets = [
         { name: '徒手攻击', damage: '1', injury: '—', load: '0', proficiency: '格斗 *', notes: '包括投掷石块。无法造成致命一击。' },
@@ -897,6 +954,21 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    function updateVirtueOptions() {
+        const virtueSelects = document.querySelectorAll('.virtue-select');
+        const selectedValues = Array.from(virtueSelects).map(s => s.value).filter(v => v);
+
+        virtueSelects.forEach(select => {
+            Array.from(select.options).forEach(option => {
+                if (option.value && selectedValues.includes(option.value) && option.value !== select.value) {
+                    option.disabled = true;
+                } else {
+                    option.disabled = false;
+                }
+            });
+        });
+    }
+
     function generateRewardSelectors(count) {
         rewardsContainer.innerHTML = '';
         for (let i = 1; i <= count; i++) {
@@ -932,6 +1004,54 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    function generateVirtueSelectors(count, culture) {
+        const virtuesContainer = document.getElementById('virtues_container');
+        virtuesContainer.innerHTML = '';
+        
+        // 获取通用美德
+        const allVirtues = {...generalVirtuesData};
+        
+        // 如果有特定文化的美德，也添加进去
+        if (culture && cultureSpecificVirtuesData[culture]) {
+            Object.assign(allVirtues, cultureSpecificVirtuesData[culture]);
+        }
+        
+        for (let i = 1; i <= count; i++) {
+            const infoItem = document.createElement('div');
+            infoItem.className = 'info-item';
+
+            const label = document.createElement('label');
+            label.setAttribute('for', `virtue_select_${i}`);
+            label.textContent = `美德 ${i}`;
+
+            const select = document.createElement('select');
+            select.id = `virtue_select_${i}`;
+            select.className = 'virtue-select';
+            select.dataset.descId = `virtue_desc_${i}`;
+
+            // Populate options
+            const option = document.createElement('option');
+            option.value = "";
+            option.textContent = "--请选择美德--";
+            select.appendChild(option);
+            
+            for(const key in allVirtues) {
+                const option = document.createElement('option');
+                option.value = key;
+                option.textContent = key;
+                select.appendChild(option);
+            }
+
+            const descBox = document.createElement('div');
+            descBox.id = `virtue_desc_${i}`;
+            descBox.className = 'description-box';
+
+            infoItem.appendChild(label);
+            infoItem.appendChild(select);
+            infoItem.appendChild(descBox);
+            virtuesContainer.appendChild(infoItem);
+        }
+    }
 
     // --- DYNAMIC TABLE FUNCTIONS ---
     function addCombatGearRow(data = {}) {
@@ -980,6 +1100,9 @@ document.addEventListener('DOMContentLoaded', function() {
         charData.gameMode = document.querySelector('input[name="game_mode"]:checked').value; // MODIFIED
 
         charData.rewards = Array.from(rewardsContainer.querySelectorAll('.reward-select')).map(s => s.value);
+        
+        // 保存美德选择器的值
+        charData.virtues = Array.from(document.querySelectorAll('.virtue-select')).map(s => s.value);
 
         document.querySelectorAll('.skill-ranks').forEach(container => {
             const ranks = [];
@@ -1040,7 +1163,7 @@ document.addEventListener('DOMContentLoaded', function() {
                  }
             });
 
-            const valor = parseInt(valourInput.value) || 0;
+            const valor = parseInt(charData.valour) || 0;
             generateRewardSelectors(valor);
             const savedRewards = charData.rewards || [];
             const rewardSelects = rewardsContainer.querySelectorAll('.reward-select');
@@ -1051,6 +1174,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             updateRewardOptions();
+
+            // 加载美德选择器
+            const wisdom = parseInt(charData.wisdom) || 0;
+            const currentCulture = heroicCultureSelect.value;
+            generateVirtueSelectors(wisdom, currentCulture);
+            const savedVirtues = charData.virtues || [];
+            const virtueSelects = document.querySelectorAll('.virtue-select');
+            virtueSelects.forEach((select, index) => {
+                if (savedVirtues[index]) {
+                    select.value = savedVirtues[index];
+                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                }
+            });
+            updateVirtueOptions();
 
             document.querySelectorAll('.skill-ranks').forEach(container => {
                 const ranks = charData[container.id] || [];
@@ -1147,6 +1284,12 @@ document.addEventListener('DOMContentLoaded', function() {
         updateAttributes();
         updateKingOfMenUI();
         updateTotalLoad(); // UPDATE TOTAL LOAD ON CULTURE CHANGE
+        
+        // 更新美德选择器以包含特定文化的美德
+        const wisdomInput = document.getElementById('wisdom');
+        const wisdomCount = parseInt(wisdomInput.value) || 0;
+        generateVirtueSelectors(wisdomCount, selectedCulture);
+        updateVirtueOptions();
     });
 
     callingSelect.addEventListener('change', (event) => {
@@ -1162,6 +1305,15 @@ document.addEventListener('DOMContentLoaded', function() {
         updateRewardOptions();
     });
 
+    // 添加智慧输入框的事件监听器
+    const wisdomInput = document.getElementById('wisdom');
+    wisdomInput.addEventListener('input', () => {
+        const count = parseInt(wisdomInput.value) || 0;
+        const currentCulture = heroicCultureSelect.value;
+        generateVirtueSelectors(count, currentCulture);
+        updateVirtueOptions();
+    });
+
     rewardsContainer.addEventListener('change', (e) => {
         if (e.target.matches('.reward-select')) {
             const descId = e.target.dataset.descId;
@@ -1170,6 +1322,30 @@ document.addEventListener('DOMContentLoaded', function() {
                 descBox.innerText = rewardsData[e.target.value] || '';
             }
             updateRewardOptions();
+        }
+    });
+
+    // 添加美德描述显示逻辑
+    document.addEventListener('change', (e) => {
+        if (e.target.matches('.virtue-select')) {
+            const descId = e.target.dataset.descId;
+            const descBox = document.getElementById(descId);
+            if (descBox) {
+                // 获取当前选择的美德名称
+                const selectedVirtue = e.target.value;
+                
+                // 查找美德描述（先查通用美德，再查种族特定美德）
+                let virtueDescription = generalVirtuesData[selectedVirtue] || '';
+                
+                // 如果没找到，查找当前文化特定的美德
+                const currentCulture = heroicCultureSelect.value;
+                if (currentCulture && cultureSpecificVirtuesData[currentCulture] && cultureSpecificVirtuesData[currentCulture][selectedVirtue]) {
+                    virtueDescription = cultureSpecificVirtuesData[currentCulture][selectedVirtue];
+                }
+                
+                descBox.innerText = virtueDescription;
+            }
+            updateVirtueOptions();
         }
     });
 
