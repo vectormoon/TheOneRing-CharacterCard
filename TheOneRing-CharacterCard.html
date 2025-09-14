@@ -281,7 +281,217 @@
         .modal-overlay.hidden { display: none; }
         @media (max-width: 992px) { .attributes-section > div, .skills-column, .combat-proficiencies, .feature-box { grid-column: span 12 !important; } .traits-container { grid-template-columns: 1fr; } .header-info { display: flex; flex-wrap: wrap; } .info-item { width: 48%; } .portrait-box { order: -1; width: 100%; margin-bottom: 15px; } .secondary-stats-container { order: 1; width: 100%; } }
         @media (max-width: 768px) { .points-container { grid-template-columns: 1fr; } }
-        @media print { @page { size: A3; margin: 1cm; } body { background-color: #fff; font-size: 10pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; } .character-sheet { box-shadow: none; border: 1px solid #ccc; max-width: 100%; } .buttons-section, .gear-controls, .remove-row-btn, .select-protective-gear-btn, .clear-protective-gear-btn, .portrait-controls, #king_of_men_bonus, .modal-overlay, .custom-file-upload { display: none; } .traits-container { grid-template-columns: repeat(3, 1fr) !important; } .header-info { display: grid !important; grid-template-columns: repeat(9, 1fr) 3fr !important; grid-template-rows: repeat(8, auto) !important; gap: 15px !important; align-items: start !important; } .header-info .info-item { width: auto !important; } .portrait-box { width: auto !important; order: initial !important; text-align: center; margin-bottom: 0; } input, textarea, select { border: 1px solid #ccc !important; background-color: #fdfdfd !important; -webkit-appearance: none; appearance: none; padding: 8px; color: #000; border-radius: 4px; box-sizing: border-box; width: 100%; } input[readonly], input.readonly { background-color: #eee !important; } select { -webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: none !important; } input[type="checkbox"] { border: 1px solid #000 !important; width: 20px; height: 20px; padding: 0; } .skill-ranks input[type="checkbox"]::before { background-color: #000; } h1, h2, legend { border-color: #ccc; } #portrait_preview { border: 1px solid #ccc !important; } .description-box { min-height: 60px; background: #fff; border: 1px dashed #c8a077 !important; } }
+        @media print { 
+    @page { size: A3; margin: 1cm; } 
+    body { background-color: #fff; font-size: 10pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; } 
+    .character-sheet { box-shadow: none; border: 1px solid #ccc; max-width: 100%; } 
+    .buttons-section, .gear-controls, .remove-row-btn, .select-protective-gear-btn, .clear-protective-gear-btn, .portrait-controls, #king_of_men_bonus, .modal-overlay, .custom-file-upload { display: none; } 
+    .traits-container { grid-template-columns: repeat(3, 1fr) !important; } 
+    .header-info { display: grid !important; grid-template-columns: repeat(9, 1fr) 3fr !important; grid-template-rows: repeat(8, auto) !important; gap: 15px !important; align-items: start !important; } 
+    .header-info .info-item { width: auto !important; } 
+    .portrait-box { width: auto !important; order: initial !important; text-align: center; margin-bottom: 0; } 
+    input, textarea, select { border: 1px solid #ccc !important; background-color: #fdfdfd !important; -webkit-appearance: none; appearance: none; padding: 8px; color: #000; border-radius: 4px; box-sizing: border-box; width: 100%; } 
+    input[readonly], input.readonly { background-color: #eee !important; } 
+    select { -webkit-appearance: none; -moz-appearance: none; appearance: none; background-image: none !important; } 
+    input[type="checkbox"] { border: 1px solid #000 !important; width: 20px; height: 20px; padding: 0; } 
+    .skill-ranks input[type="checkbox"]::before { background-color: #000; } 
+    h1, h2, legend { border-color: #ccc; } 
+    #portrait_preview { border: 1px solid #ccc !important; } 
+    .description-box { min-height: 60px; background: #fff; border: 1px dashed #c8a077 !important; }
+    
+    .reward-select, .virtue-select { 
+        border: 1px solid #ccc !important; 
+        background-color: #fdfdfd !important; 
+        -webkit-appearance: none; 
+        appearance: none; 
+        padding: 8px; 
+        color: #000; 
+        border-radius: 4px; 
+        box-sizing: border-box; 
+        width: 100%; 
+    }
+    
+    #rewards_container, #virtues_container { 
+        display: block !important; 
+    }
+    
+    .info-item { 
+        display: block !important; 
+        margin-bottom: 10px !important; 
+    }
+    
+    .description-box { 
+        min-height: 40px !important; 
+        background: #fff !important; 
+        border: 1px dashed #c8a077 !important; 
+        padding: 5px !important; 
+        white-space: pre-wrap !important; 
+    }
+    
+    .diamond-box { 
+        border: 2px solid #b7433c !important; 
+        transform: rotate(45deg) !important; 
+        position: relative !important; 
+        width: 180px !important; 
+        height: 180px !important; 
+        margin: 25px auto !important; 
+    }
+    
+    .diamond-box-small { 
+        width: 120px !important; 
+        height: 120px !important; 
+        margin: 10px auto !important; 
+    }
+    
+    .diamond-content { 
+        transform: rotate(-45deg) !important; 
+        position: relative !important; 
+        display: flex !important; 
+        align-items: center !important; 
+        justify-content: center !important; 
+        width: 100% !important; 
+        height: 100% !important; 
+    }
+    
+    .diamond-box .attr-title { 
+        position: absolute !important; 
+        font-weight: bold !important; 
+        color: #b7433c !important; 
+        text-align: center !important; 
+        width: 100% !important; 
+    }
+    
+    .diamond-box .attr-derived { 
+        position: absolute !important; 
+        text-align: center !important; 
+        width: 100% !important; 
+    }
+    
+    .diamond-box .attr-tn, .diamond-box .attr-val { 
+        position: absolute !important; 
+        text-align: center !important; 
+    }
+    
+    /* 确保技能等级复选框在打印时正确显示 */
+    .skill-ranks input[type="checkbox"] { 
+        -webkit-appearance: none !important; 
+        appearance: none !important; 
+        width: 20px !important; 
+        height: 20px !important; 
+        border: 1px solid #b7433c !important; 
+        margin: 0 2px !important; 
+        position: relative !important; 
+    }
+    
+    .skill-ranks input[type="checkbox"]::before { 
+        content: '' !important; 
+        position: absolute !important; 
+        top: 50% !important; 
+        left: 50% !important; 
+        width: 14px !important; 
+        height: 14px !important; 
+        background-color: #b7433c !important; 
+        transform: translate(-50%, -50%) scale(0) !important; 
+        transition: transform 0.2s ease-in-out !important; 
+    }
+    
+    .skill-ranks input[type="checkbox"]:checked::before { 
+        transform: translate(-50%, -50%) scale(1) !important; 
+    }
+    
+    /* 确保表格在打印时正确显示 */
+    table { 
+        page-break-inside: auto !important; 
+    }
+    
+    tr { 
+        page-break-inside: avoid !important; 
+        page-break-after: auto !important; 
+    }
+    
+    thead { 
+        display: table-header-group !important; 
+    }
+    
+    tfoot { 
+        display: table-footer-group !important; 
+    }
+    
+    /* 确保网格布局在打印时正确显示 */
+    .grid-container { 
+        display: grid !important; 
+        grid-template-columns: repeat(12, 1fr) !important; 
+        gap: 15px !important; 
+    }
+    
+    .attributes-section, .skills-section, .combat-features-section, .gear-section { 
+        display: contents !important; 
+    }
+    
+    .skills-column { 
+        grid-column: span 4 !important; 
+        padding: 10px !important; 
+    }
+    
+    .combat-proficiencies, .feature-box { 
+        grid-column: span 4 !important; 
+        padding: 10px !important; 
+    }
+    
+    .gear-table { 
+        grid-column: span 12 !important; 
+    }
+    
+    /* 确保特色框在打印时正确显示 */
+    .feature-box h2 { 
+        color: #b7433c !important; 
+        border-bottom: 2px solid #b7433c !important; 
+        padding-bottom: 5px !important; 
+        font-weight: bold !important; 
+        margin-top: 0 !important; 
+    }
+    
+    /* 确保个人特质部分在打印时正确显示 */
+    #personal_traits_section h2 { 
+        margin-top: 0 !important; 
+    }
+    
+    .traits-container { 
+        display: grid !important; 
+        grid-template-columns: repeat(3, 1fr) !important; 
+        gap: 20px !important; 
+    }
+    
+    .trait-box { 
+        padding: 10px !important; 
+        border: 1px solid #c8a077 !important; 
+        border-radius: 4px !important; 
+        background-color: #faf0e6 !important; 
+    }
+    
+    /* 确保打印时显示选中的选项文本 */
+    select::-ms-expand { 
+        display: none; 
+    }
+    
+    /* 确保打印时正确显示复选框状态 */
+    input[type="checkbox"] { 
+        -webkit-print-color-adjust: exact; 
+        print-color-adjust: exact; 
+    }
+    
+    /* 确保打印时正确显示勋绩和美德标签 */
+    .reward-select, .virtue-select { 
+        -webkit-appearance: none; 
+        -moz-appearance: none; 
+        appearance: none; 
+    }
+    
+    /* 确保打印时正确显示勋绩和美德容器 */
+    #rewards_container .info-item, #virtues_container .info-item { 
+        page-break-inside: avoid; 
+    }
+}
     </style>
 </head>
 <body>
@@ -702,12 +912,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // 通用美德数据
     const generalVirtuesData = {
-        "自信": "克服重重难关，不仅砥砺了你的意志，更让你重新树立了对美好未来的信心。\n\n你的希望上限提升2点。",
-        "坚毅": "你的每一次挥击愈发强劲，每一次瞄准也更为精准，这让你能够造成更大的伤害。\n\n? 当你在战斗中成功进行特殊攻击时，你选择重击时则视作体魄值+1，你选择穿刺时则视作技艺骰结果数值+1。",
-        "顽强": "你的决心和毅力在艰难困苦中获得了锻炼。\n\n你的最大耐力值提高2点，或根据你的智慧等级来提升最大耐力值，以高者为准。",
-        "精通": "你反复练习某些技能，直到它们变得易如反掌。\n\n选择两种技能，使其成为专精技能。",
-        "机敏": "你在战斗中的技巧（或运气？）随着你的智慧越发成熟而与日俱增。\n\n你的招架值提高1点。",
-        "巧技": "冒险磨炼了你与生俱来的才能。\n\n你的一项属性目标值降低1点。"
+        "自信": "克服重重难关，不仅砥砺了你的意志，更让你重新树立了对美好未来的信心。\n你的希望上限提升2点。",
+        "坚毅": "你的每一次挥击愈发强劲，每一次瞄准也更为精准，这让你能够造成更大的伤害。\n当你在战斗中成功进行特殊攻击时，你选择重击时则视作体魄值+1，你选择穿刺时则视作技艺骰结果数值+1。",
+        "顽强": "你的决心和毅力在艰难困苦中获得了锻炼。\n你的最大耐力值提高2点，或根据你的智慧等级来提升最大耐力值，以高者为准。",
+        "精通": "你反复练习某些技能，直到它们变得易如反掌。\n选择两种技能，使其成为专精技能。",
+        "机敏": "你在战斗中的技巧（或运气？）随着你的智慧越发成熟而与日俱增。\n你的招架值提高1点。",
+        "巧技": "冒险磨炼了你与生俱来的才能。\n你的一项属性目标值降低1点。"
     };
 
     // 种族特定美德数据
@@ -716,7 +926,9 @@ document.addEventListener('DOMContentLoaded', function() {
             "制作克拉姆": "你学会了制作一种名为克拉姆的古老食品，这是一种类似饼干、但几乎可以无限期保存的糕点，由你们族人为了长途旅行而发明。尽管它不怎么好吃（实际上，可说食之无味），但它无疑能提供持久的能量，而且营养丰富。\n每当你在旅行事件中获得劳顿值时，你所获得的劳顿值会减少1点。\n此外，当你进行短休时，你和所有团队成员将额外恢复等同于你智慧等级的耐力损失。",
             "屠龙者": "弓箭手巴德的传奇故事激励了河谷城的许多年轻男女，使许多人也开始渴望通过亲手屠杀一头巨兽来证明自己。你也跟之前的许多人一样，经常冥思苦想如何对付各种大型生物，希望有朝一日你也能战胜它们，扬名立万。\n当你与力量为2及以上的生物战斗时，你所有的攻击检定都会获得优势。",
             "矮人之友": "在与巨龙抗争的岁月中，巴德一族与埃瑞博的矮人缔结了坚实的联盟。\n如果你的同盟焦点为一名矮人，采取防御姿态进行战斗的你或你的同盟焦点都能以次要行动执行战斗动作：保护同伴，以另一方为目标。\n此外，在会议的交流阶段，矮人总是视为对你持友好态度。",
-            "箭无虚发": "黑箭能够击落巨龙斯毛格也许是命运的安排，但射出那惊雷般的一击的手臂却无疑蕴含着惊人的力量。在你投掷长矛或拉满弓弦之际，你总能确保自己的手又稳又准，确实无疑地命中要害。\n当你在远程攻击中造成致命一击时，目标的防御检定将为劣势检定。\n会议或旅行一次，你都可以选择在任何单次检定中获得激励。"
+            "箭无虚发": "黑箭能够击落巨龙斯毛格也许是命运的安排，但射出那惊雷般的一击的手臂却无疑蕴含着惊人的力量。在你投掷长矛或拉满弓弦之际，你总能确保自己的手又稳又准，确实无疑地命中要害。\n当你在远程攻击中造成致命一击时，目标的防御检定将为劣势检定。",
+            "崇高命途": "传说中，河谷血脉的后裔生来便注定不凡，这一点，你的国王及其传奇经历已做出了最好的证明。你，是否也继承了吉瑞安一脉的天命？\n使你的耐力上限增加1点。当你第一次受到致命伤——这种伤势通常九死无生——却发生了某些奇迹救你一命，让你尽管身受重伤，却也得以存活，同时你的最大希望值也随即提升1点。至此，你便已完成自身天命（此效果仅可触发一次）。",
+            "鸟类语言": "根据北方的传说所述，河谷人极富智慧，甚至能够理解鸟类的语言，因此鸟类的歌唱能够提前警告他们即将到来的威胁，或者让他们得以察觉敌人防御的弱点。\n你可以使用适当的技能与任何鸟类进行交流（通常为礼仪、说服或歌唱），以得知流言、传递口信等等。\n此外，身处室外时，每次战斗、会议或旅行一次，你都可以选择在任何单次检定中获得激励。"
         },
         "都林一族的矮人": {
             "矮人的战斧啊！": "尽管矮人族的秘密语言犹如远古奇珍而从不外传，但他们的战吼却声名远扬，令他们的宿敌闻风丧胆。\n每次战斗中一次，当你以奋进姿态战斗时，你可以使你的攻击检定成为优势检定，并以次要行动尝试威吓敌人。",
@@ -743,16 +955,20 @@ document.addEventListener('DOMContentLoaded', function() {
             "坚韧如老树根": "大家都说霍比特人吓不倒、杀不死，只要稍微休息片刻，他们就能以惊人的速度复原。你发现自己能从摔伤和擦伤中飞速恢复（尽管伴随着剧烈的疼痛）。\n当你身受重伤且必须通过检定来确定伤势的严重程度时，你可以投掷两个技艺骰而非一个，并取其中较好的结果。此外，在休息期间恢复耐力时，将以你的体魄值的两倍来计算。"
         },
         "布理的人类": {
-            "布理小马": "布理小马与其主人布理人十分相像——与其他中洲地区的同类相比，它们似乎并无特别突出之处，但它们之中的一些个体却展现出非凡的勇气和卓越的记忆力。你获得了一匹异常勇敢且聪明的小马，它会追随你到天涯海角。\n使你的希望上限提升1点。此外，无论你的生活水平如何，你的小马都拥有4点的活力。\n你的小马与你形影不离。若你不得已要与它分开，例如进入地下通道时，你可以选择要它留在当地，或是让它败，如今只有废墟仍标记着它们的边界。然而，布理人却在这当中存续了下来，展现出出人意表的坚韧与生命力。\n使你的耐力上限提升1点。在每个战斗场景结束时，如果你未处于重伤或痛苦状态，你将恢复等同于你的心志值或英勇等级的耐力。",
+            "布理小马": "布理小马与其主人布理人十分相像——与其他中洲地区的同类相比，它们似乎并无特别突出之处，但它们之中的一些个体却展现出非凡的勇气和卓越的记忆力。你获得了一匹异常勇敢且聪明的小马，它会追随你到天涯海角。\n使你的希望上限提升1点。此外，无论你的生活水平如何，你的小马都拥有4点的活力。\n你的小马与你形影不离。若你不得已要与它分开，例如进入地下通道时，你可以选择要它留在当地，或是让它自行寻路回到布理。",
             "血气方刚": "你这辈子都在荒野边缘生活，但在你所经历的岁月中，布理所面临的最大威胁也不过是强盗的侵扰和饥饿狼群的游荡。如今面对来自东方的魔影，你虽不清楚自己这样的普通人能够如何与之抗衡，但你心中坚信，无论需要付出怎样的代价，你都将毫不退缩、与之抗争到底。\n当你在某次检定中选择消耗希望点时，你可以选择同时获得1点魔影点以使该次检定获得激励效果。",
             "友好亲切": "自从踏上冒险之旅，你越来越领悟到，你的族人与陌生人贸易的传统或许能在你的旅途中发挥重要作用。你以礼貌友好的态度待人接物，总能轻易赢得陌生人的好感与信任；同时你也能既保持好奇心又不失分寸，从而从陌生人那里问出许多信息，这使得你能够抓住许多宝贵机会向沿途遇见的各色人等学习。\n你在会议阶段中可尝试的技能检定次数上限额外增加1次。此外，你遇到的人总是视作对你持友好态度。",
             "稀奇好比布理奇闻": "的确，布理人主要关心的是四个村庄的事务，但那些最好奇的居民总是热衷于收集来自远方的消息。你早已学到，倾听旅人们讲述的各种奇闻轶事有时价值连城。\n在每个同盟阶段，你都会从博闻者那里得知一则流言。此外，如果你在布理地区，你的所有洞悉和暗语检定都会获得（1d）。",
-            "吞云吐雾": "你深谙吞吐之道，总是随身携带烟斗与一大袋烟斗草，毕竟吸上一口烟，清明似神仙。\n无论是在冒险阶段还是同盟阶段，当你恢复1点及以上的希望时，你都能额外恢复1点希望。"
+            "吞云吐雾": "你深谙吞吐之道，总是随身携带烟斗与一大袋烟斗草，毕竟吸上一口烟，清明似神仙。\n无论是在冒险阶段还是同盟阶段，当你恢复1点及以上的希望时，你都能额外恢复1点希望。",
+            "坚韧不拔": "自上古时代至今，埃利阿多的孤土上已见证了无数王国的兴盛与衰败，如今只有废墟仍标记着它们的边界。然而，布理人却在这当中存续了下来，展现出出人意表的坚韧与生命力。\n使你的耐力上限提升1点。在每个战斗场景结束时，如果你未处于重伤或痛苦状态，你将恢复等同于你的心志值或英勇等级的耐力。"
         },
         "北方的游民": {
             "游民之韧": "俗话说，只要有踪迹，游民追不腻。你衷心希望这句古训能够应验，因为你的命运注定了你将时常匆忙踏上旅途，不论是为了紧急的送信任务而奔赴遥远他乡，还是永无止境地追猎你的种种宿敌。\n你的耐力上限提升1点。如果你身穿皮甲（没有戴头盔）或没有着甲，且未携带盾牌，你在旅行中将不会获得劳顿点数。",
             "远见卓识": "北方的游民虽然已不如其祖先那般拥普通你曾亲耳听到逝者在孤寂墓穴中的凄凉私语，你也曾亲眼目睹鬼火在鬼影幢幢的山丘上舞动、闪烁。然而，当你的内心有了坚定的意志，世间便罕有事物能动摇你的心志。\n你在所有抵御恐惧影响的魔影检定中获得（1d）的奖励。",
-            "荒野之道": "北方的游民们不停地四处穿梭，猎捕着那些邪恶的生物，坚定地守护着每一条边境线。你们熟知荒野的每一寸土地，正如霍比特人熟悉自己家乡的道路，而这片广袤的土地本身也会向你透露新的流言。\n每当你进行探索、狩猎或旅行检定时，你都可以消耗1点希望来获得魔法成功。此外在旅行阶段中，你总是可以担任多个团队角色。"
+            "荒野之道": "北方的游民们不停地四处穿梭，猎捕着那些邪恶的生物，坚定地守护着每一条边境线。你们熟知荒野的每一寸土地，正如霍比特人熟悉自己家乡的道路，而这片广袤的土地本身也会向你透露新的流言。\n每当你进行探索、狩猎或旅行检定时，你都可以消耗1点希望来获得魔法成功。此外在旅行阶段中，你总是可以担任多个团队角色。",
+            "阿尔诺之裔": "你们族群已经日暮西山，幸存者寥寥可数。然而，对古代国王们的追忆却如不灭的烛火，代代相传。一件承载着失落阿尔诺时代记忆的珍贵古物，被你们家族世代守护，传承至今。而现在，你已被认定有资格，成为这件传奇古物的守护者。\n在博闻者的协助下，你可以参照第八章的规则，创造出一件传世圣物或一件拥有单个附魔奖励和最多两个普通勋绩的著名武器。该物品通常出自努门诺尔人之手，但亦有可能是精灵或矮人的杰作。待你隐退之际，这件物品将作为一件额外的传家宝，传承给你的继承人。",
+            "王者威势": "你的族裔流淌着古代国王的血脉，然而，在王国日渐式微之时，你的族人已学会了如何隐匿踪迹以躲避敌人的戕害。但倘若你选择揭示自己的身世，你那与生俱来的高贵气质必将让你的盟友们疑虑全消。你可以通过高喊那传承已久的战吼、拔出象征荣耀的武器，或展示家族的信物与徽章，来昭示你的身份。\n每场战斗中可触发一次王者威势。当你采取灵活姿态进行战斗时，你可尝试以次要行动进行鼓舞士气。此外，在接下来的一轮中，团队全体成员（包括你在内）的所有的检定都将受到激励。",
+            "意志之力": "你自幼便生活在星星点点地散布着荒凉废墟与孤坟野冢的荒野之中，那里是你的成长之地。你曾亲耳听到逝者在孤寂墓穴中的凄凉私语，你也曾亲眼目睹鬼火在鬼影幢幢的山丘上舞动、闪烁。然而，当你的内心有了坚定的意志，世间便罕有事物能动摇你的心志。\n你在所有抵御恐惧影响的魔影检定中获得（1d）的奖励。"
         }
     };
 
@@ -1301,7 +1517,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
     valourInput.addEventListener('input', () => {
         const count = parseInt(valourInput.value) || 0;
+        
+        // 保存当前已选择的勋绩
+        const currentRewardValues = [];
+        rewardsContainer.querySelectorAll('.reward-select').forEach(select => {
+            currentRewardValues.push(select.value);
+        });
+        
+        // 重新生成勋绩选择器
         generateRewardSelectors(count);
+        
+        // 恢复之前已选择的勋绩
+        const newRewardSelects = rewardsContainer.querySelectorAll('.reward-select');
+        newRewardSelects.forEach((select, index) => {
+            if (currentRewardValues[index]) {
+                select.value = currentRewardValues[index];
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        });
+        
         updateRewardOptions();
     });
 
@@ -1310,7 +1544,25 @@ document.addEventListener('DOMContentLoaded', function() {
     wisdomInput.addEventListener('input', () => {
         const count = parseInt(wisdomInput.value) || 0;
         const currentCulture = heroicCultureSelect.value;
+        
+        // 保存当前已选择的美德
+        const currentVirtueValues = [];
+        document.querySelectorAll('.virtue-select').forEach(select => {
+            currentVirtueValues.push(select.value);
+        });
+        
+        // 重新生成美德选择器
         generateVirtueSelectors(count, currentCulture);
+        
+        // 恢复之前已选择的美德
+        const newVirtueSelects = document.querySelectorAll('.virtue-select');
+        newVirtueSelects.forEach((select, index) => {
+            if (currentVirtueValues[index]) {
+                select.value = currentVirtueValues[index];
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        });
+        
         updateVirtueOptions();
     });
 
