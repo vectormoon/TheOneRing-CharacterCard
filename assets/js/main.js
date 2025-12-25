@@ -164,6 +164,33 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 
+    function applyCultureSelection(selectedCulture, options = {}) {
+        const { clearTraits = true, clearCurrent = true } = options;
+        const data = cultureData[selectedCulture] || cultureData[""];
+        culturalBlessingInput.value = data.blessing.name;
+        culturalBlessingDesc.textContent = data.blessing.description;
+        document.getElementById('char_living_standard').value = data.livingStandard;
+
+        if (clearCurrent) {
+            document.getElementById('current_endurance').value = '';
+            document.getElementById('current_hope').value = '';
+        }
+
+        if (clearTraits) {
+            trait1Select.value = '';
+            trait2Select.value = '';
+        }
+        populateTraitSelectors(data.traits);
+        updateAttributes();
+        updateKingOfMenUI();
+        updateTotalLoad();
+
+        const wisdomInput = document.getElementById('wisdom');
+        const wisdomCount = parseInt(wisdomInput.value) || 0;
+        generateVirtueSelectors(wisdomCount, selectedCulture);
+        updateVirtueOptions();
+    }
+
     // --- KING OF MEN BONUS ---
     function applyKingOfMenBonus(stat) {
         if (kingOfMenBonusAppliedTo) return;
@@ -339,14 +366,13 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    function saveCharacter() {
+    function buildCharacterData() {
         const charData = {};
         document.querySelectorAll('input, textarea, select').forEach(element => {
             const key = element.id || element.name;
             if (key && !element.closest('.gear-table') && !element.closest('.modal-content') && !element.closest('#rewards_container')) {
-                // MODIFIED: Added handling for radio buttons
                 if (element.type === 'radio') {
-                    if(element.checked) charData[key] = element.value;
+                    if (element.checked) charData[key] = element.value;
                 } else if (element.type === 'checkbox') {
                     charData[key] = element.checked;
                 } else {
@@ -354,12 +380,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
-        
-        charData.gameMode = document.querySelector('input[name="game_mode"]:checked').value; // MODIFIED
 
+        charData.gameMode = document.querySelector('input[name="game_mode"]:checked').value;
         charData.rewards = Array.from(rewardsContainer.querySelectorAll('.reward-select')).map(s => s.value);
-        
-        // 保存美德选择器的值
         charData.virtues = Array.from(document.querySelectorAll('.virtue-select')).map(s => s.value);
 
         document.querySelectorAll('.skill-ranks').forEach(container => {
@@ -369,7 +392,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         charData.combatGear = collectTableData('combat_gear_body');
-
         charData.protectiveGear = {};
         document.querySelectorAll('#protective_gear_body tr').forEach(row => {
             const slot = row.id.replace('_slot', '');
@@ -385,108 +407,158 @@ document.addEventListener('DOMContentLoaded', function() {
 
         charData.portraitSrc = document.getElementById('portrait_preview').src;
         charData.kingOfMenBonus = kingOfMenBonusAppliedTo;
-        localStorage.setItem('tor_char_sheet', JSON.stringify(charData));
-        alert('人物卡已保存到浏览器！');
+        return charData;
     }
 
-    function loadCharacter(isSilent = false) {
-        const savedData = localStorage.getItem('tor_char_sheet');
-        if (savedData) {
-            const charData = JSON.parse(savedData);
-            
-            // MODIFIED: Load game mode first
-            if (charData.gameMode) {
-                const modeRadio = document.querySelector(`input[name="game_mode"][value="${charData.gameMode}"]`);
-                if(modeRadio) modeRadio.checked = true;
-            }
-            handleModeChange();
-
-
-            if (kingOfMenBonusAppliedTo) {
-                const oldStatInput = document.getElementById(kingOfMenBonusAppliedTo + '_val');
-                if (oldStatInput) oldStatInput.value = Math.max(0, parseInt(oldStatInput.value) - 1);
-            }
-            kingOfMenBonusAppliedTo = charData.kingOfMenBonus || null;
-
-            document.querySelectorAll('input, textarea, select').forEach(element => {
-                 if (!element.closest('.gear-table') && !element.closest('.modal-content') && !element.closest('#rewards_container')) {
-                    const key = element.id || element.name;
-                    if (charData.hasOwnProperty(key)) {
-                        // MODIFIED: Skip radio buttons as they are handled above
-                        if(element.type === 'radio') return;
-
-                        if (element.type === 'checkbox') { element.checked = charData[key]; }
-                        else { element.value = charData[key]; }
-                    }
-                 }
-            });
-
-            const valor = parseInt(charData.valour) || 0;
-            generateRewardSelectors(valor);
-            const savedRewards = charData.rewards || [];
-            const rewardSelects = rewardsContainer.querySelectorAll('.reward-select');
-            rewardSelects.forEach((select, index) => {
-                if (savedRewards[index]) {
-                    select.value = savedRewards[index];
-                    select.dispatchEvent(new Event('change', { bubbles: true }));
-                }
-            });
-            updateRewardOptions();
-
-            // 加载美德选择器
-            const wisdom = parseInt(charData.wisdom) || 0;
-            const currentCulture = heroicCultureSelect.value;
-            generateVirtueSelectors(wisdom, currentCulture);
-            const savedVirtues = charData.virtues || [];
-            const virtueSelects = document.querySelectorAll('.virtue-select');
-            virtueSelects.forEach((select, index) => {
-                if (savedVirtues[index]) {
-                    select.value = savedVirtues[index];
-                    select.dispatchEvent(new Event('change', { bubbles: true }));
-                }
-            });
-            updateVirtueOptions();
-
-            document.querySelectorAll('.skill-ranks').forEach(container => {
-                const ranks = charData[container.id] || [];
-                container.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = ranks.includes(cb.value); });
-            });
-
-            document.getElementById('combat_gear_body').innerHTML = '';
-            (charData.combatGear || []).forEach(rowData => addCombatGearRow(rowData));
-
-            if (charData.protectiveGear) {
-                for (const slot in charData.protectiveGear) {
-                    const gearData = charData.protectiveGear[slot];
-                    const targetRow = document.getElementById(`${slot}_slot`);
-                    if (targetRow && gearData) {
-                        targetRow.querySelector('input[data-key="name"]').value = gearData.name || '';
-                        targetRow.querySelector('input[data-key="value"]').value = gearData.value || '';
-                        targetRow.querySelector('input[data-key="load"]').value = gearData.load || '';
-                        targetRow.querySelector('input[data-key="notes"]').value = gearData.notes || '';
-                    }
-                }
-            }
-
-            if (charData.portraitSrc) { document.getElementById('portrait_preview').src = charData.portraitSrc; }
-
-            if (heroicCultureSelect.value === '北方的游民' && kingOfMenBonusAppliedTo) {
-                 const statInput = document.getElementById(kingOfMenBonusAppliedTo + '_val');
-                 if (statInput) statInput.value = (parseInt(statInput.value) || 0) + 1;
-            }
-
-            heroicCultureSelect.dispatchEvent(new Event('change'));
-            callingSelect.dispatchEvent(new Event('change'));
-            trait1Select.dispatchEvent(new Event('change'));
-            trait2Select.dispatchEvent(new Event('change'));
-            updateAttributes();
-            updateKingOfMenUI();
-            updateTotalLoad(); // UPDATE TOTAL LOAD ONCE ALL DATA IS LOADED
-
-            if (!isSilent) alert('人物卡数据已读取！');
-        } else {
-            if (!isSilent) alert('未找到已保存的人物卡。');
+    function applyCharacterData(charData, isSilent = false) {
+        if (!charData || typeof charData !== 'object') {
+            if (!isSilent) alert('角色数据格式不正确。');
+            return;
         }
+
+        if (charData.gameMode) {
+            const modeRadio = document.querySelector(`input[name="game_mode"][value="${charData.gameMode}"]`);
+            if (modeRadio) modeRadio.checked = true;
+        }
+        handleModeChange();
+
+        if (kingOfMenBonusAppliedTo) {
+            const oldStatInput = document.getElementById(kingOfMenBonusAppliedTo + '_val');
+            if (oldStatInput) oldStatInput.value = Math.max(0, parseInt(oldStatInput.value) - 1);
+        }
+        kingOfMenBonusAppliedTo = charData.kingOfMenBonus || null;
+
+        document.querySelectorAll('input, textarea, select').forEach(element => {
+            if (!element.closest('.gear-table') && !element.closest('.modal-content') && !element.closest('#rewards_container')) {
+                const key = element.id || element.name;
+                if (Object.prototype.hasOwnProperty.call(charData, key)) {
+                    if (element.type === 'radio') return;
+                    if (element.id === 'trait1_select' || element.id === 'trait2_select') return;
+                    if (element.type === 'checkbox') { element.checked = charData[key]; }
+                    else { element.value = charData[key]; }
+                }
+            }
+        });
+
+        if (charData.heroic_culture) {
+            heroicCultureSelect.value = charData.heroic_culture;
+        }
+        applyCultureSelection(heroicCultureSelect.value, { clearTraits: false, clearCurrent: false });
+
+        if (charData.trait1_select) {
+            trait1Select.value = charData.trait1_select;
+        }
+        if (charData.trait2_select) {
+            trait2Select.value = charData.trait2_select;
+        }
+        updateTraitDescriptionsAndDuplicates();
+
+        const valor = parseInt(charData.valour, 10) || 0;
+        generateRewardSelectors(valor);
+        const savedRewards = charData.rewards || [];
+        const rewardSelects = rewardsContainer.querySelectorAll('.reward-select');
+        rewardSelects.forEach((select, index) => {
+            if (savedRewards[index]) {
+                select.value = savedRewards[index];
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        });
+        updateRewardOptions();
+
+        const savedVirtues = charData.virtues || [];
+        const virtueSelects = document.querySelectorAll('.virtue-select');
+        virtueSelects.forEach((select, index) => {
+            if (savedVirtues[index]) {
+                select.value = savedVirtues[index];
+                select.dispatchEvent(new Event('change', { bubbles: true }));
+            }
+        });
+        updateVirtueOptions();
+
+        document.querySelectorAll('.skill-ranks').forEach(container => {
+            const ranks = charData[container.id] || [];
+            container.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = ranks.includes(cb.value); });
+        });
+
+        document.getElementById('combat_gear_body').innerHTML = '';
+        (charData.combatGear || []).forEach(rowData => addCombatGearRow(rowData));
+
+        if (charData.protectiveGear) {
+            for (const slot in charData.protectiveGear) {
+                const gearData = charData.protectiveGear[slot];
+                const targetRow = document.getElementById(`${slot}_slot`);
+                if (targetRow && gearData) {
+                    targetRow.querySelector('input[data-key="name"]').value = gearData.name || '';
+                    targetRow.querySelector('input[data-key="value"]').value = gearData.value || '';
+                    targetRow.querySelector('input[data-key="load"]').value = gearData.load || '';
+                    targetRow.querySelector('input[data-key="notes"]').value = gearData.notes || '';
+                }
+            }
+        }
+
+        if (charData.portraitSrc) { document.getElementById('portrait_preview').src = charData.portraitSrc; }
+
+        if (heroicCultureSelect.value === '北方的游民' && kingOfMenBonusAppliedTo) {
+            const statInput = document.getElementById(kingOfMenBonusAppliedTo + '_val');
+            if (statInput) statInput.value = (parseInt(statInput.value) || 0) + 1;
+        }
+
+        callingSelect.dispatchEvent(new Event('change'));
+        updateAttributes();
+        updateKingOfMenUI();
+        updateTotalLoad();
+
+        if (!isSilent) alert('角色信息已读取。');
+    }
+
+    function getSafeExportBaseName(charName, heroicCulture) {
+        const rawName = (charName || '角色').toString().trim();
+        const rawCulture = (heroicCulture || '未知文化').toString().trim();
+        const combined = `${rawName}-${rawCulture}`;
+        return combined.replace(/[\\/:*?"<>|]/g, '').replace(/\s+/g, ' ').trim() || '角色-未知文化';
+    }
+
+    function exportCharacter() {
+        const charData = buildCharacterData();
+        const json = JSON.stringify(charData, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        const safeName = getSafeExportBaseName(charData.char_name, charData.heroic_culture);
+        link.href = url;
+        link.download = `${safeName}.json`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        URL.revokeObjectURL(url);
+    }
+
+    function importCharacter() {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json,application/json';
+        input.style.display = 'none';
+        document.body.appendChild(input);
+        input.addEventListener('change', () => {
+            const file = input.files && input.files[0];
+            if (!file) {
+                input.remove();
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    const charData = JSON.parse(reader.result);
+                    applyCharacterData(charData, false);
+                } catch (err) {
+                    alert('读取失败：文件不是有效的JSON。');
+                } finally {
+                    input.remove();
+                }
+            };
+            reader.readAsText(file);
+        }, { once: true });
+        input.click();
     }
 
     // --- POPULATE PRESETS ---
@@ -528,26 +600,7 @@ document.addEventListener('DOMContentLoaded', function() {
     heroicCultureSelect.addEventListener('change', (event) => {
         removeKingOfMenBonus(true);
         const selectedCulture = event.target.value;
-        const data = cultureData[selectedCulture] || cultureData[""];
-        culturalBlessingInput.value = data.blessing.name;
-        culturalBlessingDesc.textContent = data.blessing.description;
-        document.getElementById('char_living_standard').value = data.livingStandard;
-
-        document.getElementById('current_endurance').value = '';
-        document.getElementById('current_hope').value = '';
-
-        trait1Select.value = '';
-        trait2Select.value = '';
-        populateTraitSelectors(data.traits);
-        updateAttributes();
-        updateKingOfMenUI();
-        updateTotalLoad(); // UPDATE TOTAL LOAD ON CULTURE CHANGE
-        
-        // 更新美德选择器以包含特定文化的美德
-        const wisdomInput = document.getElementById('wisdom');
-        const wisdomCount = parseInt(wisdomInput.value) || 0;
-        generateVirtueSelectors(wisdomCount, selectedCulture);
-        updateVirtueOptions();
+        applyCultureSelection(selectedCulture, { clearTraits: true, clearCurrent: true });
     });
 
     callingSelect.addEventListener('change', (event) => {
@@ -769,9 +822,25 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // --- BUTTONS ---
-    document.getElementById('save-btn').addEventListener('click', saveCharacter);
-    document.getElementById('load-btn').addEventListener('click', () => loadCharacter(false));
-    document.getElementById('export-btn').addEventListener('click', () => window.print());
+    document.getElementById('save-btn').addEventListener('click', exportCharacter);
+    document.getElementById('load-btn').addEventListener('click', importCharacter);
+    document.getElementById('export-btn').addEventListener('click', () => {
+        const originalTitle = document.title;
+        const safeName = getSafeExportBaseName(
+            document.getElementById('char_name').value,
+            heroicCultureSelect.value
+        );
+        document.title = safeName;
+        const restoreTitle = () => {
+            document.title = originalTitle;
+            window.removeEventListener('afterprint', restoreTitle);
+        };
+        window.addEventListener('afterprint', restoreTitle);
+        window.print();
+        setTimeout(() => {
+            document.title = originalTitle;
+        }, 1000);
+    });
     document.getElementById('reset-btn').addEventListener('click', () => {
         if (confirm('确定要重置所有数据吗？此操作不可撤销。')) {
             // MODIFIED: Set game mode to normal
@@ -810,7 +879,6 @@ document.addEventListener('DOMContentLoaded', function() {
             heroicCultureSelect.dispatchEvent(new Event('change'));
             callingSelect.dispatchEvent(new Event('change'));
 
-            localStorage.removeItem('tor_char_sheet');
             updateAttributes();
             updateKingOfMenUI();
             updateTotalLoad(); // UPDATE TOTAL LOAD ON RESET
@@ -818,8 +886,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // --- AUTO-LOAD DATA ON PAGE STARTUP ---
-    loadCharacter(true);
     // Call updateAttributes on initial load to set derived values based on defaults
     updateAttributes();
 
