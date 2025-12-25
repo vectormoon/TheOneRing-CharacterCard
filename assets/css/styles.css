@@ -1,0 +1,281 @@
+﻿
+        :root {
+            --main-font: 'Ringbearer', 'Microsoft YaHei', 'SimHei', 'KaiTi', 'STKaiti', 'serif';
+            --border-color: #b7433c;
+            --text-color: #3a2d1d;
+            --background-color: #f7f3e9;
+            --input-underline-color: #d1c5b0;
+        }
+
+        @font-face {
+            font-family: 'Ringbearer';
+            src: url('../fonts/ringbearer.TTF') format('truetype');
+        }
+
+        body {
+            font-family: var(--main-font);
+            background-color: #e0dace;
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .character-sheet {
+            max-width: 1200px;
+            margin: auto;
+            border: 2px solid var(--border-color);
+            padding: 15px;
+            background: #faf0e6;
+            box-shadow: var(--box-shadow);
+        }
+
+        h1, h2, legend {
+            color: var(--border-color);
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 5px;
+            font-weight: bold;
+        }
+        h1 { text-align: center; margin-bottom: 15px; }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 15px;
+        }
+
+        input[type="text"], input[type="number"], textarea, select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #c8a077;
+            background-color: var(--input-bg);
+            border-radius: 4px;
+            font-family: Ringbearer;
+        }
+
+        input[readonly], input.readonly {
+            background-color: #eee;
+            cursor: default;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .header-info {
+            grid-column: span 12;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr); /* 9 columns for info, 3 for portrait */
+            grid-template-rows: repeat(4, 50px); /* Adjusted rows for new diamond boxes */
+            gap: 15px;
+            align-items: start;
+            padding-bottom: 0;
+        }
+
+        .portrait-box {
+            grid-column: 10 / span 3;
+            grid-row: 1 / 6;
+            text-align: center;
+        }
+
+        #portrait_preview {
+            width: 150px;
+            height: 150px;
+            border: 2px solid var(--border-color);
+            background: #fff;
+            object-fit: cover;
+            border-radius: 4px;
+            margin: 0 auto;
+        }
+
+        .portrait-controls {
+            margin-top: 8px;
+        }
+
+        .custom-file-upload {
+            border: 1px solid #8b4513;
+            display: inline-block;
+            padding: 6px 12px;
+            cursor: pointer;
+            background-color: #8b4513;
+            color: white;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .attributes-section, .skills-section, .combat-features-section, .gear-section {
+            display: contents;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-item label {
+            margin-bottom: 4px;
+            font-size: 0.9em;
+        }
+
+        /* --- Grid Placement for Header Info Items --- */
+        .info-item.char-name { grid-column: 1 / span 2; grid-row: 1; }
+        .info-item.heroic-culture { grid-column: 3 / span 2; grid-row: 1; }
+        .info-item.char-age { grid-column: 5 / span 1; grid-row: 1; }
+        .info-item.char-living-standard { grid-column: 6 / span 1; grid-row: 1; }
+        .info-item.game-mode { grid-column: 7 / span 1; grid-row: 1; } /* MODIFIED */
+        .info-item.status-checks { grid-column: 8 / span 2; grid-row: 1; } /* MODIFIED */
+
+
+        .info-item.wound-severity { grid-column: 8 / span 2; grid-row: 2; }
+        .info-item.cultural-blessing { grid-column: 1 / span 2; grid-row: 2 / 4; }
+        .info-item.calling { grid-column: 3 / span 2; grid-row: 2; }
+        .info-item.shadow-path { grid-column: 5 / span 2; grid-row: 2; }
+        .info-item.char-patron { grid-column: 3 / span 2; grid-row: 3; }
+        .info-item.flaw { grid-column: 5 / span 2; grid-row: 3; }
+
+        .info-item.char-treasure { grid-column: 3 / span 1; grid-row: 4; }
+        .info-item.adventure-points { grid-column: 4 / span 1; grid-row: 4; }
+        .info-item.skill-points { grid-column: 5 / span 1; grid-row: 4; }
+        .info-item.fellowship-points { grid-column: 6 / span 1; grid-row: 4; }
+
+        .status-checkbox-group, .game-mode-group { /* MODIFIED */
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .game-mode-group label { /* MODIFIED */
+            margin-bottom: 0;
+        }
+        
+        /* NEW: Container for small diamond boxes in header */
+        .secondary-stats-container {
+            grid-column: 7 / span 4;
+            grid-row: 3 / span 3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding-top: 10px;
+        }
+
+        #personal_traits_section h2 { margin-top: 0; }
+        .description-box { margin-top: 8px; font-size: 0.9em; min-height: 60px; padding: 5px; background: #fff; border: 1px dashed #c8a077; border-radius: 4px; white-space: pre-wrap; }
+        #king_of_men_bonus { margin-top: 8px; padding: 5px; background-color: #fff; border: 1px solid var(--border-color); border-radius: 4px; }
+        #king_of_men_bonus:not(.hidden) { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; }
+        #king_of_men_bonus button { margin: 0px; padding: 0px 2px; font-family: Ringbearer; }
+        .hidden { display: none; }
+
+        /* --- Diamond Attribute Box Styles --- */
+        .diamond-box {
+            border: 2px solid var(--border-color);
+            transform: rotate(45deg);
+            position: relative;
+        }
+        .diamond-content {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-45deg);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .diamond-box .attr-title { position: absolute; font-weight: bold; color: var(--border-color); text-align: center; width: 100%; }
+        .diamond-box .attr-derived { position: absolute; text-align: center; width: 100%; }
+        .diamond-box .attr-tn, .diamond-box .attr-val { position: absolute; text-align: center; }
+        .diamond-box .attr-tn input, .diamond-box .attr-val input { border: 1px solid var(--border-color); text-align: center; padding: 0; background-color: white; }
+
+        /* Large Diamond Box Styles (Main Attributes) */
+        .diamond-box:not(.diamond-box-small) { width: 180px; height: 180px; margin: 25px auto; }
+        .diamond-box:not(.diamond-box-small) .attr-title { top: 12px; font-size: 1.6em; }
+        .diamond-box:not(.diamond-box-small) .attr-derived { bottom: 12px; font-size: 1.2em; }
+        .diamond-box:not(.diamond-box-small) .attr-tn, .diamond-box:not(.diamond-box-small) .attr-val { width: 60px; }
+        .diamond-box:not(.diamond-box-small) .attr-tn { left: 0px; }
+        .diamond-box:not(.diamond-box-small) .attr-val { right: 0px; }
+        .diamond-box:not(.diamond-box-small) .attr-tn label, .diamond-box:not(.diamond-box-small) .attr-val label { font-size: 1.1em; }
+        .diamond-box:not(.diamond-box-small) .attr-tn input, .diamond-box:not(.diamond-box-small) .attr-val input { width: 50px; height: 50px; font-size: 1.5em; }
+
+        /* NEW: Small Diamond Box Styles (Header) */
+        .diamond-box-small { width: 120px; height: 120px; margin: 10px auto; }
+        .diamond-box-small .attr-title { top: 6px; font-size: 1em; }
+        .diamond-box-small .attr-derived { bottom: 23px; font-size: 1.2em; }
+        .diamond-box-small .attr-tn, .diamond-box-small .attr-val { top: 12px; width: 45px; }
+        .diamond-box-small .attr-tn { left: 5px; }
+        .diamond-box-small .attr-val { right: 5px; }
+        .diamond-box-small .attr-tn label, .diamond-box-small .attr-val label { font-size: 1em; }
+        .diamond-box-small .attr-tn input, .diamond-box-small .attr-val input { width: 34px; height: 34px; font-size: 1.2em; }
+        
+        .current-stat-input-diamond { width: 38px !important; padding: 1px !important; text-align: center; font-size: 1em !important; display: inline-block; vertical-align: middle; margin-left: 4px; }
+
+        .skills-column { grid-column: span 4; padding: 10px; }
+        .skills-column h2 { margin-top: 0; text-align: center; }
+
+        /* MODIFIED: Skill Item Layout */
+        .skill-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            gap: 10px;
+        }
+        .specialization-container {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 0.9em;
+        }
+        .specialization-container input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            margin: 0;
+            flex-shrink: 0;
+        }
+        .skill-item > .skill-name-label {
+            flex-grow: 1;
+            margin: 0;
+        }
+
+        .skill-ranks { display: flex; }
+        .skill-ranks input[type="checkbox"] { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; border: 1px solid var(--border-color); margin: 0 2px; cursor: pointer; position: relative; }
+        .skill-ranks input[type="checkbox"]::before { content: ''; position: absolute; top: 50%; left: 50%; width: 14px; height: 14px; background-color: var(--border-color); transform: translate(-50%, -50%) scale(0); transition: transform 0.2s ease-in-out; }
+        .skill-ranks input[type="checkbox"]:checked::before { transform: translate(-50%, -50%) scale(1); }
+        .section-break { grid-column: span 12; border-top: 2px solid var(--border-color); margin-top: 10px; }
+        .combat-proficiencies, .feature-box { grid-column: span 4; padding: 10px; }
+        .feature-box .info-item { margin-top: 10px; }
+        #personal_traits_section { grid-column: span 12; }
+        .traits-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .trait-box { padding: 10px; border: 1px solid #c8a077; border-radius: 4px; background-color: var(--header-bg); }
+        .gear-table { grid-column: span 12; }
+        .gear-table table { width: 100%; border-collapse: collapse; }
+        .gear-table th, .gear-table td { border: 1px solid var(--border-color); padding: 8px; text-align: center; }
+        .gear-table th { background-color: var(--header-bg); }
+        .gear-table input { text-align: center; }
+        .gear-controls { margin-top: 5px; text-align: right; }
+        .gear-controls button, .remove-row-btn, .select-protective-gear-btn, .clear-protective-gear-btn { background-color: #8b4513; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-family: Ringbearer; }
+        .remove-row-btn, .clear-protective-gear-btn { background-color: #c04040; }
+        .buttons-section { grid-column: span 12; text-align: center; padding-top: 20px; }
+        .buttons-section button { padding: 10px 20px; margin: 0 10px; font-family: Ringbearer; font-size: 1em; background-color: var(--border-color); color: white; border: none; border-radius: 5px; cursor: pointer; box-shadow: var(--box-shadow); }
+        .buttons-section button:hover { opacity: 0.9; }
+        .short-input { max-width: 80px; }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; transition: opacity 0.3s ease; }
+        .modal-content { background-color: var(--background-color); padding: 25px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); border: 2px solid var(--border-color); width: 90%; max-width: 500px; }
+        .modal-content h2 { margin-top: 0; text-align: center; }
+        .modal-form-item { margin-bottom: 15px; }
+        .modal-form-item label { display: block; margin-bottom: 5px; }
+        .modal-buttons { text-align: right; margin-top: 20px; }
+        .modal-buttons button { padding: 8px 16px; margin-left: 10px; font-family: Ringbearer; font-size: 1em; background-color: var(--border-color); color: white; border: none; border-radius: 5px; cursor: pointer; }
+        .modal-buttons button[type="button"] { background-color: #a9a9a9; }
+        .modal-overlay.hidden { display: none; }
+        @media (max-width: 992px) { .attributes-section > div, .skills-column, .combat-proficiencies, .feature-box { grid-column: span 12 !important; } .traits-container { grid-template-columns: 1fr; } .header-info { display: flex; flex-wrap: wrap; } .info-item { width: 48%; } .portrait-box { order: -1; width: 100%; margin-bottom: 15px; } .secondary-stats-container { order: 1; width: 100%; } }
+        @media (max-width: 768px) { .points-container { grid-template-columns: 1fr; } }
+        @media print { 
+    /* @page { size: A3;}  */
+}
+    
