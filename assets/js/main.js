@@ -825,6 +825,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('save-btn').addEventListener('click', exportCharacter);
     document.getElementById('load-btn').addEventListener('click', importCharacter);
     document.getElementById('export-btn').addEventListener('click', () => {
+        alert('为保证打印正确，请在打印界面“更多设置”中，将纸张尺寸设置为“A3”，并勾选背景图形。');
         const originalTitle = document.title;
         const safeName = getSafeExportBaseName(
             document.getElementById('char_name').value,

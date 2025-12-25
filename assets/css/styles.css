@@ -22,11 +22,6 @@
             line-height: 1.5;
         }
 
-        @page {
-            size: A3;
-            margin: 0;
-        }
-
         .character-sheet {
             max-width: 1200px;
             margin: auto;
@@ -280,7 +275,8 @@
         .modal-overlay.hidden { display: none; }
         @media (max-width: 992px) { .attributes-section > div, .skills-column, .combat-proficiencies, .feature-box { grid-column: span 12 !important; } .traits-container { grid-template-columns: 1fr; } .header-info { display: flex; flex-wrap: wrap; } .info-item { width: 48%; } .portrait-box { order: -1; width: 100%; margin-bottom: 15px; } .secondary-stats-container { order: 1; width: 100%; } }
         @media (max-width: 768px) { .points-container { grid-template-columns: 1fr; } }
-        @media print { 
-    /* @page { size: A3;}  */
-}
+        @media print {
+            body { padding: 0; }
+            .buttons-section { display: none; }
+        }
     
