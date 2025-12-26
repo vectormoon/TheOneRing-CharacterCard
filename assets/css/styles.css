@@ -117,6 +117,7 @@
         .info-item {
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         .info-item label {
@@ -167,7 +168,30 @@
         }
 
         #personal_traits_section h2 { margin-top: 0; }
-        .description-box { margin-top: 8px; font-size: 0.9em; min-height: 60px; padding: 5px; background: #fff; border: 1px dashed #c8a077; border-radius: 4px; white-space: pre-wrap; }
+        .description-box {
+            position: absolute;
+            left: 0;
+            top: 100%;
+            margin-top: 6px;
+            width: 260px;
+            max-width: 320px;
+            font-size: 0.9em;
+            min-height: 0;
+            padding: 6px 8px;
+            background: #fff;
+            border: 1px dashed #c8a077;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+            display: none;
+            z-index: 20;
+        }
+        .info-item:hover .description-box,
+        .info-item:focus-within .description-box,
+        .trait-box:hover .description-box,
+        .trait-box:focus-within .description-box {
+            display: block;
+        }
         #king_of_men_bonus { margin-top: 8px; padding: 5px; background-color: #fff; border: 1px solid var(--border-color); border-radius: 4px; }
         #king_of_men_bonus:not(.hidden) { display: grid; grid-template-columns: repeat(2, 1fr); gap: 5px; }
         #king_of_men_bonus button { margin: 0px; padding: 0px 2px; font-family: Ringbearer; }
@@ -251,7 +275,7 @@
         .feature-box .info-item { margin-top: 10px; }
         #personal_traits_section { grid-column: span 12; }
         .traits-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-        .trait-box { padding: 10px; border: 1px solid #c8a077; border-radius: 4px; background-color: var(--header-bg); }
+        .trait-box { padding: 10px; border: 1px solid #c8a077; border-radius: 4px; background-color: var(--header-bg); position: relative; }
         .gear-table { grid-column: span 12; }
         .gear-table table { width: 100%; border-collapse: collapse; }
         .gear-table th, .gear-table td { border: 1px solid var(--border-color); padding: 8px; text-align: center; }
