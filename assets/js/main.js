@@ -214,6 +214,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateKingOfMenUI() {
         const bonusContainer = document.getElementById('king_of_men_bonus');
+        if (!bonusContainer) return;
         const isRanger = heroicCultureSelect.value === '北方的游民';
         bonusContainer.classList.toggle('hidden', !isRanger);
 
@@ -396,11 +397,12 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('#protective_gear_body tr').forEach(row => {
             const slot = row.id.replace('_slot', '');
             if (slot) {
+                const notesInput = row.querySelector('input[data-key="notes"]');
                 charData.protectiveGear[slot] = {
                     name: row.querySelector('input[data-key="name"]').value,
                     value: row.querySelector('input[data-key="value"]').value,
                     load: row.querySelector('input[data-key="load"]').value,
-                    notes: row.querySelector('input[data-key="notes"]').value,
+                    notes: notesInput ? notesInput.value : '',
                 };
             }
         });
@@ -488,10 +490,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 const gearData = charData.protectiveGear[slot];
                 const targetRow = document.getElementById(`${slot}_slot`);
                 if (targetRow && gearData) {
+                    const notesInput = targetRow.querySelector('input[data-key="notes"]');
                     targetRow.querySelector('input[data-key="name"]').value = gearData.name || '';
                     targetRow.querySelector('input[data-key="value"]').value = gearData.value || '';
                     targetRow.querySelector('input[data-key="load"]').value = gearData.load || '';
-                    targetRow.querySelector('input[data-key="notes"]').value = gearData.notes || '';
+                    if (notesInput) notesInput.value = gearData.notes || '';
                 }
             }
         }
@@ -708,13 +711,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    document.getElementById('king_of_men_bonus').addEventListener('click', e => {
-        if (e.target.matches('button[data-stat]')) {
-            applyKingOfMenBonus(e.target.dataset.stat);
-        } else if (e.target.matches('#reset_king_bonus')) {
-            removeKingOfMenBonus();
-        }
-    });
+    const kingOfMenBonus = document.getElementById('king_of_men_bonus');
+    if (kingOfMenBonus) {
+        kingOfMenBonus.addEventListener('click', e => {
+            if (e.target.matches('button[data-stat]')) {
+                applyKingOfMenBonus(e.target.dataset.stat);
+            } else if (e.target.matches('#reset_king_bonus')) {
+                removeKingOfMenBonus();
+            }
+        });
+    }
 
     // --- MODAL LISTENERS ---
     // Combat Gear
@@ -754,36 +760,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Protective Gear
     document.getElementById('protective_gear_body').addEventListener('click', (e) => {
-        const target = e.target;
-        if (target.classList.contains('select-protective-gear-btn')) {
-            currentProtectiveSlot = target.dataset.slot;
-            protectiveGearForm.reset();
+        const row = e.target.closest('tr');
+        if (!row) return;
+        const slot = row.id ? row.id.replace('_slot', '') : '';
+        if (!slot) return;
 
-            protectivePresetSelect.innerHTML = '<option value="">--自定义或选择一项--</option>';
-            const filteredPresets = protectiveGearPresets.filter(gear => {
-                const type = gear.type.toLowerCase();
-                if (currentProtectiveSlot === 'armor' && (type.includes('甲') || type.includes('衣'))) return true;
-                if (currentProtectiveSlot === 'helmet' && type.includes('头')) return true;
-                if (currentProtectiveSlot === 'shield' && type.includes('盾')) return true;
-                return false;
-            });
-            filteredPresets.forEach(gear => {
-                const option = document.createElement('option');
-                option.value = gear.name;
-                option.textContent = gear.name;
-                protectivePresetSelect.appendChild(option);
-            });
+        currentProtectiveSlot = slot;
+        protectiveGearForm.reset();
 
-            protectiveGearModal.classList.remove('hidden');
-        } else if (target.classList.contains('clear-protective-gear-btn')) {
-            const row = target.closest('tr');
-            if (row) {
-                row.querySelectorAll('input[data-key]').forEach(input => {
-                    input.value = '';
-                });
-                updateTotalLoad(); // UPDATE TOTAL LOAD ON CLEAR
-            }
-        }
+        protectivePresetSelect.innerHTML = '<option value="">--自定义或选择一项--</option>';
+        const filteredPresets = protectiveGearPresets.filter(gear => {
+            const type = gear.type.toLowerCase();
+            if (currentProtectiveSlot === 'armor' && (type.includes('甲') || type.includes('衣'))) return true;
+            if (currentProtectiveSlot === 'helmet' && type.includes('头')) return true;
+            if (currentProtectiveSlot === 'shield' && type.includes('盾')) return true;
+            return false;
+        });
+        filteredPresets.forEach(gear => {
+            const option = document.createElement('option');
+            option.value = gear.name;
+            option.textContent = gear.name;
+            protectivePresetSelect.appendChild(option);
+        });
+
+        protectiveGearModal.classList.remove('hidden');
     });
 
     protectiveGearForm.addEventListener('submit', (e) => {
@@ -797,10 +797,11 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         const targetRow = document.getElementById(`${currentProtectiveSlot}_slot`);
         if (targetRow) {
+            const notesInput = targetRow.querySelector('input[data-key="notes"]');
             targetRow.querySelector('input[data-key="name"]').value = gearData.name;
             targetRow.querySelector('input[data-key="value"]').value = gearData.value;
             targetRow.querySelector('input[data-key="load"]').value = gearData.load;
-            targetRow.querySelector('input[data-key="notes"]').value = gearData.notes;
+            if (notesInput) notesInput.value = gearData.notes;
         }
         protectiveGearModal.classList.add('hidden');
         currentProtectiveSlot = null;
