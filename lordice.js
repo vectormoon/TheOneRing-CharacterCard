@@ -63,9 +63,12 @@ function parseLorCommand(cmdArgs) {
 
 function buildLorResponse(d12Rolls, d6Rolls, mode) {
     const d6Sum = d6Rolls.reduce((total, value) => total + value, 0);
-    const d12Value = Array.isArray(d12Rolls)
-        ? (mode === 'dis' ? Math.min(...d12Rolls) : Math.max(...d12Rolls))
-        : d12Rolls;
+    const normalizedD12 = Array.isArray(d12Rolls)
+        ? d12Rolls.map((value) => normalizeD12(value))
+        : normalizeD12(d12Rolls);
+    const d12Value = Array.isArray(normalizedD12)
+        ? (mode === 'dis' ? Math.min(...normalizedD12) : Math.max(...normalizedD12))
+        : normalizedD12;
     const total = d12Value + d6Sum;
     const d6Text = formatDiceList('d6', d6Rolls);
     const parts = [];
@@ -108,9 +111,9 @@ cmdLor.solve = (ctx, msg, cmdArgs) => {
         return seal.ext.newCmdExecuteResult(false);
     }
 
-    let d12Roll = normalizeD12(rollDie(12));
+    let d12Roll = rollDie(12);
     if (parsed.mode === 'adv' || parsed.mode === 'dis') {
-        d12Roll = [normalizeD12(rollDie(12)), normalizeD12(rollDie(12))];
+        d12Roll = [rollDie(12), rollDie(12)];
     }
 
     const d6Rolls = [];
