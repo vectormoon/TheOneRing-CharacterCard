@@ -22,6 +22,10 @@ function rollDie(sides) {
     return Math.floor(Math.random() * sides) + 1;
 }
 
+function normalizeD12(value) {
+    return value === 11 ? 0 : value;
+}
+
 function formatDiceList(label, rolls) {
     if (rolls.length === 0) {
         return '';
@@ -84,6 +88,7 @@ cmdLor.name = 'lor';
 cmdLor.help = `.lor [N] // roll 1d12, optionally add Nd6 (supports .lor3 shorthand)
 .lor[N]adv // advantage: roll 2d12 take highest, add Nd6 (N defaults to 0)
 .lor[N]dis // disadvantage: roll 2d12 take lowest, add Nd6 (N defaults to 0)
+Note: d12 roll of 11 counts as 0.
 Examples:
   .lor
   .lor 3
@@ -103,9 +108,9 @@ cmdLor.solve = (ctx, msg, cmdArgs) => {
         return seal.ext.newCmdExecuteResult(false);
     }
 
-    let d12Roll = rollDie(12);
+    let d12Roll = normalizeD12(rollDie(12));
     if (parsed.mode === 'adv' || parsed.mode === 'dis') {
-        d12Roll = [rollDie(12), rollDie(12)];
+        d12Roll = [normalizeD12(rollDie(12)), normalizeD12(rollDie(12))];
     }
 
     const d6Rolls = [];
