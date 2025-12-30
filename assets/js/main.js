@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let kingOfMenBonusAppliedTo = null;
     let currentProtectiveSlot = null;
     let baseTN = 20; // MODIFIED: Added baseTN for game mode
+    let isRestoring = false;
+    const autoSaveKey = 'tor_character_autosave';
 
     // --- ELEMENTS ---
     const bodyVal = document.getElementById('body_val'),
@@ -214,6 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateKingOfMenUI() {
         const bonusContainer = document.getElementById('king_of_men_bonus');
+        if (!bonusContainer) return;
         const isRanger = heroicCultureSelect.value === '北方的游民';
         bonusContainer.classList.toggle('hidden', !isRanger);
 
@@ -260,14 +263,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const infoItem = document.createElement('div');
             infoItem.className = 'info-item';
 
-            const label = document.createElement('label');
-            label.setAttribute('for', `reward_select_${i}`);
-            label.textContent = `勋绩 ${i}`;
-
             const select = document.createElement('select');
             select.id = `reward_select_${i}`;
             select.className = 'reward-select';
             select.dataset.descId = `reward_desc_${i}`;
+            select.setAttribute('aria-label', `勋绩 ${i}`);
 
             // Populate options
             const rewardNames = { "": "--请选择勋绩--", "贴身": "贴身 (护甲或头盔)", "精工": "精工 (护甲, 头盔或盾牌)", "致命": "致命 (武器)", "深化": "深化 (武器)", "利刃": "利刃 (武器)", "加固": "加固 (盾牌)" };
@@ -282,7 +282,6 @@ document.addEventListener('DOMContentLoaded', function() {
             descBox.id = `reward_desc_${i}`;
             descBox.className = 'description-box';
 
-            infoItem.appendChild(label);
             infoItem.appendChild(select);
             infoItem.appendChild(descBox);
             rewardsContainer.appendChild(infoItem);
@@ -305,14 +304,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const infoItem = document.createElement('div');
             infoItem.className = 'info-item';
 
-            const label = document.createElement('label');
-            label.setAttribute('for', `virtue_select_${i}`);
-            label.textContent = `美德 ${i}`;
-
             const select = document.createElement('select');
             select.id = `virtue_select_${i}`;
             select.className = 'virtue-select';
             select.dataset.descId = `virtue_desc_${i}`;
+            select.setAttribute('aria-label', `美德 ${i}`);
 
             // Populate options
             const option = document.createElement('option');
@@ -331,7 +327,6 @@ document.addEventListener('DOMContentLoaded', function() {
             descBox.id = `virtue_desc_${i}`;
             descBox.className = 'description-box';
 
-            infoItem.appendChild(label);
             infoItem.appendChild(select);
             infoItem.appendChild(descBox);
             virtuesContainer.appendChild(infoItem);
@@ -381,7 +376,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        charData.gameMode = document.querySelector('input[name="game_mode"]:checked').value;
+        const gameModeChecked = document.querySelector('input[name="game_mode"]:checked');
+        if (gameModeChecked) charData.gameMode = gameModeChecked.value;
         charData.rewards = Array.from(rewardsContainer.querySelectorAll('.reward-select')).map(s => s.value);
         charData.virtues = Array.from(document.querySelectorAll('.virtue-select')).map(s => s.value);
 
@@ -396,11 +392,12 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('#protective_gear_body tr').forEach(row => {
             const slot = row.id.replace('_slot', '');
             if (slot) {
+                const notesInput = row.querySelector('input[data-key="notes"]');
                 charData.protectiveGear[slot] = {
                     name: row.querySelector('input[data-key="name"]').value,
                     value: row.querySelector('input[data-key="value"]').value,
                     load: row.querySelector('input[data-key="load"]').value,
-                    notes: row.querySelector('input[data-key="notes"]').value,
+                    notes: notesInput ? notesInput.value : '',
                 };
             }
         });
@@ -415,6 +412,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!isSilent) alert('角色数据格式不正确。');
             return;
         }
+        isRestoring = true;
 
         if (charData.gameMode) {
             const modeRadio = document.querySelector(`input[name="game_mode"][value="${charData.gameMode}"]`);
@@ -488,10 +486,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 const gearData = charData.protectiveGear[slot];
                 const targetRow = document.getElementById(`${slot}_slot`);
                 if (targetRow && gearData) {
+                    const notesInput = targetRow.querySelector('input[data-key="notes"]');
                     targetRow.querySelector('input[data-key="name"]').value = gearData.name || '';
                     targetRow.querySelector('input[data-key="value"]').value = gearData.value || '';
                     targetRow.querySelector('input[data-key="load"]').value = gearData.load || '';
-                    targetRow.querySelector('input[data-key="notes"]').value = gearData.notes || '';
+                    if (notesInput) notesInput.value = gearData.notes || '';
                 }
             }
         }
@@ -508,6 +507,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateKingOfMenUI();
         updateTotalLoad();
 
+        isRestoring = false;
         if (!isSilent) alert('角色信息已读取。');
     }
 
@@ -531,6 +531,27 @@ document.addEventListener('DOMContentLoaded', function() {
         link.click();
         link.remove();
         URL.revokeObjectURL(url);
+    }
+
+    function saveToLocalStorage() {
+        if (isRestoring) return;
+        try {
+            const charData = buildCharacterData();
+            localStorage.setItem(autoSaveKey, JSON.stringify(charData));
+        } catch (err) {
+            // Ignore storage failures (private mode or quota).
+        }
+    }
+
+    function loadFromLocalStorage() {
+        try {
+            const saved = localStorage.getItem(autoSaveKey);
+            if (!saved) return;
+            const charData = JSON.parse(saved);
+            applyCharacterData(charData, true);
+        } catch (err) {
+            // Ignore invalid autosave data.
+        }
     }
 
     function importCharacter() {
@@ -708,13 +729,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    document.getElementById('king_of_men_bonus').addEventListener('click', e => {
-        if (e.target.matches('button[data-stat]')) {
-            applyKingOfMenBonus(e.target.dataset.stat);
-        } else if (e.target.matches('#reset_king_bonus')) {
-            removeKingOfMenBonus();
-        }
-    });
+    const kingOfMenBonus = document.getElementById('king_of_men_bonus');
+    if (kingOfMenBonus) {
+        kingOfMenBonus.addEventListener('click', e => {
+            if (e.target.matches('button[data-stat]')) {
+                applyKingOfMenBonus(e.target.dataset.stat);
+            } else if (e.target.matches('#reset_king_bonus')) {
+                removeKingOfMenBonus();
+            }
+        });
+    }
 
     // --- MODAL LISTENERS ---
     // Combat Gear
@@ -754,36 +778,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Protective Gear
     document.getElementById('protective_gear_body').addEventListener('click', (e) => {
-        const target = e.target;
-        if (target.classList.contains('select-protective-gear-btn')) {
-            currentProtectiveSlot = target.dataset.slot;
-            protectiveGearForm.reset();
+        const row = e.target.closest('tr');
+        if (!row) return;
+        const slot = row.id ? row.id.replace('_slot', '') : '';
+        if (!slot) return;
 
-            protectivePresetSelect.innerHTML = '<option value="">--自定义或选择一项--</option>';
-            const filteredPresets = protectiveGearPresets.filter(gear => {
-                const type = gear.type.toLowerCase();
-                if (currentProtectiveSlot === 'armor' && (type.includes('甲') || type.includes('衣'))) return true;
-                if (currentProtectiveSlot === 'helmet' && type.includes('头')) return true;
-                if (currentProtectiveSlot === 'shield' && type.includes('盾')) return true;
-                return false;
-            });
-            filteredPresets.forEach(gear => {
-                const option = document.createElement('option');
-                option.value = gear.name;
-                option.textContent = gear.name;
-                protectivePresetSelect.appendChild(option);
-            });
+        currentProtectiveSlot = slot;
+        protectiveGearForm.reset();
 
-            protectiveGearModal.classList.remove('hidden');
-        } else if (target.classList.contains('clear-protective-gear-btn')) {
-            const row = target.closest('tr');
-            if (row) {
-                row.querySelectorAll('input[data-key]').forEach(input => {
-                    input.value = '';
-                });
-                updateTotalLoad(); // UPDATE TOTAL LOAD ON CLEAR
-            }
-        }
+        protectivePresetSelect.innerHTML = '<option value="">--自定义或选择一项--</option>';
+        const filteredPresets = protectiveGearPresets.filter(gear => {
+            const type = gear.type.toLowerCase();
+            if (currentProtectiveSlot === 'armor' && (type.includes('甲') || type.includes('衣'))) return true;
+            if (currentProtectiveSlot === 'helmet' && type.includes('头')) return true;
+            if (currentProtectiveSlot === 'shield' && type.includes('盾')) return true;
+            return false;
+        });
+        filteredPresets.forEach(gear => {
+            const option = document.createElement('option');
+            option.value = gear.name;
+            option.textContent = gear.name;
+            protectivePresetSelect.appendChild(option);
+        });
+
+        protectiveGearModal.classList.remove('hidden');
     });
 
     protectiveGearForm.addEventListener('submit', (e) => {
@@ -797,10 +815,11 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         const targetRow = document.getElementById(`${currentProtectiveSlot}_slot`);
         if (targetRow) {
+            const notesInput = targetRow.querySelector('input[data-key="notes"]');
             targetRow.querySelector('input[data-key="name"]').value = gearData.name;
             targetRow.querySelector('input[data-key="value"]').value = gearData.value;
             targetRow.querySelector('input[data-key="load"]').value = gearData.load;
-            targetRow.querySelector('input[data-key="notes"]').value = gearData.notes;
+            if (notesInput) notesInput.value = gearData.notes;
         }
         protectiveGearModal.classList.add('hidden');
         currentProtectiveSlot = null;
@@ -825,7 +844,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('save-btn').addEventListener('click', exportCharacter);
     document.getElementById('load-btn').addEventListener('click', importCharacter);
     document.getElementById('export-btn').addEventListener('click', () => {
-        alert('为保证打印正确，请在打印界面“更多设置”中，将纸张尺寸设置为“A3”，并勾选背景图形。');
         const originalTitle = document.title;
         const safeName = getSafeExportBaseName(
             document.getElementById('char_name').value,
@@ -845,7 +863,8 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('reset-btn').addEventListener('click', () => {
         if (confirm('确定要重置所有数据吗？此操作不可撤销。')) {
             // MODIFIED: Set game mode to normal
-            document.getElementById('mode_normal').checked = true;
+            const modeNormal = document.getElementById('mode_normal');
+            if (modeNormal) modeNormal.checked = true;
             baseTN = 20;
 
             const defaultZeroIds = ['body_val', 'heart_val', 'wits_val', 'fatigue_val', 'shadow_scar_val', 'valour', 'wisdom'];
@@ -883,11 +902,27 @@ document.addEventListener('DOMContentLoaded', function() {
             updateAttributes();
             updateKingOfMenUI();
             updateTotalLoad(); // UPDATE TOTAL LOAD ON RESET
+            localStorage.removeItem(autoSaveKey);
             alert('人物卡已重置。');
         }
     });
 
     // Call updateAttributes on initial load to set derived values based on defaults
     updateAttributes();
+    loadFromLocalStorage();
+
+    let autoSaveTimer = null;
+    document.querySelector('.character-sheet').addEventListener('input', () => {
+        clearTimeout(autoSaveTimer);
+        autoSaveTimer = setTimeout(saveToLocalStorage, 200);
+    });
+    document.querySelector('.character-sheet').addEventListener('change', () => {
+        clearTimeout(autoSaveTimer);
+        autoSaveTimer = setTimeout(saveToLocalStorage, 200);
+    });
+    window.addEventListener('beforeunload', saveToLocalStorage);
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') saveToLocalStorage();
+    });
 
 });
