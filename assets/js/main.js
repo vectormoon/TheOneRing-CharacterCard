@@ -261,14 +261,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const infoItem = document.createElement('div');
             infoItem.className = 'info-item';
 
-            const label = document.createElement('label');
-            label.setAttribute('for', `reward_select_${i}`);
-            label.textContent = `勋绩 ${i}`;
-
             const select = document.createElement('select');
             select.id = `reward_select_${i}`;
             select.className = 'reward-select';
             select.dataset.descId = `reward_desc_${i}`;
+            select.setAttribute('aria-label', `勋绩 ${i}`);
 
             // Populate options
             const rewardNames = { "": "--请选择勋绩--", "贴身": "贴身 (护甲或头盔)", "精工": "精工 (护甲, 头盔或盾牌)", "致命": "致命 (武器)", "深化": "深化 (武器)", "利刃": "利刃 (武器)", "加固": "加固 (盾牌)" };
@@ -283,7 +280,6 @@ document.addEventListener('DOMContentLoaded', function() {
             descBox.id = `reward_desc_${i}`;
             descBox.className = 'description-box';
 
-            infoItem.appendChild(label);
             infoItem.appendChild(select);
             infoItem.appendChild(descBox);
             rewardsContainer.appendChild(infoItem);
@@ -306,14 +302,11 @@ document.addEventListener('DOMContentLoaded', function() {
             const infoItem = document.createElement('div');
             infoItem.className = 'info-item';
 
-            const label = document.createElement('label');
-            label.setAttribute('for', `virtue_select_${i}`);
-            label.textContent = `美德 ${i}`;
-
             const select = document.createElement('select');
             select.id = `virtue_select_${i}`;
             select.className = 'virtue-select';
             select.dataset.descId = `virtue_desc_${i}`;
+            select.setAttribute('aria-label', `美德 ${i}`);
 
             // Populate options
             const option = document.createElement('option');
@@ -332,7 +325,6 @@ document.addEventListener('DOMContentLoaded', function() {
             descBox.id = `virtue_desc_${i}`;
             descBox.className = 'description-box';
 
-            infoItem.appendChild(label);
             infoItem.appendChild(select);
             infoItem.appendChild(descBox);
             virtuesContainer.appendChild(infoItem);
@@ -826,7 +818,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('save-btn').addEventListener('click', exportCharacter);
     document.getElementById('load-btn').addEventListener('click', importCharacter);
     document.getElementById('export-btn').addEventListener('click', () => {
-        alert('为保证打印正确，请在打印界面“更多设置”中，将纸张尺寸设置为“A3”，并勾选背景图形。');
         const originalTitle = document.title;
         const safeName = getSafeExportBaseName(
             document.getElementById('char_name').value,

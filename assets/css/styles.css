@@ -40,13 +40,6 @@
             right: 15px;
             bottom: 15px;
             left: 15px;
-            background-image:
-                linear-gradient(to right,
-                    transparent calc(75% - 1px),
-                    var(--border-color) calc(75% - 1px),
-                    var(--border-color) calc(75% + 1px),
-                    transparent calc(75% + 1px)
-                );
             opacity: 0.25;
             pointer-events: none;
             z-index: 0;
@@ -316,7 +309,8 @@
         .diamond-box:not(.diamond-box-small) .attr-tn { left: 0px; }
         .diamond-box:not(.diamond-box-small) .attr-val { right: 0px; }
         .diamond-box:not(.diamond-box-small) .attr-tn label, .diamond-box:not(.diamond-box-small) .attr-val label { font-size: 1em; }
-        .diamond-box:not(.diamond-box-small) .attr-tn input, .diamond-box:not(.diamond-box-small) .attr-val input { width: 28px; height: 28px; font-size: 0.95em; }
+        .diamond-box:not(.diamond-box-small) .attr-tn, .diamond-box:not(.diamond-box-small) .attr-val { width: 46px; }
+        .diamond-box:not(.diamond-box-small) .attr-tn input, .diamond-box:not(.diamond-box-small) .attr-val input { width: 34px; height: 34px; font-size: 1em; }
 
         /* NEW: Small Diamond Box Styles (Header) */
         .diamond-box-small { width: 105px; height: 105px; margin: 6px auto; }
@@ -368,14 +362,52 @@
         .combat-proficiencies h2, .feature-box h2 { font-size: 1.05em; }
         .combat-features-section > div { margin-top: -50px; }
         .feature-box .info-item { margin-top: 10px; }
+        .feature-title-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .feature-title-text { flex: 1 1 auto; }
+        .feature-title-input {
+            display: flex;
+            align-items: center;
+        }
+        .feature-title-input input[type="number"] {
+            width: 60px;
+            padding: 2px 6px;
+            height: 24px;
+        }
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+            white-space: nowrap;
+        }
         #rewards_container, #virtues_container {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 8px 10px;
         }
+        #rewards_container .description-box,
+        #virtues_container .description-box {
+            font-size: 1em;
+        }
         #rewards_container .info-item,
         #virtues_container .info-item {
             margin-top: 0;
+        }
+        #rewards_container select,
+        #virtues_container select {
+            font-size: 0.85em;
+        }
+        #rewards_container label {
+            font-size: 0.65em;
         }
         #personal_traits_section { display: block; }
         .trait-box { display: flex; align-items: center; gap: 6px; padding: 0; border: none; background-color: transparent; position: relative; }
@@ -386,13 +418,16 @@
         .gear-table-wide { grid-column: span 2; }
         .protective-gear-table { margin-top: -30px; }
         .gear-table table { width: 100%; border-collapse: collapse; }
-        .gear-table th, .gear-table td { border: 1px solid var(--border-color); padding: 8px; text-align: center; }
+        .gear-table th, .gear-table td { border: 1px solid var(--border-color); padding: 8px; text-align: center; font-size: 0.85em; }
         .gear-table th { background-color: var(--header-bg); }
-        .gear-table input { text-align: center; }
+        .gear-table input { text-align: center; font-size: 0.95em; }
         .protective-gear-table tbody tr { cursor: pointer; }
         .gear-controls { margin-top: 5px; text-align: right; }
         .gear-controls button, .remove-row-btn, .select-protective-gear-btn, .clear-protective-gear-btn { background-color: #8b4513; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-family: Ringbearer; }
         .remove-row-btn, .clear-protective-gear-btn { background-color: #c04040; }
+        #combat_gear_body .remove-row-btn { font-size: 9px; }
+        #combat_gear_body input[data-key="load"] { max-width: 50px; }
+        #combat_gear_body input[data-key="notes"] { max-width: 140px; }
         .buttons-section { grid-column: span 3; text-align: center; padding-top: 20px; }
         .buttons-section button { padding: 10px 20px; margin: 0 10px; font-family: Ringbearer; font-size: 1em; background-color: var(--border-color); color: white; border: none; border-radius: 5px; cursor: pointer; box-shadow: var(--box-shadow); }
         .buttons-section button:hover { opacity: 0.9; }
