@@ -4,6 +4,8 @@ document.addEventListener('DOMContentLoaded', function() {
     let kingOfMenBonusAppliedTo = null;
     let currentProtectiveSlot = null;
     let baseTN = 20; // MODIFIED: Added baseTN for game mode
+    let isRestoring = false;
+    const autoSaveKey = 'tor_character_autosave';
 
     // --- ELEMENTS ---
     const bodyVal = document.getElementById('body_val'),
@@ -374,7 +376,8 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        charData.gameMode = document.querySelector('input[name="game_mode"]:checked').value;
+        const gameModeChecked = document.querySelector('input[name="game_mode"]:checked');
+        if (gameModeChecked) charData.gameMode = gameModeChecked.value;
         charData.rewards = Array.from(rewardsContainer.querySelectorAll('.reward-select')).map(s => s.value);
         charData.virtues = Array.from(document.querySelectorAll('.virtue-select')).map(s => s.value);
 
@@ -409,6 +412,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!isSilent) alert('角色数据格式不正确。');
             return;
         }
+        isRestoring = true;
 
         if (charData.gameMode) {
             const modeRadio = document.querySelector(`input[name="game_mode"][value="${charData.gameMode}"]`);
@@ -503,6 +507,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateKingOfMenUI();
         updateTotalLoad();
 
+        isRestoring = false;
         if (!isSilent) alert('角色信息已读取。');
     }
 
@@ -526,6 +531,27 @@ document.addEventListener('DOMContentLoaded', function() {
         link.click();
         link.remove();
         URL.revokeObjectURL(url);
+    }
+
+    function saveToLocalStorage() {
+        if (isRestoring) return;
+        try {
+            const charData = buildCharacterData();
+            localStorage.setItem(autoSaveKey, JSON.stringify(charData));
+        } catch (err) {
+            // Ignore storage failures (private mode or quota).
+        }
+    }
+
+    function loadFromLocalStorage() {
+        try {
+            const saved = localStorage.getItem(autoSaveKey);
+            if (!saved) return;
+            const charData = JSON.parse(saved);
+            applyCharacterData(charData, true);
+        } catch (err) {
+            // Ignore invalid autosave data.
+        }
     }
 
     function importCharacter() {
@@ -837,7 +863,8 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('reset-btn').addEventListener('click', () => {
         if (confirm('确定要重置所有数据吗？此操作不可撤销。')) {
             // MODIFIED: Set game mode to normal
-            document.getElementById('mode_normal').checked = true;
+            const modeNormal = document.getElementById('mode_normal');
+            if (modeNormal) modeNormal.checked = true;
             baseTN = 20;
 
             const defaultZeroIds = ['body_val', 'heart_val', 'wits_val', 'fatigue_val', 'shadow_scar_val', 'valour', 'wisdom'];
@@ -875,11 +902,27 @@ document.addEventListener('DOMContentLoaded', function() {
             updateAttributes();
             updateKingOfMenUI();
             updateTotalLoad(); // UPDATE TOTAL LOAD ON RESET
+            localStorage.removeItem(autoSaveKey);
             alert('人物卡已重置。');
         }
     });
 
     // Call updateAttributes on initial load to set derived values based on defaults
     updateAttributes();
+    loadFromLocalStorage();
+
+    let autoSaveTimer = null;
+    document.querySelector('.character-sheet').addEventListener('input', () => {
+        clearTimeout(autoSaveTimer);
+        autoSaveTimer = setTimeout(saveToLocalStorage, 200);
+    });
+    document.querySelector('.character-sheet').addEventListener('change', () => {
+        clearTimeout(autoSaveTimer);
+        autoSaveTimer = setTimeout(saveToLocalStorage, 200);
+    });
+    window.addEventListener('beforeunload', saveToLocalStorage);
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') saveToLocalStorage();
+    });
 
 });

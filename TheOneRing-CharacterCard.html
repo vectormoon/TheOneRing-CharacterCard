@@ -182,7 +182,7 @@
         <div class="gear-section">
             <div class="gear-table gear-table-wide">
                 <table>
-                    <thead><tr><th>作战装备</th><th>伤害值</th><th>攻伤值</th><th>负重</th><th>备注</th><th>操作</th></tr></thead>
+                    <thead><tr><th>作战装备</th><th>伤害值</th><th>致伤值</th><th>负重</th><th>备注</th><th>操作</th></tr></thead>
                     <tbody id="combat_gear_body"></tbody>
                 </table>
                 <div class="gear-controls">
@@ -211,13 +211,6 @@
                     </tbody>
                 </table>
             </div>
-        </div>
-
-        <div class="buttons-section">
-            <button id="save-btn">导出角色信息</button>
-            <button id="export-btn">导出为PDF/打印</button>
-            <button id="load-btn">读取角色信息</button>
-            <button id="reset-btn">重置人物卡</button>
         </div>
 
         </div>
@@ -271,6 +264,13 @@
                 </div>
             </div>
         </div>
+
+        <div class="buttons-section">
+            <button id="save-btn">导出角色信息</button>
+            <button id="export-btn">导出为PDF/打印</button>
+            <button id="load-btn">读取角色信息</button>
+            <button id="reset-btn">重置人物卡</button>
+        </div>
     </div>
 </div>
 
@@ -294,7 +294,7 @@
                 <input type="text" id="modal_combat_damage">
             </div>
             <div class="modal-form-item">
-                <label for="modal_combat_injury">攻伤值</label>
+                <label for="modal_combat_injury">致伤值</label>
                 <input type="text" id="modal_combat_injury">
             </div>
             <div class="modal-form-item">
