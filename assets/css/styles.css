@@ -65,7 +65,7 @@
             width: 100%;
             padding: 8px;
             box-sizing: border-box;
-            border: 1px solid #c8a077;
+            border: 2px solid #c8a077;
             background-color: var(--input-bg);
             border-radius: 4px;
             font-family: Ringbearer;
@@ -187,6 +187,45 @@
             height: 28px;
             line-height: 1.1;
         }
+        .header-info .info-item.char-name input[type="text"] {
+            flex: 0 0 180px;
+            width: 180px;
+            margin-left: auto;
+        }
+        .header-info .info-item.heroic-culture select {
+            flex: 0 0 180px;
+            width: 180px;
+            margin-left: auto;
+        }
+        .header-info .info-item.cultural-blessing input[type="text"] {
+            flex: 0 0 180px;
+            width: 180px;
+            margin-left: auto;
+        }
+        .header-info .info-item.calling select,
+        .header-info .info-item.char-age input[type="text"],
+        .header-info .info-item.char-patron input[type="text"] {
+            flex: 0 0 85px;
+            width: 85px;
+            margin-left: auto;
+        }
+        .header-info .info-item.char-treasure input[type="text"],
+        .header-info .info-item.char-living-standard input[type="text"],
+        .header-info .info-item.shadow-path input[type="text"] {
+            flex: 0 0 70px;
+            width: 70px;
+            margin-left: auto;
+        }
+        .header-info .trait-box select,
+        .header-info .trait-box input[type="text"] {
+            flex: 0 0 180px;
+            width: 180px;
+            margin-left: auto;
+        }
+        .header-info .trait-box label {
+            font-size: 0.9em;
+            line-height: 1;
+        }
 
         .header-info .info-row {
             display: flex;
@@ -213,7 +252,7 @@
         .header-right .header-extra { display: flex; flex-direction: column; gap: 10px; align-items: stretch; flex: 1 1 auto; min-height: 0; }
         .header-right .travel-gear-item { flex-direction: column; align-items: stretch; flex: 1 1 auto; min-height: 0; }
         .header-right .travel-gear-item label { margin-bottom: 6px; font-size: 1em; border-bottom: 2px solid var(--border-color); padding-bottom: 4px; }
-        .header-right .travel-gear-item textarea { min-height: 180px; height: calc(100% - 50px); }
+        .header-right .travel-gear-item textarea { min-height: 180px; height: calc(100% - 50px); resize: none; }
         .header-info .attributes-section > div { grid-row: 4; }
 
         .gear-section {
@@ -315,14 +354,22 @@
         /* NEW: Small Diamond Box Styles (Header) */
         .diamond-box-small { width: 105px; height: 105px; margin: 6px auto; }
         .diamond-box-small .attr-title { top: 6px; font-size: 0.95em; }
-        .diamond-box-small .attr-derived { bottom: 20px; font-size: 1.05em; }
+        .diamond-box-small .attr-derived { bottom: 6px; font-size: 1.05em; line-height: 1.2; }
         .diamond-box-small .attr-tn, .diamond-box-small .attr-val { top: 10px; width: 40px; }
         .diamond-box-small .attr-tn { left: 4px; }
         .diamond-box-small .attr-val { right: 4px; }
         .diamond-box-small .attr-tn label, .diamond-box-small .attr-val label { font-size: 0.95em; }
         .diamond-box-small .attr-tn input, .diamond-box-small .attr-val input { width: 30px; height: 30px; font-size: 1.1em; }
         
-        .current-stat-input-diamond { width: 38px !important; padding: 1px !important; text-align: center; font-size: 1em !important; display: inline-block; vertical-align: middle; margin-left: 4px; }
+        .current-stat-input-diamond { width: 38px !important; padding: 1px !important; text-align: center; font-size: 1em !important; display: inline-block; vertical-align: middle; margin-left: 4px; margin-top: 2px; }
+        .secondary-stats-container #load_val,
+        .secondary-stats-container #fatigue_val,
+        .secondary-stats-container #shadow_val,
+        .secondary-stats-container #shadow_scar_val {
+            width: 38px;
+            height: 38px;
+            font-size: 1.1em;
+        }
 
         .skills-column { grid-column: span 1; padding: 10px; }
         .skills-section .skills-column { margin-top: -10px; }
