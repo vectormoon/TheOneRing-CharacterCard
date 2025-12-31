@@ -221,9 +221,13 @@
             flex: 0 0 180px;
             width: 180px;
             margin-left: auto;
+            height: 34px;
+            padding: 1px 6px;
+            font-size: 0.95em;
+            line-height: 1.2;
         }
         .header-info .trait-box label {
-            font-size: 0.9em;
+            font-size: 0.85em;
             line-height: 1;
         }
 
@@ -241,8 +245,15 @@
         .identity-group .info-item { grid-column: 1; }
         .info-item.cultural-blessing { align-items: center; flex-wrap: nowrap; }
         .second-column-group { grid-column: 2; grid-row: 1 / span 3; display: grid; gap: 10px; }
-        .header-info #personal_traits_section { display: contents; }
-        .header-info #personal_traits_section .trait-box { grid-column: 3; }
+        .header-info #personal_traits_section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-auto-rows: minmax(28px, auto);
+            gap: 2px 8px;
+            grid-column: 3;
+            grid-row: 1 / span 3;
+        }
+        .header-info #personal_traits_section .trait-box { grid-column: 1 / -1; }
         .header-info #personal_traits_section .trait1-item { grid-row: 1; }
         .header-info #personal_traits_section .trait2-item { grid-row: 2; }
         .header-info #personal_traits_section .trait3-item { grid-row: 3; }
@@ -456,7 +467,7 @@
         #rewards_container label {
             font-size: 0.65em;
         }
-        #personal_traits_section { display: block; }
+        #personal_traits_section { display: grid; }
         .trait-box { display: flex; align-items: center; gap: 6px; padding: 0; border: none; background-color: transparent; position: relative; }
         .trait-box label { margin-bottom: 0; white-space: nowrap; }
         .trait-box select,
