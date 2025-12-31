@@ -43,6 +43,148 @@ document.addEventListener('DOMContentLoaded', function() {
           protectivePresetSelect = document.getElementById('modal_protective_preset');
 
     // --- DATA MAPPINGS ---
+    const skillRankContainers = [
+        'skill_awe',
+        'skill_athletics',
+        'skill_awareness',
+        'skill_hunting',
+        'skill_song',
+        'skill_craft',
+        'skill_enhearten',
+        'skill_travel',
+        'skill_insight',
+        'skill_healing',
+        'skill_courtesy',
+        'skill_battle',
+        'skill_persuade',
+        'skill_stealth',
+        'skill_search',
+        'skill_explore',
+        'skill_riddle',
+        'skill_lore'
+    ];
+    const cultureSkillRanks = {
+        "巴德一族的人类": {
+            skill_awe: 1,
+            skill_enhearten: 2,
+            skill_persuade: 3,
+            skill_athletics: 1,
+            skill_travel: 1,
+            skill_stealth: 0,
+            skill_awareness: 0,
+            skill_insight: 2,
+            skill_search: 1,
+            skill_hunting: 2,
+            skill_healing: 0,
+            skill_explore: 1,
+            skill_song: 1,
+            skill_courtesy: 2,
+            skill_riddle: 0,
+            skill_craft: 1,
+            skill_battle: 2,
+            skill_lore: 1
+        },
+        "都林一族的矮人": {
+            skill_awe: 2,
+            skill_enhearten: 0,
+            skill_persuade: 0,
+            skill_athletics: 1,
+            skill_travel: 3,
+            skill_stealth: 0,
+            skill_awareness: 0,
+            skill_insight: 0,
+            skill_search: 3,
+            skill_hunting: 0,
+            skill_healing: 0,
+            skill_explore: 2,
+            skill_song: 1,
+            skill_courtesy: 1,
+            skill_riddle: 2,
+            skill_craft: 2,
+            skill_battle: 1,
+            skill_lore: 1
+        },
+        "林顿的精灵": {
+            skill_awe: 2,
+            skill_enhearten: 1,
+            skill_persuade: 0,
+            skill_athletics: 2,
+            skill_travel: 0,
+            skill_stealth: 3,
+            skill_awareness: 2,
+            skill_insight: 0,
+            skill_search: 0,
+            skill_hunting: 0,
+            skill_healing: 1,
+            skill_explore: 0,
+            skill_song: 2,
+            skill_courtesy: 0,
+            skill_riddle: 0,
+            skill_craft: 2,
+            skill_battle: 0,
+            skill_lore: 3
+        },
+        "夏尔的霍比特人": {
+            skill_awe: 0,
+            skill_enhearten: 0,
+            skill_persuade: 2,
+            skill_athletics: 0,
+            skill_travel: 0,
+            skill_stealth: 3,
+            skill_awareness: 2,
+            skill_insight: 2,
+            skill_search: 0,
+            skill_hunting: 0,
+            skill_healing: 1,
+            skill_explore: 0,
+            skill_song: 2,
+            skill_courtesy: 2,
+            skill_riddle: 3,
+            skill_craft: 1,
+            skill_battle: 0,
+            skill_lore: 0
+        },
+        "布理的人类": {
+            skill_awe: 0,
+            skill_enhearten: 2,
+            skill_persuade: 2,
+            skill_athletics: 1,
+            skill_travel: 1,
+            skill_stealth: 1,
+            skill_awareness: 1,
+            skill_insight: 2,
+            skill_search: 1,
+            skill_hunting: 1,
+            skill_healing: 0,
+            skill_explore: 1,
+            skill_song: 1,
+            skill_courtesy: 3,
+            skill_riddle: 2,
+            skill_craft: 2,
+            skill_battle: 0,
+            skill_lore: 0
+        },
+        "北方的游民": {
+            skill_awe: 1,
+            skill_enhearten: 0,
+            skill_persuade: 0,
+            skill_athletics: 2,
+            skill_travel: 2,
+            skill_stealth: 2,
+            skill_awareness: 2,
+            skill_insight: 0,
+            skill_search: 1,
+            skill_hunting: 2,
+            skill_healing: 2,
+            skill_explore: 2,
+            skill_song: 0,
+            skill_courtesy: 0,
+            skill_riddle: 0,
+            skill_craft: 0,
+            skill_battle: 2,
+            skill_lore: 2
+        }
+    };
 
     // --- HELPER FUNCTIONS ---
     function handleRankClick(event) {
@@ -69,6 +211,24 @@ document.addEventListener('DOMContentLoaded', function() {
             container.appendChild(checkbox);
         }
         container.addEventListener('click', handleRankClick);
+    }
+    function setSkillRanks(containerId, rank) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        const checkboxes = Array.from(container.querySelectorAll('input[type="checkbox"]'));
+        const targetRank = Math.max(0, Math.min(rank, checkboxes.length));
+        checkboxes.forEach((checkbox, index) => {
+            checkbox.checked = index < targetRank;
+        });
+    }
+    function applyCultureSkillRanks(selectedCulture) {
+        if (isRestoring) return;
+        const ranks = cultureSkillRanks[selectedCulture];
+        if (!ranks) return;
+        skillRankContainers.forEach(containerId => {
+            const rank = Object.prototype.hasOwnProperty.call(ranks, containerId) ? ranks[containerId] : 0;
+            setSkillRanks(containerId, rank);
+        });
     }
     // MODIFIED: Function to handle game mode change
     function handleModeChange() {
@@ -186,6 +346,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateAttributes();
         updateKingOfMenUI();
         updateTotalLoad();
+        applyCultureSkillRanks(selectedCulture);
 
         const wisdomInput = document.getElementById('wisdom');
         const wisdomCount = parseInt(wisdomInput.value) || 0;
