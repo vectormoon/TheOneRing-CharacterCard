@@ -591,6 +591,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- DYNAMIC TABLE FUNCTIONS ---
+    function syncCombatGearTooltips(row) {
+        const targets = [
+            row.querySelector('input[data-key="injury"]'),
+            row.querySelector('input[data-key="notes"]')
+        ];
+        targets.forEach(input => {
+            if (!input) return;
+            const value = input.value.trim();
+            if (value) {
+                input.title = value;
+            } else {
+                input.removeAttribute('title');
+            }
+        });
+    }
+
     function addCombatGearRow(data = {}) {
         const tableBody = document.getElementById('combat_gear_body');
         const newRow = tableBody.insertRow();
@@ -602,6 +618,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <td><input type="text" data-key="notes" value="${data.notes || ''}" class="readonly" readonly></td>
             <td><button type="button" class="remove-row-btn">移除</button></td>
         `;
+        syncCombatGearTooltips(newRow);
     }
 
     // --- SAVE / LOAD ---
