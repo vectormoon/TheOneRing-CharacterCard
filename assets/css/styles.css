@@ -499,6 +499,33 @@
         .modal-buttons button { padding: 8px 16px; margin-left: 10px; font-family: Ringbearer; font-size: 1em; background-color: var(--border-color); color: white; border: none; border-radius: 5px; cursor: pointer; }
         .modal-buttons button[type="button"] { background-color: #a9a9a9; }
         .modal-overlay.hidden { display: none; }
+        .portrait-crop-modal { max-width: 560px; }
+        .portrait-crop-area { display: flex; justify-content: center; margin: 10px 0 15px; }
+        .portrait-crop-frame {
+            width: 220px;
+            height: 220px;
+            border: 2px dashed var(--border-color);
+            background: #fff;
+            position: relative;
+            overflow: hidden;
+            cursor: grab;
+            touch-action: none;
+        }
+        .portrait-crop-frame:active { cursor: grabbing; }
+        #portrait_crop_image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-origin: top left;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+        .portrait-crop-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            justify-content: center;
+        }
         @media (max-width: 992px) { .attributes-section > div, .skills-column, .combat-proficiencies, .feature-box { grid-column: span 3 !important; } .header-info { display: flex; flex-wrap: wrap; } .info-item { width: 48%; } .portrait-box { order: -1; width: 100%; margin-bottom: 15px; } .secondary-stats-container { order: 1; width: 100%; } }
         @media (max-width: 768px) { .points-container { grid-template-columns: 1fr; } }
         @media print {
