@@ -16,4 +16,11 @@
 
 **角色信息的导入：** 通过```TheOneRing-CharacterCard.html```文件最底部的**读取角色信息**按钮上传角色信息文件加载人物数据； 
 
+## 海豹骰指令
+[文件位置](https://github.com/vectormoon/TheOneRing-CharacterCard/blob/main/sealdice/lordice.js)
 
+指令详情：
+- .lor: d12骰
+- .lor[number]: number对应技能数字，如.lor3=d12+3d6
+- .lor[number]adv: 优势骰，如：.lor3adv
+- .lor[number]dis: 劣势骰，如：.lor3dis
