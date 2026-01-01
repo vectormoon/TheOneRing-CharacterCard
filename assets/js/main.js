@@ -42,6 +42,28 @@ document.addEventListener('DOMContentLoaded', function() {
           cancelProtectiveGearBtn = document.getElementById('cancel_protective_gear_btn'),
           protectivePresetSelect = document.getElementById('modal_protective_preset');
 
+    // Portrait Crop Modal Elements
+    const portraitCropModal = document.getElementById('portraitCropModal'),
+          portraitCropFrame = document.getElementById('portrait_crop_frame'),
+          portraitCropImage = document.getElementById('portrait_crop_image'),
+          portraitZoomInput = document.getElementById('portrait_zoom'),
+          portraitCropConfirm = document.getElementById('portrait_crop_confirm'),
+          portraitCropCancel = document.getElementById('portrait_crop_cancel'),
+          portraitUploadInput = document.getElementById('portrait_upload'),
+          portraitPreview = document.getElementById('portrait_preview');
+
+    const portraitCropState = {
+        scale: 1,
+        minScale: 1,
+        offsetX: 0,
+        offsetY: 0,
+        dragging: false,
+        dragStartX: 0,
+        dragStartY: 0,
+        startOffsetX: 0,
+        startOffsetY: 0
+    };
+
     // --- DATA MAPPINGS ---
     const skillRankContainers = [
         'skill_awe',
@@ -354,6 +376,80 @@ document.addEventListener('DOMContentLoaded', function() {
         updateVirtueOptions();
     }
 
+    // --- PORTRAIT CROP ---
+    function openPortraitCropModal(dataUrl) {
+        portraitCropImage.src = dataUrl;
+        portraitCropModal.classList.remove('hidden');
+    }
+
+    function getPortraitFrameSize() {
+        const rect = portraitCropFrame.getBoundingClientRect();
+        return { width: rect.width, height: rect.height };
+    }
+
+    function clampPortraitOffsets() {
+        const frame = getPortraitFrameSize();
+        const imgWidth = portraitCropImage.naturalWidth * portraitCropState.scale;
+        const imgHeight = portraitCropImage.naturalHeight * portraitCropState.scale;
+        const minX = frame.width - imgWidth;
+        const minY = frame.height - imgHeight;
+        portraitCropState.offsetX = Math.min(0, Math.max(minX, portraitCropState.offsetX));
+        portraitCropState.offsetY = Math.min(0, Math.max(minY, portraitCropState.offsetY));
+    }
+
+    function applyPortraitTransform() {
+        portraitCropImage.style.transform = `translate(${portraitCropState.offsetX}px, ${portraitCropState.offsetY}px) scale(${portraitCropState.scale})`;
+    }
+
+    function initializePortraitCrop() {
+        const frame = getPortraitFrameSize();
+        const scaleX = frame.width / portraitCropImage.naturalWidth;
+        const scaleY = frame.height / portraitCropImage.naturalHeight;
+        portraitCropState.minScale = Math.max(scaleX, scaleY);
+        portraitCropState.scale = portraitCropState.minScale;
+        portraitCropState.offsetX = (frame.width - portraitCropImage.naturalWidth * portraitCropState.scale) / 2;
+        portraitCropState.offsetY = (frame.height - portraitCropImage.naturalHeight * portraitCropState.scale) / 2;
+
+        portraitZoomInput.min = portraitCropState.minScale.toFixed(2);
+        portraitZoomInput.max = (portraitCropState.minScale * 3).toFixed(2);
+        portraitZoomInput.value = portraitCropState.scale.toFixed(2);
+        applyPortraitTransform();
+    }
+
+    function closePortraitCropModal() {
+        portraitCropState.dragging = false;
+        portraitCropModal.classList.add('hidden');
+        portraitCropImage.removeAttribute('src');
+        portraitUploadInput.value = '';
+    }
+
+    function confirmPortraitCrop() {
+        const frame = getPortraitFrameSize();
+        const sourceX = Math.max(0, -portraitCropState.offsetX / portraitCropState.scale);
+        const sourceY = Math.max(0, -portraitCropState.offsetY / portraitCropState.scale);
+        const sourceW = frame.width / portraitCropState.scale;
+        const sourceH = frame.height / portraitCropState.scale;
+        const outputSize = 300;
+        const canvas = document.createElement('canvas');
+        canvas.width = outputSize;
+        canvas.height = outputSize;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(
+            portraitCropImage,
+            sourceX,
+            sourceY,
+            sourceW,
+            sourceH,
+            0,
+            0,
+            outputSize,
+            outputSize
+        );
+        portraitPreview.src = canvas.toDataURL('image/png');
+        saveToLocalStorage();
+        closePortraitCropModal();
+    }
+
     // --- KING OF MEN BONUS ---
     function applyKingOfMenBonus(stat) {
         if (kingOfMenBonusAppliedTo) return;
@@ -495,6 +591,22 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // --- DYNAMIC TABLE FUNCTIONS ---
+    function syncCombatGearTooltips(row) {
+        const targets = [
+            row.querySelector('input[data-key="injury"]'),
+            row.querySelector('input[data-key="notes"]')
+        ];
+        targets.forEach(input => {
+            if (!input) return;
+            const value = input.value.trim();
+            if (value) {
+                input.title = value;
+            } else {
+                input.removeAttribute('title');
+            }
+        });
+    }
+
     function addCombatGearRow(data = {}) {
         const tableBody = document.getElementById('combat_gear_body');
         const newRow = tableBody.insertRow();
@@ -506,6 +618,7 @@ document.addEventListener('DOMContentLoaded', function() {
             <td><input type="text" data-key="notes" value="${data.notes || ''}" class="readonly" readonly></td>
             <td><button type="button" class="remove-row-btn">移除</button></td>
         `;
+        syncCombatGearTooltips(newRow);
     }
 
     // --- SAVE / LOAD ---
@@ -881,13 +994,56 @@ document.addEventListener('DOMContentLoaded', function() {
     trait1Select.addEventListener('change', updateTraitDescriptionsAndDuplicates);
     trait2Select.addEventListener('change', updateTraitDescriptionsAndDuplicates);
 
-    document.getElementById('portrait_upload').addEventListener('change', function(event) {
+    portraitUploadInput.addEventListener('change', function(event) {
         const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = e => document.getElementById('portrait_preview').src = e.target.result;
-            reader.readAsDataURL(file);
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = e => openPortraitCropModal(e.target.result);
+        reader.readAsDataURL(file);
+    });
+
+    portraitCropImage.addEventListener('load', initializePortraitCrop);
+    portraitZoomInput.addEventListener('input', () => {
+        portraitCropState.scale = parseFloat(portraitZoomInput.value) || portraitCropState.minScale;
+        clampPortraitOffsets();
+        applyPortraitTransform();
+    });
+
+    portraitCropFrame.addEventListener('pointerdown', (e) => {
+        if (!portraitCropImage.src) return;
+        portraitCropState.dragging = true;
+        portraitCropState.dragStartX = e.clientX;
+        portraitCropState.dragStartY = e.clientY;
+        portraitCropState.startOffsetX = portraitCropState.offsetX;
+        portraitCropState.startOffsetY = portraitCropState.offsetY;
+        portraitCropFrame.setPointerCapture(e.pointerId);
+    });
+
+    portraitCropFrame.addEventListener('pointermove', (e) => {
+        if (!portraitCropState.dragging) return;
+        const deltaX = e.clientX - portraitCropState.dragStartX;
+        const deltaY = e.clientY - portraitCropState.dragStartY;
+        portraitCropState.offsetX = portraitCropState.startOffsetX + deltaX;
+        portraitCropState.offsetY = portraitCropState.startOffsetY + deltaY;
+        clampPortraitOffsets();
+        applyPortraitTransform();
+    });
+
+    portraitCropFrame.addEventListener('pointerup', (e) => {
+        portraitCropState.dragging = false;
+        if (portraitCropFrame.hasPointerCapture(e.pointerId)) {
+            portraitCropFrame.releasePointerCapture(e.pointerId);
         }
+    });
+
+    portraitCropFrame.addEventListener('pointercancel', () => {
+        portraitCropState.dragging = false;
+    });
+
+    portraitCropConfirm.addEventListener('click', confirmPortraitCrop);
+    portraitCropCancel.addEventListener('click', closePortraitCropModal);
+    portraitCropModal.addEventListener('click', (e) => {
+        if (e.target === portraitCropModal) closePortraitCropModal();
     });
 
     const kingOfMenBonus = document.getElementById('king_of_men_bonus');

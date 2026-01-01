@@ -348,6 +348,25 @@
     </div>
 </div>
 
+<div id="portraitCropModal" class="modal-overlay hidden">
+    <div class="modal-content portrait-crop-modal">
+        <h2>裁剪头像</h2>
+        <div class="portrait-crop-area">
+            <div class="portrait-crop-frame" id="portrait_crop_frame">
+                <img id="portrait_crop_image" alt="头像裁剪预览">
+            </div>
+        </div>
+        <div class="portrait-crop-controls">
+            <label for="portrait_zoom">缩放</label>
+            <input type="range" id="portrait_zoom" min="1" max="3" step="0.01" value="1">
+        </div>
+        <div class="modal-buttons">
+            <button type="button" id="portrait_crop_confirm">保存</button>
+            <button type="button" id="portrait_crop_cancel">取消</button>
+        </div>
+    </div>
+</div>
+
 
     <script src="assets/js/data/traits.js" defer></script>
     <script src="assets/js/data/cultures.js" defer></script>
