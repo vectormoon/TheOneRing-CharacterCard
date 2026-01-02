@@ -382,7 +382,7 @@
             font-size: 1.1em;
         }
 
-        .skills-column { grid-column: span 1; padding: 10px; }
+        .skills-column { grid-column: span 1; padding: 10px; position: relative; z-index: 2; }
         .skills-section .skills-column { margin-top: -10px; }
         .skills-column h2 { margin-top: 0; text-align: center; }
 
