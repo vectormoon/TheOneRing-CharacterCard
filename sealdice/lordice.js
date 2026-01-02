@@ -121,9 +121,10 @@ cmdLor.solve = (ctx, msg, cmdArgs) => {
         d6Rolls.push(rollDie(6));
     }
 
+    const userName = seal.format(ctx, '{$t玩家}');
     let response;
     response = buildLorResponse(d12Roll, d6Rolls, parsed.mode);
-    seal.replyToSender(ctx, msg, response);
+    seal.replyToSender(ctx, msg, `${userName} ${response}`);
     return seal.ext.newCmdExecuteResult(true);
 };
 
