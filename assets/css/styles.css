@@ -263,7 +263,7 @@
         .header-right .header-extra { display: flex; flex-direction: column; gap: 10px; align-items: stretch; flex: 1 1 auto; min-height: 0; }
         .header-right .travel-gear-item { flex-direction: column; align-items: stretch; flex: 1 1 auto; min-height: 0; }
         .header-right .travel-gear-item label { margin-bottom: 6px; font-size: 1em; border-bottom: 2px solid var(--border-color); padding-bottom: 4px; }
-        .header-right .travel-gear-item textarea { min-height: 180px; height: calc(100% - 50px); resize: none; }
+        .header-right .travel-gear-item textarea { min-height: 115px; height: calc(100% - 50px); resize: none; }
         .header-info .attributes-section > div { grid-row: 4; }
 
         .gear-section {
@@ -279,9 +279,19 @@
             gap: 10px;
             align-items: center;
             flex-wrap: wrap;
+            justify-content: center;
         }
         .game-mode-group label { /* MODIFIED */
             margin-bottom: 0;
+        }
+
+        .header-right .info-item.status-checks,
+        .header-right .info-item.game-mode {
+            text-align: center;
+        }
+        .header-right .info-item.status-checks > label,
+        .header-right .info-item.game-mode > label {
+            font-weight: bold;
         }
         
         /* NEW: Container for small diamond boxes in header */
@@ -418,7 +428,7 @@
         .section-break { grid-column: span 3; border-top: 2px solid var(--border-color); margin-top: 10px; }
         .combat-proficiencies, .feature-box { grid-column: span 1; padding: 10px; font-size: 0.95em; margin-top: 10px; }
         .combat-proficiencies h2, .feature-box h2 { font-size: 1.05em; }
-        .combat-features-section > div { margin-top: -50px; }
+        .combat-features-section > div { margin-top: -40px; }
         .feature-box .info-item { margin-top: 10px; }
         .feature-title-bar {
             display: flex;
