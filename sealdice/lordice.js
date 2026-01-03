@@ -93,10 +93,14 @@ function buildLorResponse(d12Rolls, d6Rolls, mode, normalizer, label) {
 
     if (d6Text) {
         parts.push(d6Text);
+    } else {
+        parts.push('d6=0 (0)');
     }
-    parts.push(`\n技艺骰->${skillDieCount}`);
-    parts.push(`\ntotal=${total}`);
-    return `${label} roll:\n${parts.join('; ')}`;
+    parts.push('-------------------');
+    parts.push(`技艺骰：${skillDieCount}`);
+    parts.push(`总点数：${total}`);
+    parts.push('-------------------');
+    return `${label}：\n${parts.join('\n')}`;
 }
 
 const cmdLor = seal.ext.newCmdItemInfo();
@@ -136,7 +140,7 @@ cmdLor.solve = (ctx, msg, cmdArgs) => {
 
     const userName = seal.format(ctx, '{$t玩家}');
     let response;
-    response = buildLorResponse(d12Roll, d6Rolls, parsed.mode, normalizeD12Lor, 'LOR');
+    response = buildLorResponse(d12Roll, d6Rolls, parsed.mode, normalizeD12Lor, '冒险者进行检定');
     seal.replyToSender(ctx, msg, `${userName} ${response}`);
     return seal.ext.newCmdExecuteResult(true);
 };
@@ -193,7 +197,7 @@ cmdLorm.solve = (ctx, msg, cmdArgs) => {
 
     const userName = seal.format(ctx, '{$t玩家}');
     let response;
-    response = buildLorResponse(d12Roll, d6Rolls, parsed.mode, normalizeD12Lorm, 'LORM');
+    response = buildLorResponse(d12Roll, d6Rolls, parsed.mode, normalizeD12Lorm, '博闻者进行检定');
     seal.replyToSender(ctx, msg, `${userName} ${response}`);
     return seal.ext.newCmdExecuteResult(true);
 };
