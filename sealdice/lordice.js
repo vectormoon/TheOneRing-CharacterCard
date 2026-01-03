@@ -97,7 +97,7 @@ function buildLorResponse(d12Rolls, d6Rolls, mode, normalizer, label) {
         parts.push('d6=0 (0)');
     }
     parts.push('-------------------');
-    parts.push(`技艺骰：${skillDieCount}`);
+    parts.push(`成功骰：${skillDieCount}`);
     parts.push(`总点数：${total}`);
     parts.push('-------------------');
     return `${label}：\n${parts.join('\n')}`;
