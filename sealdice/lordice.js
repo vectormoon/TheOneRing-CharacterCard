@@ -3,6 +3,7 @@
 // @author       waddleming
 // @version      1.0.0
 // @description  Simple .lor dice command: d12 or d12 + Nd6.
+// @timestamp    1767427200
 // @license      MIT
 // ==/UserScript==
 
@@ -22,8 +23,18 @@ function rollDie(sides) {
     return Math.floor(Math.random() * sides) + 1;
 }
 
-function normalizeD12(value) {
+function normalizeD12Lor(value) {
     return value === 11 ? 0 : value;
+}
+
+function normalizeD12Lorm(value) {
+    if (value === 11) {
+        return 12;
+    }
+    if (value === 12) {
+        return 0;
+    }
+    return value;
 }
 
 function formatDiceList(label, rolls) {
@@ -34,9 +45,9 @@ function formatDiceList(label, rolls) {
     return `${label}=${rolls.join('+')} (${sum})`;
 }
 
-function parseLorCommand(cmdArgs) {
+function parseLorCommand(cmdArgs, prefix) {
     const commandName = (cmdArgs.command || '').toLowerCase();
-    const advDisMatch = commandName.match(/^lor(\d+)?(adv|dis)$/i);
+    const advDisMatch = commandName.match(new RegExp(`^${prefix}(\\d+)?(adv|dis)$`, 'i'));
     if (advDisMatch) {
         return {
             count: advDisMatch[1] ? parseInt(advDisMatch[1], 10) : 0,
@@ -44,7 +55,7 @@ function parseLorCommand(cmdArgs) {
         };
     }
 
-    const suffixMatch = commandName.match(/^lor(\d+)$/i);
+    const suffixMatch = commandName.match(new RegExp(`^${prefix}(\\d+)$`, 'i'));
     if (suffixMatch) {
         return { count: parseInt(suffixMatch[1], 10), mode: 'normal' };
     }
@@ -61,11 +72,12 @@ function parseLorCommand(cmdArgs) {
     return null;
 }
 
-function buildLorResponse(d12Rolls, d6Rolls, mode) {
+function buildLorResponse(d12Rolls, d6Rolls, mode, normalizer, label) {
     const d6Sum = d6Rolls.reduce((total, value) => total + value, 0);
+    const skillDieCount = d6Rolls.filter((value) => value === 6).length;
     const normalizedD12 = Array.isArray(d12Rolls)
-        ? d12Rolls.map((value) => normalizeD12(value))
-        : normalizeD12(d12Rolls);
+        ? d12Rolls.map((value) => normalizer(value))
+        : normalizer(d12Rolls);
     const d12Value = Array.isArray(normalizedD12)
         ? (mode === 'dis' ? Math.min(...normalizedD12) : Math.max(...normalizedD12))
         : normalizedD12;
@@ -82,8 +94,9 @@ function buildLorResponse(d12Rolls, d6Rolls, mode) {
     if (d6Text) {
         parts.push(d6Text);
     }
+    parts.push(`\n技艺骰->${skillDieCount}`);
     parts.push(`\ntotal=${total}`);
-    return `LOR roll:\n${parts.join('; ')}`;
+    return `${label} roll:\n${parts.join('; ')}`;
 }
 
 const cmdLor = seal.ext.newCmdItemInfo();
@@ -99,7 +112,7 @@ Examples:
   .lor3adv
   .lor2dis`;
 cmdLor.solve = (ctx, msg, cmdArgs) => {
-    const parsed = parseLorCommand(cmdArgs);
+    const parsed = parseLorCommand(cmdArgs, 'lor');
     if (!parsed) {
         const result = seal.ext.newCmdExecuteResult(false);
         result.showHelp = true;
@@ -123,7 +136,7 @@ cmdLor.solve = (ctx, msg, cmdArgs) => {
 
     const userName = seal.format(ctx, '{$t玩家}');
     let response;
-    response = buildLorResponse(d12Roll, d6Rolls, parsed.mode);
+    response = buildLorResponse(d12Roll, d6Rolls, parsed.mode, normalizeD12Lor, 'LOR');
     seal.replyToSender(ctx, msg, `${userName} ${response}`);
     return seal.ext.newCmdExecuteResult(true);
 };
@@ -141,4 +154,61 @@ lorExt.cmdMap['lordis'] = cmdLor;
 for (let i = 1; i <= MAX_D6_COUNT; i++) {
     lorExt.cmdMap[`lor${i}adv`] = cmdLor;
     lorExt.cmdMap[`lor${i}dis`] = cmdLor;
+}
+
+const cmdLorm = seal.ext.newCmdItemInfo();
+cmdLorm.name = 'lorm';
+cmdLorm.help = `.lorm [N] // roll 1d12, optionally add Nd6 (supports .lorm3 shorthand)
+.lorm[N]adv // advantage: roll 2d12 take highest, add Nd6 (N defaults to 0)
+.lorm[N]dis // disadvantage: roll 2d12 take lowest, add Nd6 (N defaults to 0)
+Note: d12 roll of 11 counts as 12, roll of 12 counts as 0.
+Examples:
+  .lorm
+  .lorm 3
+  .lorm3
+  .lorm3adv
+  .lorm2dis`;
+cmdLorm.solve = (ctx, msg, cmdArgs) => {
+    const parsed = parseLorCommand(cmdArgs, 'lorm');
+    if (!parsed) {
+        const result = seal.ext.newCmdExecuteResult(false);
+        result.showHelp = true;
+        return result;
+    }
+
+    if (parsed.count < 0 || parsed.count > MAX_D6_COUNT) {
+        seal.replyToSender(ctx, msg, `Invalid d6 count (0-${MAX_D6_COUNT}).`);
+        return seal.ext.newCmdExecuteResult(false);
+    }
+
+    let d12Roll = rollDie(12);
+    if (parsed.mode === 'adv' || parsed.mode === 'dis') {
+        d12Roll = [rollDie(12), rollDie(12)];
+    }
+
+    const d6Rolls = [];
+    for (let i = 0; i < parsed.count; i++) {
+        d6Rolls.push(rollDie(6));
+    }
+
+    const userName = seal.format(ctx, '{$t玩家}');
+    let response;
+    response = buildLorResponse(d12Roll, d6Rolls, parsed.mode, normalizeD12Lorm, 'LORM');
+    seal.replyToSender(ctx, msg, `${userName} ${response}`);
+    return seal.ext.newCmdExecuteResult(true);
+};
+
+lorExt.cmdMap['lorm'] = cmdLorm;
+
+for (let i = 1; i <= MAX_D6_COUNT; i++) {
+    const alias = `lorm${i}`;
+    lorExt.cmdMap[alias] = cmdLorm;
+}
+
+lorExt.cmdMap['lormadv'] = cmdLorm;
+lorExt.cmdMap['lormdis'] = cmdLorm;
+
+for (let i = 1; i <= MAX_D6_COUNT; i++) {
+    lorExt.cmdMap[`lorm${i}adv`] = cmdLorm;
+    lorExt.cmdMap[`lorm${i}dis`] = cmdLorm;
 }
