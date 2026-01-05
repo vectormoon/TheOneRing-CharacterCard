@@ -51,7 +51,17 @@
                     </div>
                     <div class="info-row age-living-row">
                         <div class="info-item char-age"><label for="char_age">年龄</label><input type="text" id="char_age" name="char_age"></div>
-                        <div class="info-item char-living-standard"><label for="char_living_standard">生活水平</label><input type="text" id="char_living_standard" name="char_living_standard" class="readonly" readonly></div>
+                        <div class="info-item char-living-standard">
+                            <label for="char_living_standard">生活水平</label>
+                            <select id="char_living_standard" name="char_living_standard">
+                                <option value="">--请选择生活水平--</option>
+                                <option value="贫穷">贫穷</option>
+                                <option value="节俭">节俭</option>
+                                <option value="普通">普通</option>
+                                <option value="富有">富有</option>
+                                <option value="富裕">富裕</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="info-row patron-shadow-row">
                         <div class="info-item char-patron"><label for="patron">赞助人</label><input type="text" id="patron" name="patron"></div>
@@ -186,7 +196,7 @@
                     <tbody id="combat_gear_body"></tbody>
                 </table>
                 <div class="gear-controls">
-                    <button type="button" id="add_combat_gear_btn">+ 添加一行</button>
+                    <button type="button" id="add_combat_gear_btn">+ 添加装备</button>
                 </div>
             </div>
             <div class="gear-table protective-gear-table">
