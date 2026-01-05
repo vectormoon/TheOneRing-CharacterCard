@@ -28,9 +28,6 @@ function normalizeD12Lor(value) {
 }
 
 function normalizeD12Lorm(value) {
-    if (value === 11) {
-        return 12;
-    }
     if (value === 12) {
         return 0;
     }
@@ -43,6 +40,27 @@ function formatDiceList(label, rolls) {
     }
     const sum = rolls.reduce((total, value) => total + value, 0);
     return `${label}=${rolls.join('+')} (${sum})`;
+}
+
+function getD12Mark(rawValue) {
+    if (rawValue === 12) {
+        return '（甘道夫徽记）';
+    }
+    if (rawValue === 11) {
+        return '（索隆之眼）';
+    }
+    return '';
+}
+
+function selectD12Result(d12Rolls, mode, normalizer) {
+    if (!Array.isArray(d12Rolls)) {
+        return { raw: d12Rolls, value: normalizer(d12Rolls) };
+    }
+
+    const normalized = d12Rolls.map((value) => normalizer(value));
+    const targetValue = mode === 'dis' ? Math.min(...normalized) : Math.max(...normalized);
+    const index = normalized.indexOf(targetValue);
+    return { raw: d12Rolls[index], value: normalized[index] };
 }
 
 function parseLorCommand(cmdArgs, prefix) {
@@ -75,15 +93,12 @@ function parseLorCommand(cmdArgs, prefix) {
 function buildLorResponse(d12Rolls, d6Rolls, mode, normalizer, label) {
     const d6Sum = d6Rolls.reduce((total, value) => total + value, 0);
     const skillDieCount = d6Rolls.filter((value) => value === 6).length;
-    const normalizedD12 = Array.isArray(d12Rolls)
-        ? d12Rolls.map((value) => normalizer(value))
-        : normalizer(d12Rolls);
-    const d12Value = Array.isArray(normalizedD12)
-        ? (mode === 'dis' ? Math.min(...normalizedD12) : Math.max(...normalizedD12))
-        : normalizedD12;
+    const d12Result = selectD12Result(d12Rolls, mode, normalizer);
+    const d12Value = d12Result.value;
     const total = d12Value + d6Sum;
     const d6Text = formatDiceList('d6', d6Rolls);
     const parts = [];
+    const totalMark = getD12Mark(d12Result.raw);
 
     if (Array.isArray(d12Rolls)) {
         parts.push(`d12=${d12Rolls.join(',')} -> ${d12Value}`);
@@ -97,10 +112,10 @@ function buildLorResponse(d12Rolls, d6Rolls, mode, normalizer, label) {
         parts.push('d6=0 (0)');
     }
     parts.push('-------------------');
-    parts.push(`成功骰：${skillDieCount}`);
-    parts.push(`总点数：${total}`);
+    parts.push(`成功数：${skillDieCount}`);
+    parts.push(`总点数：${total}${totalMark}`);
     parts.push('-------------------');
-    return `${label}：\n${parts.join('\n')}`;
+    return `${label}\n${parts.join('\n')}`;
 }
 
 const cmdLor = seal.ext.newCmdItemInfo();
