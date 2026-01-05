@@ -561,5 +561,12 @@
             }
             .buttons-section { display: none; }
             .gear-controls { display: none; }
+            .gear-table-wide thead th:last-child,
+            .gear-table-wide tbody td:last-child {
+                display: none;
+            }
+            .gear-table-wide .remove-row-btn {
+                display: none;
+            }
         }
     
