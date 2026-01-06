@@ -210,7 +210,7 @@
             margin-left: auto;
         }
         .header-info .info-item.char-treasure input[type="text"],
-        .header-info .info-item.char-living-standard input[type="text"],
+        .header-info .info-item.char-living-standard select,
         .header-info .info-item.shadow-path input[type="text"] {
             flex: 0 0 70px;
             width: 70px;
@@ -547,6 +547,8 @@
         @media print {
             @page { margin: 0; }
             html, body { padding: 0; margin: 0;}
+            * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            body { background-color: #e0dace; }
             .character-sheet {
                 width: 297mm;
                 height: 210mm;
@@ -555,8 +557,16 @@
                 transform: none;
                 overflow: hidden;
                 position: relative;
+                background: #faf0e6;
             }
             .buttons-section { display: none; }
             .gear-controls { display: none; }
+            .gear-table-wide thead th:last-child,
+            .gear-table-wide tbody td:last-child {
+                display: none;
+            }
+            .gear-table-wide .remove-row-btn {
+                display: none;
+            }
         }
     
