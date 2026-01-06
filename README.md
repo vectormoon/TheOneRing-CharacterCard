@@ -15,9 +15,9 @@
 - 布局：横向
 - 背景图形：✅️
 
-**角色信息的导出：** 通过```TheOneRing-CharacterCard.html```文件最底部的**导出角色信息**按钮将角色信息文件下载到本地；
+**角色信息的导出：** 在人物卡最底部的**导出角色信息**按钮将角色信息文件下载到本地；
 
-**角色信息的导入：** 通过```TheOneRing-CharacterCard.html```文件最底部的**读取角色信息**按钮上传角色信息文件加载人物数据； 
+**角色信息的导入：** 在人物卡最底部的**读取角色信息**按钮上传角色信息文件加载人物数据； 
 
 ## 海豹骰指令
 [配置文件位置](https://github.com/vectormoon/TheOneRing-CharacterCard/blob/main/sealdice/lordice.js)
