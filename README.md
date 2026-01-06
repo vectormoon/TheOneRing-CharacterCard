@@ -7,7 +7,7 @@
 ## 如果下载&使用
 
 ### 下载
-本仓库[下载地址](https://github.com/vectormoon/TheOneRing-CharacterCard/releases)下载 ```latest``` 版本的 ```Source Code```，解压后直接运行```TheOneRing-CharacterCard.html```文件即可
+本仓库[下载地址](https://github.com/vectormoon/TheOneRing-CharacterCard/releases)下载 ```latest``` 版本的 ```TOR.zip```，解压后直接运行```TheOneRing-CharacterCard.html```文件即可
 
 ### 人物卡数据的保存与导出
 
