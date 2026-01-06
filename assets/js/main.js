@@ -641,11 +641,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!isSilent) alert('角色信息已读取。');
     }
 
-    function getSafeExportBaseName(charName, heroicCulture) {
+    function getSafeExportBaseName(charName, heroicCulture, calling) {
         const rawName = (charName || '角色').toString().trim();
         const rawCulture = (heroicCulture || '未知文化').toString().trim();
-        const combined = `${rawName}-${rawCulture}`;
-        return combined.replace(/[\\/:*?"<>|]/g, '').replace(/\s+/g, ' ').trim() || '角色-未知文化';
+        const rawCalling = (calling || '未知呼召').toString().trim();
+        const combined = `${rawName}-${rawCulture}-${rawCalling}`;
+        return combined.replace(/[\\/:*?"<>|]/g, '').replace(/\s+/g, ' ').trim()
+            || '角色-未知文化-未知呼召';
     }
 
     function exportCharacter() {
@@ -654,7 +656,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const blob = new Blob([json], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
-        const safeName = getSafeExportBaseName(charData.char_name, charData.heroic_culture);
+        const safeName = getSafeExportBaseName(
+            charData.char_name,
+            charData.heroic_culture,
+            charData.calling
+        );
         link.href = url;
         link.download = `${safeName}.json`;
         document.body.appendChild(link);
@@ -1020,7 +1026,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const originalTitle = document.title;
         const safeName = getSafeExportBaseName(
             document.getElementById('char_name').value,
-            heroicCultureSelect.value
+            heroicCultureSelect.value,
+            callingSelect.value
         );
         document.title = safeName;
         const restoreTitle = () => {

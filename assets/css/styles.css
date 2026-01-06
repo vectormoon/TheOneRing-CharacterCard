@@ -546,7 +546,7 @@
         @media (max-width: 768px) { .points-container { grid-template-columns: 1fr; } }
         @media print {
             @page { margin: 0; }
-            html, body { padding: 0; margin: 0;}
+            html, body { padding: 0; margin: 0; }
             * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             body { background-color: #e0dace; }
             .character-sheet {
