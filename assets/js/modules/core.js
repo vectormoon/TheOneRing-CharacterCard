@@ -67,6 +67,8 @@
             parryVal,
             heroicCultureSelect
         } = app.elements;
+        const previousEnduranceMax = parseInt(enduranceVal.textContent, 10) || 0;
+        const previousHopeMax = parseInt(hopeVal.textContent, 10) || 0;
         const bVal = parseInt(bodyVal.value, 10) || 0;
         if (document.activeElement !== bodyTN) bodyTN.value = app.state.baseTN - bVal;
         const hVal = parseInt(heartVal.value, 10) || 0;
@@ -82,9 +84,35 @@
         parryVal.textContent = wVal + modifiers.parry;
 
         const currentEnduranceInput = document.getElementById('current_endurance');
-        if (currentEnduranceInput.value === '' || currentEnduranceInput.value === '0') currentEnduranceInput.value = enduranceMax;
+        if (currentEnduranceInput) {
+            const rawEndurance = currentEnduranceInput.value.trim();
+            if (rawEndurance === '' || rawEndurance === '0') {
+                currentEnduranceInput.value = enduranceMax;
+            } else {
+                const currentEndurance = parseInt(rawEndurance, 10);
+                if (Number.isNaN(currentEndurance)) {
+                    currentEnduranceInput.value = enduranceMax;
+                } else if (enduranceMax !== previousEnduranceMax) {
+                    const adjustedEndurance = currentEndurance + (enduranceMax - previousEnduranceMax);
+                    currentEnduranceInput.value = Math.max(0, Math.min(enduranceMax, adjustedEndurance));
+                }
+            }
+        }
         const currentHopeInput = document.getElementById('current_hope');
-        if (currentHopeInput.value === '' || currentHopeInput.value === '0') currentHopeInput.value = hopeMax;
+        if (currentHopeInput) {
+            const rawHope = currentHopeInput.value.trim();
+            if (rawHope === '' || rawHope === '0') {
+                currentHopeInput.value = hopeMax;
+            } else {
+                const currentHope = parseInt(rawHope, 10);
+                if (Number.isNaN(currentHope)) {
+                    currentHopeInput.value = hopeMax;
+                } else if (hopeMax !== previousHopeMax) {
+                    const adjustedHope = currentHope + (hopeMax - previousHopeMax);
+                    currentHopeInput.value = Math.max(0, Math.min(hopeMax, adjustedHope));
+                }
+            }
+        }
     }
 
     function updateFromTN(sourceTN, targetVal) {
