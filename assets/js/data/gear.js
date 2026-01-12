@@ -3,15 +3,15 @@
     { name: '皮革甲', value: '2d', load: '6', type: '皮甲' },
     { name: '链甲衫', value: '3d', load: '9', type: '链甲' },
     { name: '链甲衣', value: '4d', load: '12', type: '链甲' },
-    { name: '头盔', value: '+1d', load: '4', type: '头部装备' },
+    { name: '头盔', value: '1d', load: '4', type: '头部装备' },
     { name: '盾牌', value: '1d', load: '4', type: '盾牌' }
 ];
 
 const combatGearPresets = [
-    { name: '徒手攻击', damage: '1', injury: '—', load: '0', proficiency: '格斗 *', notes: '包括投掷石块。无法造成致命一击。' },
-    { name: '匕首', damage: '2', injury: '14', load: '0', proficiency: '格斗 *', notes: '可以如同剑鞘般发射 (详见于第99页)' },
-    { name: '短棍', damage: '3', injury: '12', load: '0', proficiency: '格斗 *', notes: '—' },
-    { name: '棍棒', damage: '4', injury: '14', load: '1', proficiency: '格斗 *', notes: '—' },
+    { name: '徒手攻击', damage: '1', injury: '—', load: '0', proficiency: '格斗', notes: '包括投掷石块。无法造成致命一击。' },
+    { name: '匕首', damage: '2', injury: '14', load: '0', proficiency: '格斗', notes: '可以如同剑鞘般发射 (详见于第99页)' },
+    { name: '短棍', damage: '3', injury: '12', load: '0', proficiency: '格斗', notes: '—' },
+    { name: '棍棒', damage: '4', injury: '14', load: '1', proficiency: '格斗', notes: '—' },
     { name: '短剑', damage: '3', injury: '16', load: '1', proficiency: '剑类', notes: '—' },
     { name: '剑', damage: '4', injury: '16', load: '2', proficiency: '剑类', notes: '—' },
     { name: '长剑', damage: '5', injury: '16 (单手) / 18 (双手)', load: '3', proficiency: '剑类', notes: '可单手或双手持握' },

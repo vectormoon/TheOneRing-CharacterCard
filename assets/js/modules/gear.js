@@ -76,6 +76,24 @@
         if (form) form.querySelector('#modal_combat_preset').value = '';
     }
 
+    function getProtectiveGearRowValues(row) {
+        if (!row) return {};
+        return {
+            name: row.querySelector('input[data-key="name"]').value,
+            value: row.querySelector('input[data-key="value"]').value,
+            load: row.querySelector('input[data-key="load"]').value,
+            notes: row.dataset.notes || ''
+        };
+    }
+
+    function setProtectiveGearFormValues(form, data) {
+        document.getElementById('modal_protective_name').value = data.name || '';
+        document.getElementById('modal_protective_value').value = data.value || '';
+        document.getElementById('modal_protective_load').value = data.load || '';
+        document.getElementById('modal_protective_notes').value = data.notes || '';
+        if (form) form.querySelector('#modal_protective_preset').value = '';
+    }
+
     function addCombatGearRow(data = {}) {
         const tableBody = document.getElementById('combat_gear_body');
         const newRow = tableBody.insertRow();
@@ -194,6 +212,7 @@
 
             app.state.currentProtectiveSlot = slot;
             protectiveGearForm.reset();
+            const existingGear = getProtectiveGearRowValues(row);
 
             protectivePresetSelect.innerHTML = '<option value="">--自定义或选择一项--</option>';
             const filteredPresets = protectiveGearPresets.filter(gear => {
@@ -210,6 +229,7 @@
                 protectivePresetSelect.appendChild(option);
             });
 
+            setProtectiveGearFormValues(protectiveGearForm, existingGear);
             protectiveGearModal.classList.remove('hidden');
         });
 
@@ -229,6 +249,7 @@
                 targetRow.querySelector('input[data-key="value"]').value = gearData.value;
                 targetRow.querySelector('input[data-key="load"]').value = gearData.load;
                 if (notesInput) notesInput.value = gearData.notes;
+                targetRow.dataset.notes = gearData.notes || '';
             }
             protectiveGearModal.classList.add('hidden');
             app.state.currentProtectiveSlot = null;
@@ -243,6 +264,7 @@
                 targetRow.querySelector('input[data-key="value"]').value = '';
                 targetRow.querySelector('input[data-key="load"]').value = '';
                 if (notesInput) notesInput.value = '';
+                targetRow.dataset.notes = '';
             }
             protectiveGearModal.classList.add('hidden');
             app.state.currentProtectiveSlot = null;
