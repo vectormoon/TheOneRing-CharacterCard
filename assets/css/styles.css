@@ -81,7 +81,7 @@
         }
 
         input[readonly], input.readonly {
-            background-color: #eee;
+            background-color: #f7f4ee;
             cursor: default;
         }
 
