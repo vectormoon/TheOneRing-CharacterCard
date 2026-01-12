@@ -60,7 +60,8 @@ document.addEventListener('DOMContentLoaded', function() {
         portraitCropCancel: document.getElementById('portrait_crop_cancel'),
         portraitUploadInput: document.getElementById('portrait_upload'),
         portraitPreview: document.getElementById('portrait_preview'),
-        portraitFrame: document.getElementById('portrait_frame')
+        portraitFrame: document.getElementById('portrait_frame'),
+        portraitRemove: document.getElementById('portrait_remove')
     };
 
     const portraitBox = document.querySelector('.portrait-box');
@@ -78,6 +79,20 @@ document.addEventListener('DOMContentLoaded', function() {
         app.elements.portraitFrame.addEventListener('click', () => {
             if (portraitBox && portraitBox.classList.contains('has-portrait')) return;
             if (app.elements.portraitUploadInput) app.elements.portraitUploadInput.click();
+        });
+    }
+    if (app.elements.portraitRemove) {
+        app.elements.portraitRemove.addEventListener('click', (event) => {
+            event.stopPropagation();
+            if (!defaultPortraitSrc || !app.elements.portraitPreview) return;
+            app.elements.portraitPreview.src = defaultPortraitSrc;
+            if (app.elements.portraitUploadInput) {
+                app.elements.portraitUploadInput.value = '';
+            }
+            if (app.storage && app.storage.saveToLocalStorage) {
+                app.storage.saveToLocalStorage();
+            }
+            updatePortraitPlaceholder();
         });
     }
 
