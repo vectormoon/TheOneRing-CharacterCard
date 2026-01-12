@@ -59,8 +59,27 @@ document.addEventListener('DOMContentLoaded', function() {
         portraitCropConfirm: document.getElementById('portrait_crop_confirm'),
         portraitCropCancel: document.getElementById('portrait_crop_cancel'),
         portraitUploadInput: document.getElementById('portrait_upload'),
-        portraitPreview: document.getElementById('portrait_preview')
+        portraitPreview: document.getElementById('portrait_preview'),
+        portraitFrame: document.getElementById('portrait_frame')
     };
+
+    const portraitBox = document.querySelector('.portrait-box');
+    const defaultPortraitSrc = app.elements.portraitPreview ? app.elements.portraitPreview.dataset.defaultSrc : '';
+    const updatePortraitPlaceholder = () => {
+        const currentSrc = app.elements.portraitPreview ? app.elements.portraitPreview.src : '';
+        const hasPortrait = Boolean(currentSrc) && currentSrc !== defaultPortraitSrc;
+        if (portraitBox) portraitBox.classList.toggle('has-portrait', hasPortrait);
+    };
+    if (app.elements.portraitPreview) {
+        app.elements.portraitPreview.addEventListener('load', updatePortraitPlaceholder);
+    }
+    updatePortraitPlaceholder();
+    if (app.elements.portraitFrame) {
+        app.elements.portraitFrame.addEventListener('click', () => {
+            if (portraitBox && portraitBox.classList.contains('has-portrait')) return;
+            if (app.elements.portraitUploadInput) app.elements.portraitUploadInput.click();
+        });
+    }
 
     app.core.init();
     app.rewards.init();
@@ -142,8 +161,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
             app.elements.rewardsContainer.innerHTML = '';
 
-            app.elements.portraitPreview.src = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMCAyMWE4IDggMCAwIDAtMTYgME0xMiAxM2E0IDQgMCAxIDAgMC04IDQgNCAwIDAgMCAwIDhaIi8+PC9zdmc+";
+            if (defaultPortraitSrc) {
+                app.elements.portraitPreview.src = defaultPortraitSrc;
+            }
             app.elements.portraitUploadInput.value = '';
+            updatePortraitPlaceholder();
 
             document.getElementById('combat_gear_body').innerHTML = '';
             document.querySelectorAll('#protective_gear_body input[data-key]').forEach(input => { input.value = ''; });
@@ -163,6 +185,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     app.core.updateAttributes();
     app.storage.loadFromLocalStorage();
+    updatePortraitPlaceholder();
 
     document.querySelector('.character-sheet').addEventListener('input', () => {
         clearTimeout(app.state.autoSaveTimer);

@@ -228,11 +228,14 @@
         <div class="main-right">
             <div class="header-right">
                 <div class="portrait-box">
-                    <img id="portrait_preview" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNTAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjQgMjQiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzg4OCIgc3Ryb2tlLXdpZHRoPSIxIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxwYXRoIGQ9Ik0yMCAyMWE4IDggMCAwIDAtMTYgME0xMiAxM2E0IDQgMCAxIDAgMC04IDQgNCAwIDAgMCAwIDhaIi8+PC9zdmc+" alt="人物形象预览">
-                    <div class="portrait-controls">
-                        <label for="portrait_upload" class="custom-file-upload">选择文件</label>
-                        <input type="file" id="portrait_upload" accept="image/*">
+                    <div class="portrait-frame" id="portrait_frame">
+                        <img id="portrait_preview" data-default-src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="人物形象预览">
+                        <div class="portrait-placeholder">
+                            <strong>角色头像</strong>
+                            <span>点击上传</span>
+                        </div>
                     </div>
+                    <input type="file" id="portrait_upload" accept="image/*">
                 </div>
 
                 <div class="info-item game-mode">

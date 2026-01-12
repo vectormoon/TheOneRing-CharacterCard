@@ -123,14 +123,51 @@
             text-align: center;
         }
 
-        #portrait_preview {
+        .portrait-frame {
+            position: relative;
             width: 150px;
             height: 150px;
+            margin: 0 auto;
+        }
+
+        #portrait_preview {
+            width: 100%;
+            height: 100%;
             border: 2px solid var(--border-color);
             background: #fff;
             object-fit: cover;
             border-radius: 4px;
-            margin: 0 auto;
+            display: block;
+        }
+
+        .portrait-placeholder {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            color: #6b5b4a;
+            font-size: 0.95em;
+            pointer-events: none;
+        }
+
+        .portrait-placeholder span {
+            display: block;
+        }
+
+        .portrait-box.has-portrait .portrait-placeholder {
+            display: none;
+        }
+
+        .portrait-box:not(.has-portrait) .portrait-frame {
+            cursor: pointer;
+        }
+
+        .portrait-box:not(.has-portrait) .portrait-frame:hover {
+            box-shadow: 0 0 0 2px rgba(183, 67, 60, 0.25);
+            border-radius: 4px;
         }
 
         .portrait-controls {
