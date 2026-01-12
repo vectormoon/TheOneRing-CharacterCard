@@ -500,6 +500,10 @@
         .gear-table th, .gear-table td { border: 1px solid var(--border-color); padding: 8px; text-align: center; font-size: 0.85em; }
         .gear-table th { background-color: var(--header-bg); }
         .gear-table input { text-align: center; font-size: 0.95em; }
+        .gear-table input[type="number"] { appearance: textfield; -moz-appearance: textfield; }
+        .gear-table input[type="number"]::-webkit-outer-spin-button,
+        .gear-table input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .gear-table .short-input { margin: 0 auto; display: block; }
         .protective-gear-table tbody tr { cursor: pointer; }
         .gear-controls { margin-top: 5px; text-align: right; }
         .gear-controls button, .remove-row-btn, .select-protective-gear-btn, .clear-protective-gear-btn { background-color: #8b4513; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-family: Ringbearer; }
