@@ -46,16 +46,47 @@
         });
     }
 
+    function setCombatGearRowValues(row, data) {
+        if (!row) return;
+        row.querySelector('input[data-key="name"]').value = data.name || '';
+        row.querySelector('input[data-key="damage"]').value = data.damage || '';
+        row.querySelector('input[data-key="injury"]').value = data.injury || '';
+        row.querySelector('input[data-key="load"]').value = data.load || '';
+        row.querySelector('input[data-key="notes"]').value = data.notes || '';
+        syncCombatGearTooltips(row);
+    }
+
+    function getCombatGearRowValues(row) {
+        if (!row) return {};
+        return {
+            name: row.querySelector('input[data-key="name"]').value,
+            damage: row.querySelector('input[data-key="damage"]').value,
+            injury: row.querySelector('input[data-key="injury"]').value,
+            load: row.querySelector('input[data-key="load"]').value,
+            notes: row.querySelector('input[data-key="notes"]').value
+        };
+    }
+
+    function setCombatGearFormValues(form, data) {
+        document.getElementById('modal_combat_name').value = data.name || '';
+        document.getElementById('modal_combat_damage').value = data.damage || '';
+        document.getElementById('modal_combat_injury').value = data.injury || '';
+        document.getElementById('modal_combat_load').value = data.load || '';
+        document.getElementById('modal_combat_notes').value = data.notes || '';
+        if (form) form.querySelector('#modal_combat_preset').value = '';
+    }
+
     function addCombatGearRow(data = {}) {
         const tableBody = document.getElementById('combat_gear_body');
         const newRow = tableBody.insertRow();
         newRow.innerHTML = `
-            <td><input type="text" data-key="name" value="${data.name || ''}" class="readonly" readonly></td>
+            <td>
+                <input type="text" data-key="name" value="${data.name || ''}" class="readonly" readonly>
+            </td>
             <td><input type="text" data-key="damage" value="${data.damage || ''}" class="readonly short-input" readonly></td>
             <td><input type="text" data-key="injury" value="${data.injury || ''}" class="readonly short-input" readonly></td>
             <td><input type="number" data-key="load" value="${data.load || ''}" class="readonly short-input" readonly></td>
             <td><input type="text" data-key="notes" value="${data.notes || ''}" class="readonly" readonly></td>
-            <td><button type="button" class="remove-row-btn">移除</button></td>
         `;
         syncCombatGearTooltips(newRow);
     }
@@ -74,24 +105,30 @@
         const {
             combatGearModal,
             combatGearForm,
+            clearCombatGearBtn,
             cancelCombatGearBtn,
             combatPresetSelect,
             protectiveGearModal,
             protectiveGearForm,
+            clearProtectiveGearBtn,
             cancelProtectiveGearBtn,
             protectivePresetSelect
         } = app.elements;
 
-        document.getElementById('combat_gear_body').addEventListener('click', e => {
-            if (e.target.classList.contains('remove-row-btn')) {
-                e.target.closest('tr').remove();
-                updateTotalLoad();
-            }
+        const combatGearBody = document.getElementById('combat_gear_body');
+        combatGearBody.addEventListener('click', e => {
+            const row = e.target.closest('tr');
+            if (!row) return;
+            app.state.currentCombatGearRow = row;
+            combatGearForm.reset();
+            setCombatGearFormValues(combatGearForm, getCombatGearRowValues(row));
+            combatGearModal.classList.remove('hidden');
         });
 
         populateCombatGearPresets();
 
         document.getElementById('add_combat_gear_btn').addEventListener('click', () => {
+            app.state.currentCombatGearRow = null;
             combatGearForm.reset();
             combatPresetSelect.dispatchEvent(new Event('change'));
             combatGearModal.classList.remove('hidden');
@@ -105,12 +142,36 @@
                 load: document.getElementById('modal_combat_load').value,
                 notes: document.getElementById('modal_combat_notes').value
             };
-            addCombatGearRow(gearData);
+            if (app.state.currentCombatGearRow) {
+                setCombatGearRowValues(app.state.currentCombatGearRow, gearData);
+            } else {
+                addCombatGearRow(gearData);
+            }
             combatGearModal.classList.add('hidden');
+            app.state.currentCombatGearRow = null;
             updateTotalLoad();
         });
-        cancelCombatGearBtn.addEventListener('click', () => combatGearModal.classList.add('hidden'));
-        combatGearModal.addEventListener('click', (e) => { if (e.target === combatGearModal) combatGearModal.classList.add('hidden'); });
+        clearCombatGearBtn.addEventListener('click', () => {
+            if (app.state.currentCombatGearRow) {
+                app.state.currentCombatGearRow.remove();
+                app.state.currentCombatGearRow = null;
+                combatGearModal.classList.add('hidden');
+                updateTotalLoad();
+                return;
+            }
+            combatGearForm.reset();
+            combatPresetSelect.value = '';
+            combatPresetSelect.dispatchEvent(new Event('change'));
+        });
+        cancelCombatGearBtn.addEventListener('click', () => {
+            app.state.currentCombatGearRow = null;
+            combatGearModal.classList.add('hidden');
+        });
+        combatGearModal.addEventListener('click', (e) => {
+            if (e.target !== combatGearModal) return;
+            app.state.currentCombatGearRow = null;
+            combatGearModal.classList.add('hidden');
+        });
         combatPresetSelect.addEventListener('change', function() {
             const selectedName = this.value;
             const selectedGear = combatGearPresets.find(gear => gear.name === selectedName);
@@ -168,6 +229,20 @@
                 targetRow.querySelector('input[data-key="value"]').value = gearData.value;
                 targetRow.querySelector('input[data-key="load"]').value = gearData.load;
                 if (notesInput) notesInput.value = gearData.notes;
+            }
+            protectiveGearModal.classList.add('hidden');
+            app.state.currentProtectiveSlot = null;
+            updateTotalLoad();
+        });
+        clearProtectiveGearBtn.addEventListener('click', () => {
+            if (!app.state.currentProtectiveSlot) return;
+            const targetRow = document.getElementById(`${app.state.currentProtectiveSlot}_slot`);
+            if (targetRow) {
+                const notesInput = targetRow.querySelector('input[data-key="notes"]');
+                targetRow.querySelector('input[data-key="name"]').value = '';
+                targetRow.querySelector('input[data-key="value"]').value = '';
+                targetRow.querySelector('input[data-key="load"]').value = '';
+                if (notesInput) notesInput.value = '';
             }
             protectiveGearModal.classList.add('hidden');
             app.state.currentProtectiveSlot = null;

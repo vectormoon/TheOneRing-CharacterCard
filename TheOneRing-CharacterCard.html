@@ -192,11 +192,11 @@
         <div class="gear-section">
             <div class="gear-table gear-table-wide">
                 <table>
-                    <thead><tr><th>作战装备</th><th>伤害值</th><th>致伤值</th><th>负重</th><th>备注</th><th>操作</th></tr></thead>
+                    <thead><tr><th>作战装备</th><th>伤害值</th><th>致伤值</th><th>负重</th><th>备注</th></tr></thead>
                     <tbody id="combat_gear_body"></tbody>
                 </table>
                 <div class="gear-controls">
-                    <button type="button" id="add_combat_gear_btn">+ 添加装备</button>
+                    <button type="button" id="add_combat_gear_btn">+</button>
                 </div>
             </div>
             <div class="gear-table protective-gear-table">
@@ -329,6 +329,7 @@
             </div>
             <div class="modal-buttons">
                 <button type="submit">保存</button>
+                <button type="button" id="clear_combat_gear_btn">删除装备</button>
                 <button type="button" id="cancel_combat_gear_btn">取消</button>
             </div>
         </form>
@@ -364,6 +365,7 @@
             </div>
             <div class="modal-buttons">
                 <button type="submit">保存</button>
+                <button type="button" id="clear_protective_gear_btn">删除装备</button>
                 <button type="button" id="cancel_protective_gear_btn">取消</button>
             </div>
         </form>
