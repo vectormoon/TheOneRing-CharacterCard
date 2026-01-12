@@ -561,6 +561,7 @@
         .gear-table table { width: 100%; border-collapse: collapse; }
         .gear-table th, .gear-table td { border: 1px solid var(--border-color); padding: 8px; text-align: center; font-size: 0.85em; }
         .gear-table th { background-color: var(--header-bg); }
+        .gear-table tbody tr:hover td { background-color: #e2d4c3; }
         .gear-table input { text-align: center; font-size: 0.95em; }
         .gear-table input[type="number"] { appearance: textfield; -moz-appearance: textfield; }
         .gear-table input[type="number"]::-webkit-outer-spin-button,
