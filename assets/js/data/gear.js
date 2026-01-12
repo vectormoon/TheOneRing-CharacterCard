@@ -1,9 +1,9 @@
 ﻿const protectiveGearPresets = [
     { name: '皮革衣', value: '1d', load: '3', type: '皮甲' },
     { name: '皮革甲', value: '2d', load: '6', type: '皮甲' },
-    { name: '链甲衫 **', value: '3d', load: '9', type: '链甲' },
-    { name: '链甲衣 **', value: '4d', load: '12', type: '链甲' },
-    { name: '头盔 *', value: '+1d', load: '4', type: '头部装备' },
+    { name: '链甲衫', value: '3d', load: '9', type: '链甲' },
+    { name: '链甲衣', value: '4d', load: '12', type: '链甲' },
+    { name: '头盔', value: '+1d', load: '4', type: '头部装备' },
     { name: '盾牌', value: '1d', load: '4', type: '盾牌' }
 ];
 
