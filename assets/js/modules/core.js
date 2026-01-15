@@ -8,9 +8,15 @@
         const checkboxes = Array.from(checkbox.parentNode.children);
         const currentIndex = checkboxes.indexOf(checkbox);
         const isChecking = checkbox.checked;
+        const hasHigherChecked = checkboxes.slice(currentIndex + 1).some(cb => cb.checked);
         for (let i = 0; i < checkboxes.length; i++) {
-            if (isChecking) { if (i <= currentIndex) checkboxes[i].checked = true; }
-            else { if (i >= currentIndex) checkboxes[i].checked = false; }
+            if (isChecking) {
+                if (i <= currentIndex) checkboxes[i].checked = true;
+            } else if (hasHigherChecked) {
+                checkboxes[i].checked = i <= currentIndex;
+            } else {
+                if (i >= currentIndex) checkboxes[i].checked = false;
+            }
         }
     }
 

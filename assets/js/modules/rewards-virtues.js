@@ -1,5 +1,7 @@
 (function() {
     const app = window.TorCharacterApp = window.TorCharacterApp || {};
+    const emptyRewardText = '请选择您的勋绩';
+    const emptyVirtueText = '请选择您的美德';
 
     function updateRewardOptions() {
         const rewardSelects = app.elements.rewardsContainer.querySelectorAll('.reward-select');
@@ -55,6 +57,7 @@
             const descBox = document.createElement('div');
             descBox.id = `reward_desc_${i}`;
             descBox.className = 'description-box';
+            descBox.innerText = emptyRewardText;
 
             infoItem.appendChild(select);
             infoItem.appendChild(descBox);
@@ -96,6 +99,7 @@
             const descBox = document.createElement('div');
             descBox.id = `virtue_desc_${i}`;
             descBox.className = 'description-box';
+            descBox.innerText = emptyVirtueText;
 
             infoItem.appendChild(select);
             infoItem.appendChild(descBox);
@@ -152,7 +156,7 @@
                 const descId = e.target.dataset.descId;
                 const descBox = document.getElementById(descId);
                 if (descBox) {
-                    descBox.innerText = rewardsData[e.target.value] || '';
+                    descBox.innerText = e.target.value ? (rewardsData[e.target.value] || '') : emptyRewardText;
                 }
                 updateRewardOptions();
             }
@@ -164,12 +168,16 @@
                 const descBox = document.getElementById(descId);
                 if (descBox) {
                     const selectedVirtue = e.target.value;
-                    let virtueDescription = generalVirtuesData[selectedVirtue] || '';
-                    const currentCulture = heroicCultureSelect.value;
-                    if (currentCulture && cultureSpecificVirtuesData[currentCulture] && cultureSpecificVirtuesData[currentCulture][selectedVirtue]) {
-                        virtueDescription = cultureSpecificVirtuesData[currentCulture][selectedVirtue];
+                    if (!selectedVirtue) {
+                        descBox.innerText = emptyVirtueText;
+                    } else {
+                        let virtueDescription = generalVirtuesData[selectedVirtue] || '';
+                        const currentCulture = heroicCultureSelect.value;
+                        if (currentCulture && cultureSpecificVirtuesData[currentCulture] && cultureSpecificVirtuesData[currentCulture][selectedVirtue]) {
+                            virtueDescription = cultureSpecificVirtuesData[currentCulture][selectedVirtue];
+                        }
+                        descBox.innerText = virtueDescription;
                     }
-                    descBox.innerText = virtueDescription;
                 }
                 updateVirtueOptions();
             }
