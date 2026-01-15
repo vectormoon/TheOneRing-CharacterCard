@@ -140,8 +140,9 @@
 
     function updateTraitDescriptionsAndDuplicates() {
         const { trait1Select, trait1Desc, trait2Select, trait2Desc } = app.elements;
-        trait1Desc.textContent = traitsData[trait1Select.value] || '';
-        trait2Desc.textContent = traitsData[trait2Select.value] || '';
+        const emptyTraitText = '请选择您的特质';
+        trait1Desc.textContent = trait1Select.value ? (traitsData[trait1Select.value] || '') : emptyTraitText;
+        trait2Desc.textContent = trait2Select.value ? (traitsData[trait2Select.value] || '') : emptyTraitText;
         const val1 = trait1Select.value;
         const val2 = trait2Select.value;
         for (const option of trait2Select.options) { option.disabled = (option.value !== '' && option.value === val1); }

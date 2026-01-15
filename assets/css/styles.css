@@ -621,11 +621,11 @@
             gap: 10px;
             justify-content: center;
         }
-        @media (max-width: 992px) { .attributes-section > div, .skills-column, .combat-proficiencies, .feature-box { grid-column: span 3 !important; } .header-info { display: flex; flex-wrap: wrap; } .info-item { width: 48%; } .portrait-box { order: -1; width: 100%; margin-bottom: 15px; } .secondary-stats-container { order: 1; width: 100%; } }
-        @media (max-width: 768px) { .points-container { grid-template-columns: 1fr; } }
+        @media screen and (max-width: 992px) { .attributes-section > div, .skills-column, .combat-proficiencies, .feature-box { grid-column: span 3 !important; } .header-info { display: flex; flex-wrap: wrap; } .info-item { width: 48%; } .portrait-box { order: -1; width: 100%; margin-bottom: 15px; } .secondary-stats-container { order: 1; width: 100%; } }
+        @media screen and (max-width: 768px) { .points-container { grid-template-columns: 1fr; } }
         @media print {
-            @page { margin: 0; }
-            html, body { padding: 0; margin: 0; }
+            @page { size: 297mm 210mm; margin: 0; }
+            html, body { width: 297mm; height: 210mm; padding: 0; margin: 0; }
             * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
             body { background-color: #e0dace; }
             .character-sheet {
