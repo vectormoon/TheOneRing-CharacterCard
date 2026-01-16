@@ -83,11 +83,14 @@
         if (document.activeElement !== witsTN) witsTN.value = app.state.baseTN - wVal;
         const selectedCulture = heroicCultureSelect.value;
         const modifiers = cultureData[selectedCulture]?.modifiers || cultureData[""].modifiers;
-        const enduranceMax = bVal + modifiers.endurance;
-        const hopeMax = hVal + modifiers.hope;
+        const virtueModifiers = app.rewards && app.rewards.getVirtueModifiers
+            ? app.rewards.getVirtueModifiers()
+            : { endurance: 0, hope: 0, parry: 0 };
+        const enduranceMax = bVal + modifiers.endurance + virtueModifiers.endurance;
+        const hopeMax = hVal + modifiers.hope + virtueModifiers.hope;
         enduranceVal.textContent = enduranceMax;
         hopeVal.textContent = hopeMax;
-        parryVal.textContent = wVal + modifiers.parry;
+        parryVal.textContent = wVal + modifiers.parry + virtueModifiers.parry;
 
         const currentEnduranceInput = document.getElementById('current_endurance');
         if (currentEnduranceInput) {

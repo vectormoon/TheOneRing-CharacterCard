@@ -33,6 +33,26 @@
         });
     }
 
+    function getVirtueModifiers() {
+        const modifiers = { endurance: 0, hope: 0, parry: 0 };
+        const wisdomValue = parseInt(app.elements.wisdomInput.value, 10) || 0;
+        const bonusData = typeof virtueBonusData === 'undefined' ? null : virtueBonusData;
+        document.querySelectorAll('.virtue-select').forEach(select => {
+            const virtueKey = select.value;
+            if (!virtueKey || !bonusData || !bonusData[virtueKey]) return;
+            const virtueBonus = bonusData[virtueKey];
+            if (virtueBonus.enduranceUsesWisdom) {
+                const scaledEndurance = Math.max(virtueBonus.endurance || 0, wisdomValue);
+                modifiers.endurance += scaledEndurance;
+            } else if (virtueBonus.endurance) {
+                modifiers.endurance += virtueBonus.endurance;
+            }
+            if (virtueBonus.hope) modifiers.hope += virtueBonus.hope;
+            if (virtueBonus.parry) modifiers.parry += virtueBonus.parry;
+        });
+        return modifiers;
+    }
+
     function generateRewardSelectors(count) {
         const { rewardsContainer } = app.elements;
         rewardsContainer.innerHTML = '';
@@ -149,6 +169,9 @@
             });
 
             updateVirtueOptions();
+            if (app.core && app.core.updateAttributes) {
+                app.core.updateAttributes();
+            }
         });
 
         rewardsContainer.addEventListener('change', (e) => {
@@ -180,6 +203,9 @@
                     }
                 }
                 updateVirtueOptions();
+                if (app.core && app.core.updateAttributes) {
+                    app.core.updateAttributes();
+                }
             }
         });
     }
@@ -187,6 +213,7 @@
     app.rewards = {
         updateRewardOptions,
         updateVirtueOptions,
+        getVirtueModifiers,
         generateRewardSelectors,
         generateVirtueSelectors,
         init
