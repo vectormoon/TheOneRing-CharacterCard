@@ -28,7 +28,7 @@ const cultureData = {
     "林顿的精灵": {
         blessing: {
             name: "精灵之艺",
-            description: "*如果你不处于痛苦状态，当你使用至少拥有1个等级的技能时，你可以通过消耗1点希望值从而在该技能检定中取得魔法成功。",
+            description: "如果你不处于痛苦状态，当你使用至少拥有1个等级的技能时，你可以通过消耗1点希望值从而在该技能检定中取得魔法成功。",
         },
         livingStandard: "节俭",
         modifiers: {
@@ -41,7 +41,7 @@ const cultureData = {
     "夏尔的霍比特人": {
         blessing: {
             name: "见怪不怪",
-            description: "*你的智慧检定视为优势，并且你在有关抵御贪婪影响的魔影检定中获得（1d）。",
+            description: "你的智慧检定视为优势，并且你在有关抵御贪婪影响的魔影检定中获得（1d）。",
         },
         livingStandard: "普通",
         modifiers: {
@@ -54,7 +54,7 @@ const cultureData = {
     "布理的人类": {
         blessing: {
             name: "布理血脉",
-            description: "*玩家团队中每有一名布理人，同盟点就会提升1点。",
+            description: "玩家团队中每有一名布理人，同盟点就会提升1点。",
         },
         livingStandard: "普通",
         modifiers: {
