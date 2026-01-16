@@ -159,7 +159,19 @@ document.addEventListener('DOMContentLoaded', function() {
             if (modeNormal) modeNormal.checked = true;
             app.state.baseTN = 20;
 
-            const defaultZeroIds = ['body_val', 'heart_val', 'wits_val', 'fatigue_val', 'shadow_scar_val', 'valour', 'wisdom'];
+            const defaultZeroIds = [
+                'body_val',
+                'heart_val',
+                'wits_val',
+                'fatigue_val',
+                'shadow_scar_val',
+                'valour',
+                'wisdom',
+                'adventure_points',
+                'skill_points',
+                'fellowship_points',
+                'shadow_val'
+            ];
 
             document.querySelectorAll('.character-sheet input, .character-sheet textarea, .character-sheet select').forEach(el => {
                 if (el.closest('.modal-content') || el.closest('#rewards_container')) return;

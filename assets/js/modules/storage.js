@@ -79,6 +79,13 @@
         }
         app.state.kingOfMenBonusAppliedTo = charData.kingOfMenBonus || null;
 
+        const zeroDefaults = new Set([
+            'adventure_points',
+            'skill_points',
+            'fellowship_points',
+            'shadow_val'
+        ]);
+
         document.querySelectorAll('input, textarea, select').forEach(element => {
             if (!element.closest('.gear-table') && !element.closest('.modal-content') && !element.closest('#rewards_container')) {
                 const key = element.id || element.name;
@@ -86,7 +93,10 @@
                     if (element.type === 'radio') return;
                     if (element.id === 'trait1_select' || element.id === 'trait2_select') return;
                     if (element.type === 'checkbox') { element.checked = charData[key]; }
-                    else { element.value = charData[key]; }
+                    else {
+                        const rawValue = charData[key];
+                        element.value = (zeroDefaults.has(element.id) && (rawValue === '' || rawValue == null)) ? '0' : rawValue;
+                    }
                 }
             }
         });

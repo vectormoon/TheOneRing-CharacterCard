@@ -433,14 +433,16 @@
         .diamond-box .attr-derived { position: absolute; text-align: center; width: 100%; }
         .diamond-box .attr-tn, .diamond-box .attr-val { position: absolute; text-align: center; }
         .diamond-box .attr-tn input, .diamond-box .attr-val input { border: 1px solid var(--border-color); text-align: center; padding: 0; background-color: white; }
+        #endurance_val, #hope_val, #parry_val { font-size: 1.35em; }
 
         /* Large Diamond Box Styles (Main Attributes) */
         .diamond-box:not(.diamond-box-small) { width: 110px; height: 110px; margin: 20px auto 12px; }
-        .diamond-box:not(.diamond-box-small) .attr-title { top: 7px; font-size: 1em; }
+        .diamond-box:not(.diamond-box-small) .attr-title { top: 2px; font-size: 1em; }
         .diamond-box:not(.diamond-box-small) .attr-derived { bottom: 7px; font-size: 0.9em; }
         .diamond-box:not(.diamond-box-small) .attr-tn, .diamond-box:not(.diamond-box-small) .attr-val { width: 38px; }
         .diamond-box:not(.diamond-box-small) .attr-tn { left: 0px; }
         .diamond-box:not(.diamond-box-small) .attr-val { right: 0px; }
+        .diamond-box:not(.diamond-box-small) .attr-tn, .diamond-box:not(.diamond-box-small) .attr-val { top: 22px; }
         .diamond-box:not(.diamond-box-small) .attr-tn label, .diamond-box:not(.diamond-box-small) .attr-val label { font-size: 1em; }
         .diamond-box:not(.diamond-box-small) .attr-tn, .diamond-box:not(.diamond-box-small) .attr-val { width: 46px; }
         .diamond-box:not(.diamond-box-small) .attr-tn input, .diamond-box:not(.diamond-box-small) .attr-val input { width: 34px; height: 34px; font-size: 1em; }
