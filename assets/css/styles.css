@@ -457,7 +457,7 @@
         .diamond-box-small .attr-tn label, .diamond-box-small .attr-val label { font-size: 0.95em; }
         .diamond-box-small .attr-tn input, .diamond-box-small .attr-val input { width: 30px; height: 30px; font-size: 1.1em; }
         
-        .current-stat-input-diamond { width: 38px !important; padding: 1px !important; text-align: center; font-size: 1em !important; display: inline-block; vertical-align: middle; margin-left: 4px; margin-top: 2px; }
+        .current-stat-input-diamond { width: 38px !important; padding: 1px !important; text-align: center; font-size: 1.2em !important; display: inline-block; vertical-align: middle; margin-left: 4px; margin-top: 2px; }
         .secondary-stats-container #load_val,
         .secondary-stats-container #fatigue_val,
         .secondary-stats-container #shadow_val,
