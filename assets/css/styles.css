@@ -446,12 +446,12 @@
         .diamond-box:not(.diamond-box-small) .attr-tn input, .diamond-box:not(.diamond-box-small) .attr-val input { width: 34px; height: 34px; font-size: 1em; }
 
         /* NEW: Small Diamond Box Styles (Header) */
-        .diamond-box-small { width: 105px; height: 105px; margin: 6px auto; }
+        .diamond-box-small { width: 120px; height: 120px; margin: 6px auto; }
         .diamond-box-small .attr-title { top: 6px; font-size: 0.95em; }
         .diamond-box-small .attr-derived { bottom: 6px; font-size: 1.05em; line-height: 1.2; }
-        .diamond-box-small .attr-tn, .diamond-box-small .attr-val { top: 10px; width: 40px; }
-        .diamond-box-small .attr-tn { left: 4px; }
-        .diamond-box-small .attr-val { right: 4px; }
+        .diamond-box-small .attr-tn, .diamond-box-small .attr-val { top: 10px; width: 46px; }
+        .diamond-box-small .attr-tn { left: 6px; }
+        .diamond-box-small .attr-val { right: 6px; }
         .diamond-box-small .attr-tn label, .diamond-box-small .attr-val label { font-size: 0.95em; }
         .diamond-box-small .attr-tn input, .diamond-box-small .attr-val input { width: 30px; height: 30px; font-size: 1.1em; }
         
