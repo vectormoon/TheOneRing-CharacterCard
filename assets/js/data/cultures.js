@@ -67,7 +67,7 @@ const cultureData = {
     "北方的游民": {
         blessing: {
             name: "人中王者",
-            description: "*任选一项属性提升1点。",
+            description: "任选一项属性提升1点。",
         },
         livingStandard: "节俭",
         modifiers: {
@@ -80,7 +80,7 @@ const cultureData = {
     "": {
         blessing: {
             name: "",
-            description: "",
+            description: "由您的英雄所属文化决定。",
         },
         livingStandard: "",
         modifiers: {
