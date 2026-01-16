@@ -434,6 +434,25 @@
         .diamond-box .attr-tn, .diamond-box .attr-val { position: absolute; text-align: center; }
         .diamond-box .attr-tn input, .diamond-box .attr-val input { border: 1px solid var(--border-color); text-align: center; padding: 0; background-color: white; }
         #endurance_val, #hope_val, #parry_val { font-size: 1.35em; }
+        #body_tn, #body_val, #heart_tn, #heart_val, #wits_tn, #wits_val {
+            appearance: textfield;
+            -moz-appearance: textfield;
+        }
+        #body_tn::-webkit-outer-spin-button,
+        #body_tn::-webkit-inner-spin-button,
+        #body_val::-webkit-outer-spin-button,
+        #body_val::-webkit-inner-spin-button,
+        #heart_tn::-webkit-outer-spin-button,
+        #heart_tn::-webkit-inner-spin-button,
+        #heart_val::-webkit-outer-spin-button,
+        #heart_val::-webkit-inner-spin-button,
+        #wits_tn::-webkit-outer-spin-button,
+        #wits_tn::-webkit-inner-spin-button,
+        #wits_val::-webkit-outer-spin-button,
+        #wits_val::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
 
         /* Large Diamond Box Styles (Main Attributes) */
         .diamond-box:not(.diamond-box-small) { width: 110px; height: 110px; margin: 20px auto 12px; }
