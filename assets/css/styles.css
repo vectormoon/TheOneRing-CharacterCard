@@ -12,6 +12,10 @@
             src: url('../fonts/ringbearer.TTF') format('truetype');
         }
 
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: var(--main-font);
             background-color: #e0dace;
@@ -24,7 +28,9 @@
 
         .character-sheet {
             width: calc(297mm - 30px);
+            max-width: 100%;
             height: calc(210mm - 30px);
+            max-height: none;
             margin: auto;
             border: 1px solid var(--border-color);
             padding: 15px;
@@ -642,8 +648,128 @@
             gap: 10px;
             justify-content: center;
         }
-        @media screen and (max-width: 992px) { .attributes-section > div, .skills-column, .combat-proficiencies, .feature-box { grid-column: span 3 !important; } .header-info { display: flex; flex-wrap: wrap; } .info-item { width: 48%; } .portrait-box { order: -1; width: 100%; margin-bottom: 15px; } .secondary-stats-container { order: 1; width: 100%; } }
-        @media screen and (max-width: 768px) { .points-container { grid-template-columns: 1fr; } }
+        @media screen and (max-width: 992px) {
+            .attributes-section > div,
+            .skills-column,
+            .combat-proficiencies,
+            .feature-box {
+                grid-column: span 3 !important;
+            }
+            .header-info {
+                display: flex;
+                flex-wrap: wrap;
+            }
+            .info-item {
+                width: 48%;
+            }
+            .portrait-box {
+                order: -1;
+                width: 100%;
+                margin-bottom: 15px;
+            }
+            .secondary-stats-container {
+                order: 1;
+                width: 100%;
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            .character-sheet {
+                width: 100%;
+                height: auto;
+                padding: 12px;
+            }
+            .grid-container {
+                grid-template-columns: 1fr;
+            }
+            .main-left,
+            .gear-section,
+            .skills-section,
+            .combat-features-section {
+                grid-template-columns: 1fr;
+            }
+            .header-info {
+                display: grid;
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            .header-info .info-item,
+            .header-info .info-row {
+                width: 100%;
+            }
+            .header-info .info-row {
+                flex-direction: column;
+            }
+            .header-info .info-item input[type="text"],
+            .header-info .info-item input[type="number"],
+            .header-info .info-item select {
+                width: 100%;
+                flex: 1 1 auto;
+                margin-left: 0;
+            }
+            .header-info .info-item.char-name input[type="text"],
+            .header-info .info-item.heroic-culture select,
+            .header-info .info-item.cultural-blessing input[type="text"],
+            .header-info .info-item.calling select,
+            .header-info .info-item.char-age input[type="text"],
+            .header-info .info-item.char-patron input[type="text"],
+            .header-info .info-item.char-treasure input[type="text"],
+            .header-info .info-item.char-living-standard select,
+            .header-info .info-item.shadow-path input[type="text"],
+            .header-info .trait-box select,
+            .header-info .trait-box input[type="text"] {
+                width: 100%;
+                flex: 1 1 auto;
+            }
+            .header-info #personal_traits_section {
+                grid-template-columns: 1fr;
+            }
+            .description-box {
+                position: static;
+                width: 100%;
+                max-width: none;
+                margin-top: 6px;
+                z-index: 1;
+            }
+            .skills-column {
+                padding: 6px 0;
+            }
+            .gear-section > .gear-table,
+            .gear-table-wide,
+            .gear-table {
+                grid-column: span 1;
+                margin-top: 0;
+            }
+            .feature-box,
+            .combat-proficiencies {
+                margin-top: 0;
+                padding: 8px 0;
+            }
+            .secondary-stats-container {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .diamond-box,
+            .diamond-box-small {
+                width: 100px;
+                height: 100px;
+                margin: 10px auto;
+            }
+            .portrait-frame {
+                width: 140px;
+                height: 140px;
+            }
+            .buttons-section {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .buttons-section button {
+                width: 100%;
+            }
+        }
         @media print {
             @page { size: 297mm 210mm; margin: 0; }
             html, body { width: 297mm; height: 210mm; padding: 0; margin: 0; }
