@@ -35,9 +35,8 @@
         charData.virtues = Array.from(document.querySelectorAll('.virtue-select')).map(s => s.value);
 
         document.querySelectorAll('.skill-ranks').forEach(container => {
-            const ranks = [];
-            container.querySelectorAll('input:checked').forEach(cb => ranks.push(cb.value));
-            charData[container.id] = ranks;
+            const rankCount = container.querySelectorAll('input:checked').length;
+            charData[container.id] = rankCount;
         });
 
         charData.combatGear = collectTableData('combat_gear_body');
@@ -137,8 +136,16 @@
         app.rewards.updateVirtueOptions();
 
         document.querySelectorAll('.skill-ranks').forEach(container => {
-            const ranks = charData[container.id] || [];
-            container.querySelectorAll('input[type="checkbox"]').forEach(cb => { cb.checked = ranks.includes(cb.value); });
+            const rawRank = charData[container.id];
+            let rankValue = 0;
+            if (Array.isArray(rawRank)) {
+                const numericRanks = rawRank.map(value => parseInt(value, 10)).filter(value => !Number.isNaN(value));
+                rankValue = numericRanks.length ? Math.max(...numericRanks) : 0;
+            } else if (rawRank != null && rawRank !== '') {
+                const parsedRank = parseInt(rawRank, 10);
+                rankValue = Number.isNaN(parsedRank) ? 0 : parsedRank;
+            }
+            app.core.setSkillRanks(container.id, rankValue);
         });
 
         document.getElementById('combat_gear_body').innerHTML = '';
