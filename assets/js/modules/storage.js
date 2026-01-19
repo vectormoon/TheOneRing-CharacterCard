@@ -32,6 +32,17 @@
         const gameModeChecked = document.querySelector('input[name="game_mode"]:checked');
         if (gameModeChecked) charData.gameMode = gameModeChecked.value;
         charData.rewards = Array.from(app.elements.rewardsContainer.querySelectorAll('.reward-select')).map(s => s.value);
+        if (app.rewards) {
+            if (app.rewards.getCustomRewards) {
+                charData.customRewards = app.rewards.getCustomRewards();
+            }
+            if (app.rewards.getCustomRewardLibraryData) {
+                charData.customRewardsLibrary = app.rewards.getCustomRewardLibraryData();
+            }
+            if (app.rewards.getCustomRewardSelections) {
+                charData.customRewardSelections = app.rewards.getCustomRewardSelections();
+            }
+        }
         charData.virtues = Array.from(document.querySelectorAll('.virtue-select')).map(s => s.value);
 
         document.querySelectorAll('.skill-ranks').forEach(container => {
@@ -115,6 +126,15 @@
 
         const valor = parseInt(charData.valour, 10) || 0;
         app.rewards.generateRewardSelectors(valor);
+        if (app.rewards.applyCustomRewardLibraryData) {
+            app.rewards.applyCustomRewardLibraryData(charData.customRewardsLibrary);
+        }
+        if (app.rewards.applyCustomRewardSelections) {
+            app.rewards.applyCustomRewardSelections(charData.customRewardSelections);
+        }
+        if (app.rewards.applyCustomRewards) {
+            app.rewards.applyCustomRewards(charData.customRewards);
+        }
         const savedRewards = charData.rewards || [];
         const rewardSelects = app.elements.rewardsContainer.querySelectorAll('.reward-select');
         rewardSelects.forEach((select, index) => {

@@ -571,6 +571,60 @@
         #rewards_container label {
             font-size: 0.65em;
         }
+        #customRewardModal textarea {
+            min-height: 110px;
+        }
+        .custom-reward-list-section label {
+            display: block;
+            margin-bottom: 6px;
+            margin-top: 6px;
+            font-weight: bold;
+        }
+        .custom-reward-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            min-height: 32px;
+        }
+        .custom-reward-list button {
+            border: 1px solid var(--border-color);
+            background-color: #fff;
+            color: var(--text-color);
+            border-radius: 3px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-family: Ringbearer;
+            font-size: 0.85em;
+        }
+        .custom-reward-list-empty {
+            color: #6b5b4a;
+            font-size: 0.85em;
+            padding: 4px 0;
+        }
+        .custom-reward-list button.active {
+            background-color: var(--border-color);
+            color: #fff;
+        }
+        .custom-reward-list-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .custom-reward-list-actions button {
+            padding: 6px 10px;
+            border-radius: 3px;
+            border: none;
+            cursor: pointer;
+            font-family: Ringbearer;
+        }
+        #custom_reward_add {
+            background-color: #8b4513;
+            color: #fff;
+        }
+        #custom_reward_delete {
+            background-color: #c04040;
+            color: #fff;
+        }
         #personal_traits_section { display: grid; }
         .trait-box { display: flex; align-items: center; gap: 6px; padding: 0; border: none; background-color: transparent; position: relative; }
         .trait-box label { margin-bottom: 0; white-space: nowrap; }
@@ -606,6 +660,30 @@
         .short-input { max-width: 80px; }
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; transition: opacity 0.3s ease; }
         .modal-content { background-color: var(--background-color); padding: 25px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); border: 2px solid var(--border-color); width: 90%; max-width: 500px; }
+        .modal-content { position: relative; }
+        .modal-close-button {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 26px;
+            height: 26px;
+            border: none;
+            border-radius: 50%;
+            background-color: #c04040;
+            color: #fff;
+            font-size: 16px;
+            line-height: 1;
+            cursor: pointer;
+            font-family: Ringbearer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            transform: translateY(-1px);
+        }
+        .modal-close-button:hover {
+            background-color: #a83838;
+        }
         .modal-content h2 { margin-top: 0; text-align: center; }
         .modal-form-item { margin-bottom: 15px; }
         .modal-form-item label { display: block; margin-bottom: 5px; }
