@@ -4,9 +4,9 @@
     { name: '链甲衫', value: '3d', load: '9', type: '链甲' },
     { name: '链甲衣', value: '4d', load: '12', type: '链甲' },
     { name: '头盔', value: '1d', load: '4', type: '头部装备' },
-    { name: '小圆盾', value: '+1招架', load: '2', type: '盾牌' },
-    { name: '盾牌（普通生活水平）', value: '+2招架', load: '4', type: '盾牌' },
-    { name: '大盾（富足生活水平）', value: '+3招架', load: '6', type: '盾牌' }
+    { name: '小圆盾', value: '+1招架', load: '2', type: '盾牌', parryBonus: 1 },
+    { name: '盾牌（普通生活水平）', value: '+2招架', load: '4', type: '盾牌', parryBonus: 2 },
+    { name: '大盾（富有生活水平）', value: '+3招架', load: '6', type: '盾牌', parryBonus: 3 }
 ];
 
 const combatGearPresets = [

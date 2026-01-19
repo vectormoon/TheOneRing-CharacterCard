@@ -30,6 +30,24 @@
         document.getElementById('load_val').value = totalLoad;
     }
 
+    function parseParryBonusFromValue(value) {
+        const text = (value || '').toString();
+        if (!text.includes('招架')) return 0;
+        const match = text.match(/-?\d+/);
+        if (!match) return 0;
+        const parsed = parseInt(match[0], 10);
+        return Number.isNaN(parsed) ? 0 : parsed;
+    }
+
+    function getShieldParryBonus() {
+        const shieldRow = document.getElementById('shield_slot');
+        if (!shieldRow) return 0;
+        const datasetBonus = parseInt(shieldRow.dataset.parryBonus, 10);
+        if (!Number.isNaN(datasetBonus)) return datasetBonus;
+        const valueInput = shieldRow.querySelector('input[data-key="value"]');
+        return parseParryBonusFromValue(valueInput ? valueInput.value : '');
+    }
+
     function syncCombatGearTooltips(row) {
         const targets = [
             row.querySelector('input[data-key="injury"]'),
@@ -230,6 +248,22 @@
             });
 
             setProtectiveGearFormValues(protectiveGearForm, existingGear);
+            if (app.state.currentProtectiveSlot === 'shield') {
+                const rowBonus = parseInt(row.dataset.parryBonus, 10);
+                if (!Number.isNaN(rowBonus)) {
+                    protectiveGearForm.dataset.parryBonus = rowBonus;
+                } else {
+                    const valueInput = row.querySelector('input[data-key="value"]');
+                    const parsed = parseParryBonusFromValue(valueInput ? valueInput.value : '');
+                    if (parsed) {
+                        protectiveGearForm.dataset.parryBonus = parsed;
+                    } else {
+                        delete protectiveGearForm.dataset.parryBonus;
+                    }
+                }
+            } else {
+                delete protectiveGearForm.dataset.parryBonus;
+            }
             protectiveGearModal.classList.remove('hidden');
         });
 
@@ -250,10 +284,21 @@
                 targetRow.querySelector('input[data-key="load"]').value = gearData.load;
                 if (notesInput) notesInput.value = gearData.notes;
                 targetRow.dataset.notes = gearData.notes || '';
+                if (app.state.currentProtectiveSlot === 'shield') {
+                    const parsedBonus = parseParryBonusFromValue(gearData.value);
+                    const presetBonus = parseInt(protectiveGearForm.dataset.parryBonus, 10);
+                    const finalBonus = parsedBonus || (!Number.isNaN(presetBonus) ? presetBonus : 0);
+                    if (finalBonus) {
+                        targetRow.dataset.parryBonus = finalBonus;
+                    } else {
+                        delete targetRow.dataset.parryBonus;
+                    }
+                }
             }
             protectiveGearModal.classList.add('hidden');
             app.state.currentProtectiveSlot = null;
             updateTotalLoad();
+            if (app.core && app.core.updateAttributes) app.core.updateAttributes();
         });
         clearProtectiveGearBtn.addEventListener('click', () => {
             if (!app.state.currentProtectiveSlot) return;
@@ -265,10 +310,14 @@
                 targetRow.querySelector('input[data-key="load"]').value = '';
                 if (notesInput) notesInput.value = '';
                 targetRow.dataset.notes = '';
+                if (app.state.currentProtectiveSlot === 'shield') {
+                    delete targetRow.dataset.parryBonus;
+                }
             }
             protectiveGearModal.classList.add('hidden');
             app.state.currentProtectiveSlot = null;
             updateTotalLoad();
+            if (app.core && app.core.updateAttributes) app.core.updateAttributes();
         });
         cancelProtectiveGearBtn.addEventListener('click', () => protectiveGearModal.classList.add('hidden'));
         protectiveGearModal.addEventListener('click', (e) => { if (e.target === protectiveGearModal) protectiveGearModal.classList.add('hidden'); });
@@ -280,14 +329,21 @@
                 document.getElementById('modal_protective_value').value = selectedGear.value;
                 document.getElementById('modal_protective_load').value = selectedGear.load;
                 document.getElementById('modal_protective_notes').value = selectedGear.type;
+                if (selectedGear.parryBonus != null) {
+                    protectiveGearForm.dataset.parryBonus = selectedGear.parryBonus;
+                } else {
+                    delete protectiveGearForm.dataset.parryBonus;
+                }
             } else {
                 protectiveGearForm.reset();
+                delete protectiveGearForm.dataset.parryBonus;
             }
         });
     }
 
     app.gear = {
         updateTotalLoad,
+        getShieldParryBonus,
         addCombatGearRow,
         populateCombatGearPresets,
         init

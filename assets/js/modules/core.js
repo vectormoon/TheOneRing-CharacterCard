@@ -88,9 +88,12 @@
             : { endurance: 0, hope: 0, parry: 0 };
         const enduranceMax = bVal + modifiers.endurance + virtueModifiers.endurance;
         const hopeMax = hVal + modifiers.hope + virtueModifiers.hope;
+        const shieldParryBonus = app.gear && app.gear.getShieldParryBonus
+            ? app.gear.getShieldParryBonus()
+            : 0;
         enduranceVal.textContent = enduranceMax;
         hopeVal.textContent = hopeMax;
-        parryVal.textContent = wVal + modifiers.parry + virtueModifiers.parry;
+        parryVal.textContent = wVal + modifiers.parry + virtueModifiers.parry + shieldParryBonus;
 
         const currentEnduranceInput = document.getElementById('current_endurance');
         if (currentEnduranceInput) {
