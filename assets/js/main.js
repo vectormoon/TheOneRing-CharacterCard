@@ -190,6 +190,8 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             app.elements.rewardsContainer.innerHTML = '';
+            app.state.customRewards = [];
+            app.state.customRewardNextId = 1;
 
             if (defaultPortraitSrc) {
                 app.elements.portraitPreview.src = defaultPortraitSrc;

@@ -374,7 +374,6 @@
 
 <div id="customRewardModal" class="modal-overlay hidden">
     <div class="modal-content custom-reward-modal">
-        <button type="button" class="modal-close-button" id="custom_reward_modal_close" aria-label="关闭">×</button>
         <h2>编辑自定义勋绩</h2>
         <form id="customRewardForm">
             <div class="modal-form-item custom-reward-list-section">
@@ -382,6 +381,7 @@
                     <button type="button" id="custom_reward_add">新增自定义勋绩</button>
                     <button type="button" id="custom_reward_delete">删除自定义勋绩</button>
                 </div>
+                <hr class="custom-reward-divider">
                 <label>已定义勋绩</label>
                 <div id="custom_reward_list" class="custom-reward-list"></div>
             </div>
@@ -396,7 +396,7 @@
             </div>
             <div class="modal-buttons">
                 <button type="submit" id="custom_reward_modal_save">保存</button>
-                <button type="button" id="custom_reward_modal_cancel">取消</button>
+                <button type="button" id="custom_reward_modal_cancel">退出</button>
             </div>
         </form>
     </div>

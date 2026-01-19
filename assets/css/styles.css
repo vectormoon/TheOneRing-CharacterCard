@@ -573,6 +573,8 @@
         }
         #customRewardModal textarea {
             min-height: 110px;
+            height: 110px;
+            resize: none;
         }
         .custom-reward-list-section label {
             display: block;
@@ -609,6 +611,11 @@
             display: flex;
             gap: 8px;
             margin-top: 8px;
+        }
+        .custom-reward-divider {
+            border: none;
+            border-top: 1px solid #c8a077;
+            margin: 10px 0 6px;
         }
         .custom-reward-list-actions button {
             padding: 6px 10px;
@@ -660,30 +667,6 @@
         .short-input { max-width: 80px; }
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.6); display: flex; justify-content: center; align-items: center; z-index: 1000; transition: opacity 0.3s ease; }
         .modal-content { background-color: var(--background-color); padding: 25px; border-radius: 8px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); border: 2px solid var(--border-color); width: 90%; max-width: 500px; }
-        .modal-content { position: relative; }
-        .modal-close-button {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            width: 26px;
-            height: 26px;
-            border: none;
-            border-radius: 50%;
-            background-color: #c04040;
-            color: #fff;
-            font-size: 16px;
-            line-height: 1;
-            cursor: pointer;
-            font-family: Ringbearer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0;
-            transform: translateY(-1px);
-        }
-        .modal-close-button:hover {
-            background-color: #a83838;
-        }
         .modal-content h2 { margin-top: 0; text-align: center; }
         .modal-form-item { margin-bottom: 15px; }
         .modal-form-item label { display: block; margin-bottom: 5px; }

@@ -60,6 +60,7 @@
     }
 
     function buildRewardSelectOptions(select) {
+        pruneCustomRewardLibrary();
         const rewardNames = {
             "": "--请选择勋绩--",
             "贴身": "贴身 (护甲或头盔)",
@@ -78,9 +79,10 @@
         }
         const library = getCustomRewardLibrary();
         library.forEach(item => {
+            if (!item.name || !item.name.trim()) return;
             const option = document.createElement('option');
             option.value = getCustomRewardOptionValue(item.id);
-            option.textContent = item.name || '未命名勋绩';
+            option.textContent = item.name;
             select.appendChild(option);
         });
         const editOption = document.createElement('option');
@@ -166,7 +168,6 @@
     let customRewardDeleteButton = null;
     let customRewardSaveButton = null;
     let customRewardCancelButton = null;
-    let customRewardCloseButton = null;
     let activeCustomRewardId = null;
 
     function getCustomRewardLibrary() {
@@ -193,6 +194,31 @@
     function findCustomRewardByContent(name, description) {
         const library = getCustomRewardLibrary();
         return library.find(item => item.name === name && item.description === description) || null;
+    }
+
+    function pruneCustomRewardLibrary() {
+        const library = getCustomRewardLibrary();
+        const removedIds = library
+            .filter(item => !item || !item.name || !item.name.trim())
+            .map(item => item && item.id)
+            .filter(id => id != null);
+        if (!removedIds.length) return;
+        app.state.customRewards = library.filter(item => item && item.name && item.name.trim());
+        if (activeCustomRewardId && removedIds.includes(activeCustomRewardId)) {
+            activeCustomRewardId = null;
+        }
+        document.querySelectorAll('#rewards_container .info-item').forEach(item => {
+            const slot = getSlotCustomReward(item);
+            if (slot && slot.id && removedIds.includes(slot.id)) {
+                setSlotCustomReward(item, null);
+                const select = item.querySelector('.reward-select');
+                if (select && select.value === customRewardKey) {
+                    select.value = '';
+                    updateCustomRewardDisplay(select);
+                }
+            }
+        });
+        refreshCustomRewardNextId();
     }
 
     function getCustomRewardOptionValue(id) {
@@ -231,6 +257,7 @@
 
     function renderCustomRewardList() {
         if (!customRewardList) return;
+        pruneCustomRewardLibrary();
         customRewardList.innerHTML = '';
         const library = getCustomRewardLibrary();
         if (!library.length) {
@@ -246,7 +273,7 @@
             button.type = 'button';
             button.className = 'custom-reward-list-item';
             button.dataset.id = item.id;
-            button.textContent = item.name || '未命名勋绩';
+            button.textContent = item.name;
             if (item.id === activeCustomRewardId) button.classList.add('active');
             customRewardList.appendChild(button);
         });
@@ -299,7 +326,7 @@
     function syncCustomRewardsFromSlots() {
         document.querySelectorAll('#rewards_container .info-item').forEach(item => {
             const slot = getSlotCustomReward(item);
-            if (!slot || (!slot.name && !slot.description)) return;
+            if (!slot || !slot.name || !slot.name.trim()) return;
             let rewardItem = slot.id ? getCustomRewardById(slot.id) : null;
             if (!rewardItem) {
                 const existing = findCustomRewardByContent(slot.name, slot.description);
@@ -317,7 +344,7 @@
         syncCustomRewardsFromSlots();
         const slotData = getSlotCustomReward(infoItem);
         let rewardItem = slotData && slotData.id ? getCustomRewardById(slotData.id) : null;
-        if (!rewardItem && slotData && (slotData.name || slotData.description)) {
+        if (!rewardItem && slotData && slotData.name && slotData.name.trim()) {
             const existing = findCustomRewardByContent(slotData.name, slotData.description);
             rewardItem = existing || createCustomReward(slotData.name, slotData.description);
             setSlotCustomReward(infoItem, rewardItem);
@@ -343,6 +370,7 @@
         if (!infoItem) return;
         const nameValue = customRewardNameInput ? customRewardNameInput.value.trim() : '';
         const descValue = customRewardDescInput ? customRewardDescInput.value.trim() : '';
+        if (!nameValue) return;
         let rewardItem = activeCustomRewardId ? getCustomRewardById(activeCustomRewardId) : null;
         if (!rewardItem) {
             rewardItem = createCustomReward(nameValue, descValue);
@@ -353,7 +381,6 @@
         setSlotCustomReward(infoItem, rewardItem);
         updateCustomRewardDisplay(activeCustomRewardSelect);
         renderCustomRewardList();
-        closeCustomRewardModal();
     }
 
     function syncActiveCustomRewardDraft() {
@@ -440,11 +467,13 @@
     }
 
     function getCustomRewardLibraryData() {
-        return getCustomRewardLibrary().map(item => ({
-            id: item.id,
-            name: item.name || '',
-            description: item.description || ''
-        }));
+        return getCustomRewardLibrary()
+            .filter(item => item.name && item.name.trim())
+            .map(item => ({
+                id: item.id,
+                name: item.name.trim(),
+                description: item.description || ''
+            }));
     }
 
     function applyCustomRewardLibraryData(libraryData) {
@@ -459,10 +488,10 @@
                     description: item.description || ''
                 };
             })
-            .filter(item => item)
+            .filter(item => item && item.name && item.name.trim())
             .map(item => ({
                 id: item.id,
-                name: item.name || '',
+                name: item.name.trim(),
                 description: item.description || ''
             }));
         refreshCustomRewardNextId();
@@ -521,7 +550,6 @@
         customRewardDeleteButton = document.getElementById('custom_reward_delete');
         customRewardSaveButton = document.getElementById('custom_reward_modal_save');
         customRewardCancelButton = document.getElementById('custom_reward_modal_cancel');
-        customRewardCloseButton = document.getElementById('custom_reward_modal_close');
 
         if (customRewardList) {
             customRewardList.addEventListener('click', (event) => {
@@ -571,12 +599,6 @@
         }
         if (customRewardCancelButton) {
             customRewardCancelButton.addEventListener('click', (event) => {
-                event.preventDefault();
-                closeCustomRewardModal();
-            });
-        }
-        if (customRewardCloseButton) {
-            customRewardCloseButton.addEventListener('click', (event) => {
                 event.preventDefault();
                 closeCustomRewardModal();
             });
