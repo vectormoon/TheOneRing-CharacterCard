@@ -98,12 +98,15 @@
         const currentEnduranceInput = document.getElementById('current_endurance');
         if (currentEnduranceInput) {
             const rawEndurance = currentEnduranceInput.value.trim();
-            if (rawEndurance === '' || rawEndurance === '0') {
+            const shouldAutoFillEndurance = rawEndurance === '' || (!app.state.isRestoring && rawEndurance === '0');
+            if (shouldAutoFillEndurance) {
                 currentEnduranceInput.value = enduranceMax;
             } else {
                 const currentEndurance = parseInt(rawEndurance, 10);
                 if (Number.isNaN(currentEndurance)) {
                     currentEnduranceInput.value = enduranceMax;
+                } else if (app.state.isRestoring) {
+                    currentEnduranceInput.value = Math.max(0, Math.min(enduranceMax, currentEndurance));
                 } else if (enduranceMax !== previousEnduranceMax) {
                     const adjustedEndurance = currentEndurance + (enduranceMax - previousEnduranceMax);
                     currentEnduranceInput.value = Math.max(0, Math.min(enduranceMax, adjustedEndurance));
@@ -113,12 +116,15 @@
         const currentHopeInput = document.getElementById('current_hope');
         if (currentHopeInput) {
             const rawHope = currentHopeInput.value.trim();
-            if (rawHope === '' || rawHope === '0') {
+            const shouldAutoFillHope = rawHope === '' || (!app.state.isRestoring && rawHope === '0');
+            if (shouldAutoFillHope) {
                 currentHopeInput.value = hopeMax;
             } else {
                 const currentHope = parseInt(rawHope, 10);
                 if (Number.isNaN(currentHope)) {
                     currentHopeInput.value = hopeMax;
+                } else if (app.state.isRestoring) {
+                    currentHopeInput.value = Math.max(0, Math.min(hopeMax, currentHope));
                 } else if (hopeMax !== previousHopeMax) {
                     const adjustedHope = currentHope + (hopeMax - previousHopeMax);
                     currentHopeInput.value = Math.max(0, Math.min(hopeMax, adjustedHope));
