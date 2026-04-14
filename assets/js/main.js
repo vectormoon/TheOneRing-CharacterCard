@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', function() {
         kingOfMenBonusAppliedTo: null,
         currentProtectiveSlot: null,
         currentCombatGearRow: null,
+        creationBaseRanks: {},
         baseTN: 20,
         isRestoring: false,
         autoSaveKey: 'tor_character_autosave',
@@ -131,6 +132,10 @@ document.addEventListener('DOMContentLoaded', function() {
     ];
     skillContainers.forEach(id => app.core.createRankCheckboxes(id));
 
+    if (app.creation && app.creation.init) {
+        app.creation.init();
+    }
+
     document.getElementById('save-btn').addEventListener('click', app.storage.exportCharacter);
     document.getElementById('load-btn').addEventListener('click', app.storage.importCharacter);
     document.getElementById('export-btn').addEventListener('click', () => {
@@ -210,6 +215,9 @@ document.addEventListener('DOMContentLoaded', function() {
             app.core.updateAttributes();
             app.king.updateKingOfMenUI();
             app.gear.updateTotalLoad();
+            if (app.creation && app.creation.reset) {
+                app.creation.reset();
+            }
             localStorage.removeItem(app.state.autoSaveKey);
             alert('人物卡已重置。');
         }

@@ -18,6 +18,9 @@
                 if (i >= currentIndex) checkboxes[i].checked = false;
             }
         }
+        if (app.creation && app.creation.updateCreationPointsUI) {
+            app.creation.updateCreationPointsUI();
+        }
     }
 
     function createRankCheckboxes(containerId, count = 5) {
@@ -52,6 +55,9 @@
             const rank = Object.prototype.hasOwnProperty.call(ranks, containerId) ? ranks[containerId] : 0;
             setSkillRanks(containerId, rank);
         });
+        if (app.creation && app.creation.snapshotBaseRanks) {
+            app.creation.snapshotBaseRanks();
+        }
     }
 
     function handleModeChange() {
