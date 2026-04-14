@@ -24,13 +24,15 @@
 
         .character-sheet {
             width: calc(297mm - 30px);
-            height: calc(210mm - 30px);
+            min-height: calc(210mm - 30px);
+            height: auto;
             margin: auto;
             border: 1px solid var(--border-color);
             padding: 15px;
             background: #faf0e6;
             box-shadow: var(--box-shadow);
             position: relative;
+            box-sizing: border-box;
         }
 
         .character-sheet::before {
