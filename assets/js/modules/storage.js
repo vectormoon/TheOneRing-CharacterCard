@@ -172,13 +172,12 @@
         });
 
         if (app.creation) {
-            if (charData.creationBaseRanks && typeof charData.creationBaseRanks === 'object') {
-                app.state.creationBaseRanks = { ...charData.creationBaseRanks };
-            } else {
-                const cult = charData.heroic_culture || app.elements.heroicCultureSelect.value;
-                app.creation.snapshotBaseRanksFromCulture(cult);
-            }
+            const cult = charData.heroic_culture || app.elements.heroicCultureSelect.value;
+            app.creation.snapshotBaseRanksFromCulture(cult);
             app.creation.updateCreationPointsUI();
+        }
+        if (app.core && app.core.updateProficiencyOrHints) {
+            app.core.updateProficiencyOrHints();
         }
 
         document.getElementById('combat_gear_body').innerHTML = '';

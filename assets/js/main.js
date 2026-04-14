@@ -135,6 +135,9 @@ document.addEventListener('DOMContentLoaded', function() {
     if (app.creation && app.creation.init) {
         app.creation.init();
     }
+    if (app.core && app.core.updateProficiencyOrHints) {
+        app.core.updateProficiencyOrHints();
+    }
 
     document.getElementById('save-btn').addEventListener('click', app.storage.exportCharacter);
     document.getElementById('load-btn').addEventListener('click', app.storage.importCharacter);

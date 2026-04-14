@@ -1,3 +1,23 @@
+/** 战斗熟练四类（与人物卡 prof_* 容器 id 一致）。 */
+const proficiencyRankContainers = [
+    'prof_axes',
+    'prof_bows',
+    'prof_spears',
+    'prof_swords'
+];
+
+/**
+ * 「弓类或剑类 2」等：两项战斗熟练 id，由玩家在二者之一上点满 2 级（不预填默认项）。
+ */
+const cultureCombatProficiencyOrPair = {
+    "巴德一族的人类": ["prof_bows", "prof_swords"],
+    "都林一族的矮人": ["prof_axes", "prof_swords"],
+    "林顿的精灵": ["prof_bows", "prof_spears"],
+    "夏尔的霍比特人": ["prof_bows", "prof_swords"],
+    "布理的人类": ["prof_axes", "prof_spears"],
+    "北方的游民": ["prof_spears", "prof_swords"]
+};
+
 const skillRankContainers = [
     'skill_awe',
     'skill_athletics',

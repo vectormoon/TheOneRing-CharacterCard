@@ -5,6 +5,8 @@
             --text-color: #3a2d1d;
             --background-color: #f7f3e9;
             --input-underline-color: #d1c5b0;
+            --prof-or-hint-bg: rgba(183, 67, 60, 0.12);
+            --prof-or-hint-edge: rgba(183, 67, 60, 0.34);
         }
 
         @font-face {
@@ -530,6 +532,13 @@
         }
 
         .skill-ranks { display: flex; }
+        .combat-proficiencies .skill-ranks.prof-or-hint {
+            padding: 3px 5px;
+            margin: -3px -5px;
+            border-radius: 4px;
+            background: var(--prof-or-hint-bg);
+            box-shadow: inset 0 0 0 1px var(--prof-or-hint-edge);
+        }
         .skill-ranks input[type="checkbox"] { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border: 1px solid var(--border-color); margin: 0 2px; cursor: pointer; position: relative; }
         .skill-ranks input[type="checkbox"]::before { content: ''; position: absolute; top: 50%; left: 50%; width: 12px; height: 12px; background-color: var(--border-color); transform: translate(-50%, -50%) scale(0); transition: transform 0.2s ease-in-out; }
         .skill-ranks input[type="checkbox"]:checked::before { transform: translate(-50%, -50%) scale(1); }
