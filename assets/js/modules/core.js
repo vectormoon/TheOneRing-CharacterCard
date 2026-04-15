@@ -18,6 +18,38 @@
                 if (i >= currentIndex) checkboxes[i].checked = false;
             }
         }
+        if (app.creation && app.creation.updateCreationPointsUI) {
+            app.creation.updateCreationPointsUI();
+        }
+        updateProficiencyOrHints();
+    }
+
+    function getProficiencyRank(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return 0;
+        return container.querySelectorAll('input:checked').length;
+    }
+
+    /** 「或」类 2 级未点满前，在两项熟练格上显示浅色提示（与 creation 点数无关）。 */
+    function updateProficiencyOrHints() {
+        proficiencyRankContainers.forEach((id) => {
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('prof-or-hint');
+        });
+        if (app.state.isRestoring) return;
+        const cultureEl = document.getElementById('heroic_culture');
+        const culture = cultureEl ? cultureEl.value : '';
+        const pair = cultureCombatProficiencyOrPair[culture];
+        if (!pair) return;
+        const [a, b] = pair;
+        const ra = getProficiencyRank(a);
+        const rb = getProficiencyRank(b);
+        const orResolved = (ra >= 2 && rb <= 1) || (rb >= 2 && ra <= 1);
+        if (orResolved) return;
+        const elA = document.getElementById(a);
+        const elB = document.getElementById(b);
+        if (elA) elA.classList.add('prof-or-hint');
+        if (elB) elB.classList.add('prof-or-hint');
     }
 
     function createRankCheckboxes(containerId, count = 5) {
@@ -52,6 +84,11 @@
             const rank = Object.prototype.hasOwnProperty.call(ranks, containerId) ? ranks[containerId] : 0;
             setSkillRanks(containerId, rank);
         });
+        proficiencyRankContainers.forEach((id) => setSkillRanks(id, 0));
+        if (app.creation && app.creation.snapshotBaseRanksAfterCulture) {
+            app.creation.snapshotBaseRanksAfterCulture();
+        }
+        updateProficiencyOrHints();
     }
 
     function handleModeChange() {
@@ -248,6 +285,7 @@
         createRankCheckboxes,
         setSkillRanks,
         applyCultureSkillRanks,
+        updateProficiencyOrHints,
         handleModeChange,
         updateAttributes,
         updateFromTN,

@@ -67,6 +67,9 @@
 
         charData.portraitSrc = app.elements.portraitPreview.src;
         charData.kingOfMenBonus = app.state.kingOfMenBonusAppliedTo;
+        if (app.state.creationBaseRanks && typeof app.state.creationBaseRanks === 'object') {
+            charData.creationBaseRanks = { ...app.state.creationBaseRanks };
+        }
         return charData;
     }
 
@@ -167,6 +170,15 @@
             }
             app.core.setSkillRanks(container.id, rankValue);
         });
+
+        if (app.creation) {
+            const cult = charData.heroic_culture || app.elements.heroicCultureSelect.value;
+            app.creation.snapshotBaseRanksFromCulture(cult);
+            app.creation.updateCreationPointsUI();
+        }
+        if (app.core && app.core.updateProficiencyOrHints) {
+            app.core.updateProficiencyOrHints();
+        }
 
         document.getElementById('combat_gear_body').innerHTML = '';
         (charData.combatGear || []).forEach(rowData => app.gear.addCombatGearRow(rowData));

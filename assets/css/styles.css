@@ -5,6 +5,8 @@
             --text-color: #3a2d1d;
             --background-color: #f7f3e9;
             --input-underline-color: #d1c5b0;
+            --prof-or-hint-bg: rgba(183, 67, 60, 0.12);
+            --prof-or-hint-edge: rgba(183, 67, 60, 0.34);
         }
 
         @font-face {
@@ -24,13 +26,15 @@
 
         .character-sheet {
             width: calc(297mm - 30px);
-            height: calc(210mm - 30px);
+            min-height: calc(210mm - 30px);
+            height: auto;
             margin: auto;
             border: 1px solid var(--border-color);
             padding: 15px;
             background: #faf0e6;
             box-shadow: var(--box-shadow);
             position: relative;
+            box-sizing: border-box;
         }
 
         .character-sheet::before {
@@ -333,6 +337,18 @@
         .header-right .points-row .info-item { flex: 1 1 0; min-width: 0; flex-direction: row; align-items: center; gap: 6px; }
         .header-right .points-row .info-item label { margin-bottom: 0; white-space: nowrap; }
         .header-right .points-row .info-item input[type="number"] { width: 38px; padding: 2px 6px; height: 28px; }
+        .header-right .creation-points-row .creation-points-status {
+            flex: 1 1 100%;
+            font-size: 0.9em;
+            line-height: 1.3;
+        }
+        .header-right .creation-points-row.creation-points-overspent .creation-points-figures {
+            color: #a32;
+            font-weight: 600;
+        }
+        .header-right .creation-points-row.creation-points-inactive {
+            display: none;
+        }
         .header-right .header-extra { display: flex; flex-direction: column; gap: 10px; align-items: stretch; flex: 1 1 auto; min-height: 0; }
         .header-right .travel-gear-item { flex-direction: column; align-items: stretch; flex: 1 1 auto; min-height: 0; }
         .header-right .travel-gear-item label { margin-bottom: 6px; font-size: 1em; border-bottom: 2px solid var(--border-color); padding-bottom: 4px; }
@@ -516,6 +532,13 @@
         }
 
         .skill-ranks { display: flex; }
+        .combat-proficiencies .skill-ranks.prof-or-hint {
+            padding: 3px 5px;
+            margin: -3px -5px;
+            border-radius: 4px;
+            background: var(--prof-or-hint-bg);
+            box-shadow: inset 0 0 0 1px var(--prof-or-hint-edge);
+        }
         .skill-ranks input[type="checkbox"] { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border: 1px solid var(--border-color); margin: 0 2px; cursor: pointer; position: relative; }
         .skill-ranks input[type="checkbox"]::before { content: ''; position: absolute; top: 50%; left: 50%; width: 12px; height: 12px; background-color: var(--border-color); transform: translate(-50%, -50%) scale(0); transition: transform 0.2s ease-in-out; }
         .skill-ranks input[type="checkbox"]:checked::before { transform: translate(-50%, -50%) scale(1); }
@@ -722,5 +745,6 @@
             }
             .buttons-section { display: none; }
             .gear-controls { display: none; }
+            .creation-points-row { display: none !important; }
         }
     
