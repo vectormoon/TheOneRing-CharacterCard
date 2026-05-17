@@ -19,7 +19,7 @@
             background-color: #e0dace;
             color: var(--text-color);
             margin: 0;
-            padding: 20px;
+            padding: 20px 20px 48px;
             font-size: 14px;
             line-height: 1.5;
         }
@@ -681,6 +681,21 @@
         .buttons-section { grid-column: 1 / -1; display: flex; justify-content: center; gap: 12px; padding-top: 20px; }
         .buttons-section button { padding: 10px 20px; margin: 0; font-family: Ringbearer; font-size: 1em; background-color: var(--border-color); color: white; border: none; border-radius: 5px; cursor: pointer; box-shadow: var(--box-shadow); }
         .buttons-section button:hover { opacity: 0.9; }
+        .project-link {
+            position: fixed;
+            left: 16px;
+            bottom: 12px;
+            z-index: 10;
+            font-size: 0.9em;
+            color: var(--text-color);
+        }
+        .project-link a {
+            color: var(--border-color);
+            text-decoration: none;
+        }
+        .project-link a:hover {
+            text-decoration: underline;
+        }
 
         @media print {
             .portrait-controls {
@@ -744,6 +759,7 @@
                 background: #faf0e6;
             }
             .buttons-section { display: none; }
+            .project-link { display: none; }
             .gear-controls { display: none; }
             .creation-points-row { display: none !important; }
         }
