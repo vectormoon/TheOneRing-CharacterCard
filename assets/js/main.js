@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const app = window.TorCharacterApp = window.TorCharacterApp || {};
 
     app.state = {
-        kingOfMenBonusAppliedTo: null,
         currentProtectiveSlot: null,
         currentCombatGearRow: null,
         creationBaseRanks: {},
