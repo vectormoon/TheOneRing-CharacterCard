@@ -66,11 +66,11 @@
 
     function setCombatGearRowValues(row, data) {
         if (!row) return;
-        row.querySelector('input[data-key="name"]').value = data.name || '';
-        row.querySelector('input[data-key="damage"]').value = data.damage || '';
-        row.querySelector('input[data-key="injury"]').value = data.injury || '';
-        row.querySelector('input[data-key="load"]').value = data.load || '';
-        row.querySelector('input[data-key="notes"]').value = data.notes || '';
+        row.querySelector('input[data-key="name"]').value = data.name ?? '';
+        row.querySelector('input[data-key="damage"]').value = data.damage ?? '';
+        row.querySelector('input[data-key="injury"]').value = data.injury ?? '';
+        row.querySelector('input[data-key="load"]').value = data.load ?? '';
+        row.querySelector('input[data-key="notes"]').value = data.notes ?? '';
         syncCombatGearTooltips(row);
     }
 
@@ -115,15 +115,23 @@
     function addCombatGearRow(data = {}) {
         const tableBody = document.getElementById('combat_gear_body');
         const newRow = tableBody.insertRow();
-        newRow.innerHTML = `
-            <td>
-                <input type="text" data-key="name" value="${data.name || ''}" class="readonly" readonly>
-            </td>
-            <td><input type="text" data-key="damage" value="${data.damage || ''}" class="readonly short-input" readonly></td>
-            <td><input type="text" data-key="injury" value="${data.injury || ''}" class="readonly short-input" readonly></td>
-            <td><input type="number" data-key="load" value="${data.load || ''}" class="readonly short-input" readonly></td>
-            <td><input type="text" data-key="notes" value="${data.notes || ''}" class="readonly" readonly></td>
-        `;
+        [
+            ['name', 'text', ''],
+            ['damage', 'text', 'short-input'],
+            ['injury', 'text', 'short-input'],
+            ['load', 'number', 'short-input'],
+            ['notes', 'text', '']
+        ].forEach(([key, type, extraClass]) => {
+            const cell = newRow.insertCell();
+            const input = document.createElement('input');
+            input.type = type;
+            input.dataset.key = key;
+            input.value = data[key] ?? '';
+            input.className = extraClass ? `readonly ${extraClass}` : 'readonly';
+            input.readOnly = true;
+            if (type === 'number') input.min = '0';
+            cell.appendChild(input);
+        });
         syncCombatGearTooltips(newRow);
     }
 
@@ -319,8 +327,16 @@
             updateTotalLoad();
             if (app.core && app.core.updateAttributes) app.core.updateAttributes();
         });
-        cancelProtectiveGearBtn.addEventListener('click', () => protectiveGearModal.classList.add('hidden'));
-        protectiveGearModal.addEventListener('click', (e) => { if (e.target === protectiveGearModal) protectiveGearModal.classList.add('hidden'); });
+        cancelProtectiveGearBtn.addEventListener('click', () => {
+            app.state.currentProtectiveSlot = null;
+            protectiveGearModal.classList.add('hidden');
+        });
+        protectiveGearModal.addEventListener('click', (e) => {
+            if (e.target === protectiveGearModal) {
+                app.state.currentProtectiveSlot = null;
+                protectiveGearModal.classList.add('hidden');
+            }
+        });
         protectivePresetSelect.addEventListener('change', function() {
             const selectedName = this.value;
             const selectedGear = protectiveGearPresets.find(gear => gear.name === selectedName);
