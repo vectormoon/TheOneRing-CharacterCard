@@ -56,17 +56,21 @@
             const slot = row.id.replace('_slot', '');
             if (slot) {
                 const notesInput = row.querySelector('input[data-key="notes"]');
-                charData.protectiveGear[slot] = {
+                const gearData = {
                     name: row.querySelector('input[data-key="name"]').value,
                     value: row.querySelector('input[data-key="value"]').value,
                     load: row.querySelector('input[data-key="load"]').value,
-                    notes: notesInput ? notesInput.value : '',
+                    notes: row.dataset.notes || (notesInput ? notesInput.value : ''),
                 };
+                const parryBonus = parseInt(row.dataset.parryBonus, 10);
+                if (!Number.isNaN(parryBonus)) {
+                    gearData.parryBonus = parryBonus;
+                }
+                charData.protectiveGear[slot] = gearData;
             }
         });
 
         charData.portraitSrc = app.elements.portraitPreview.src;
-        charData.kingOfMenBonus = app.state.kingOfMenBonusAppliedTo;
         if (app.state.creationBaseRanks && typeof app.state.creationBaseRanks === 'object') {
             charData.creationBaseRanks = { ...app.state.creationBaseRanks };
         }
@@ -85,12 +89,6 @@
             if (modeRadio) modeRadio.checked = true;
         }
         app.core.handleModeChange();
-
-        if (app.state.kingOfMenBonusAppliedTo) {
-            const oldStatInput = document.getElementById(app.state.kingOfMenBonusAppliedTo + '_val');
-            if (oldStatInput) oldStatInput.value = Math.max(0, parseInt(oldStatInput.value, 10) - 1);
-        }
-        app.state.kingOfMenBonusAppliedTo = charData.kingOfMenBonus || null;
 
         const zeroDefaults = new Set([
             'adventure_points',
@@ -184,6 +182,13 @@
         (charData.combatGear || []).forEach(rowData => app.gear.addCombatGearRow(rowData));
 
         if (charData.protectiveGear) {
+            document.querySelectorAll('#protective_gear_body tr').forEach(row => {
+                row.querySelectorAll('input[data-key]').forEach(input => {
+                    input.value = '';
+                });
+                row.dataset.notes = '';
+                delete row.dataset.parryBonus;
+            });
             for (const slot in charData.protectiveGear) {
                 const gearData = charData.protectiveGear[slot];
                 const targetRow = document.getElementById(`${slot}_slot`);
@@ -193,16 +198,18 @@
                     targetRow.querySelector('input[data-key="value"]').value = gearData.value || '';
                     targetRow.querySelector('input[data-key="load"]').value = gearData.load || '';
                     if (notesInput) notesInput.value = gearData.notes || '';
+                    targetRow.dataset.notes = gearData.notes || '';
+                    const parryBonus = parseInt(gearData.parryBonus, 10);
+                    if (slot === 'shield' && !Number.isNaN(parryBonus)) {
+                        targetRow.dataset.parryBonus = parryBonus;
+                    } else if (slot === 'shield') {
+                        delete targetRow.dataset.parryBonus;
+                    }
                 }
             }
         }
 
         if (charData.portraitSrc) { app.elements.portraitPreview.src = charData.portraitSrc; }
-
-        if (app.elements.heroicCultureSelect.value === '北方的游民' && app.state.kingOfMenBonusAppliedTo) {
-            const statInput = document.getElementById(app.state.kingOfMenBonusAppliedTo + '_val');
-            if (statInput) statInput.value = (parseInt(statInput.value, 10) || 0) + 1;
-        }
 
         app.elements.callingSelect.dispatchEvent(new Event('change'));
         app.core.updateAttributes();

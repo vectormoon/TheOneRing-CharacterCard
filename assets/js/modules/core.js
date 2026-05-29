@@ -4,7 +4,6 @@
     function handleRankClick(event) {
         const checkbox = event.target;
         if (checkbox.type !== 'checkbox') return;
-        if (event.shiftKey) return;
         const checkboxes = Array.from(checkbox.parentNode.children);
         const currentIndex = checkboxes.indexOf(checkbox);
         const isChecking = checkbox.checked;
